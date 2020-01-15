@@ -4,14 +4,18 @@
 \alias{as_yam.yamlet}
 \title{Coerce Yamlet to Yam}
 \usage{
-\method{as_yam}{yamlet}(x, default_keys = list("label", "guide"), ...)
+\method{as_yam}{yamlet}(
+  x,
+  default_keys = getOption("yamlet_default_keys", list("label", "guide")),
+  ...
+)
 }
 \arguments{
 \item{x}{yamlet}
 
 \item{default_keys}{names that may be omitted in left subsets}
 
-\item{...}{passed arguments}
+\item{...}{ignored}
 }
 \value{
 yam
@@ -32,7 +36,10 @@ as_yam(as_yamlet(c('amt: [ guide: mg, label: dose ]')))
 
 }
 \seealso{
-Other yam: \code{\link{as.character.yam}},
-  \code{\link{as_yam.character}}, \code{\link{as_yam}}
+Other yam: 
+\code{\link{as.character.yam}()},
+\code{\link{as_yam.character}()},
+\code{\link{as_yam}()}
 }
 \concept{yam}
+\keyword{internal}

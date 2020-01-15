@@ -1,10 +1,10 @@
-#' yamlet: Store Data Specification as YAML
+#' yamlet: Versatile Curation of Table Metadata
 #'
-#' The \pkg{yamlet} package supports storage and retrieval of data
-#' specifications in YAML format.  The most important function
+#' The \pkg{yamlet} package supports storage and retrieval of table
+#' metadata in yaml format.  The most important function
 #' is \code{\link{decorate.character}}: it lets you 'decorate'
 #' your data by attaching attributes retrieved from a file in
-#' YAML format.  Typically your data will be of class
+#' yaml format.  Typically your data will be of class
 #' 'data.frame', but it could be anything that is essentially
 #' a named list.
 #'
@@ -15,7 +15,7 @@
 #' Though well formed, it need not be complete, and therefore
 #' has utility over a longer life cycle of data development.
 #'
-#' In the simplest case, the data specification constists
+#' In the simplest case, the data specification consists
 #' of a list of column (item) names, followed by semicolons.
 #' Perhaps you only have one column:
 #'
@@ -82,6 +82,10 @@
 #' examples there. See also \code{?decorate} which adds yamlet
 #' values to corresponding items in your data. See also \code{?print.ag}
 #' which uses labels and guides to autogenerate axis labels.
+#'
+#' Note: the quinidine and phenobarb datasets in the examples
+#' are borrowed from \pkg{nlme} (\code{?Quinidine}, \code{?Phenobarb}),
+#' with some reorganization.
 #'
 #' @docType package
 #' @name yamlet

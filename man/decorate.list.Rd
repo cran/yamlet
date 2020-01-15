@@ -4,17 +4,27 @@
 \alias{decorate.list}
 \title{Decorate List}
 \usage{
-\method{decorate}{list}(x, meta = NULL, coerce = getOption("coerce",
-  FALSE), ...)
+\method{decorate}{list}(
+  x,
+  meta = NULL,
+  ext = getOption("yamlet_extension", ".yaml"),
+  coerce = getOption("yamlet_coerce", FALSE),
+  overwrite = getOption("yamlet_overwrite", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{object inheriting from \code{list}}
 
-\item{meta}{file path for corresponding yaml metadata, or a yamlet; an attempt will be made to guess the file path if x has a 'source' attribute}
+\item{meta}{file path for corresponding yaml metadata, or a yamlet; an attempt will be made to guess the file path if x has a 'source' attribute (as for \code{\link[csv]{as.csv}})}
 
-\item{coerce}{whether to coerce to factor where guide is a list}
+\item{ext}{file extension for metadata file, if relevant}
 
-\item{...}{passed arguments}
+\item{coerce}{whether to coerce to factor where guide has length > 1}
+
+\item{overwrite}{whether to overwrite attributes that are already present (else give warning)}
+
+\item{...}{passed to \code{\link{as_yamlet.character}} (by method dispatch)}
 }
 \value{
 list, possibly with member attributes
@@ -22,7 +32,7 @@ list, possibly with member attributes
 \description{
 Decorates a list-like object. Expects metadata with labels and guides,
 where guides are units, factor levels and labels (codes, decodes), or
-datetime formatting strings. For guides that are lists, the corresponding
+datetime formatting strings. For guides with length > 1, the corresponding
 data element may optionally be coerced to factor.
 }
 \examples{
@@ -30,10 +40,28 @@ example(decorate.data.frame)
 
 }
 \seealso{
-Other decorate: \code{\link{decorate.character}},
-  \code{\link{decorate.data.frame}},
-  \code{\link{decorate}},
-  \code{\link{decorations.data.frame}},
-  \code{\link{decorations}}
+Other decorate: 
+\code{\link{decorate.character}()},
+\code{\link{decorate.data.frame}()},
+\code{\link{decorate}()},
+\code{\link{decorations.data.frame}()},
+\code{\link{decorations}()}
+
+Other interface: 
+\code{\link{decorate.character}()},
+\code{\link{decorate}()},
+\code{\link{io_csv.character}()},
+\code{\link{io_csv.data.frame}()},
+\code{\link{io_csv}()},
+\code{\link{io_table.character}()},
+\code{\link{io_table.data.frame}()},
+\code{\link{io_table}()},
+\code{\link{io_yamlet.character}()},
+\code{\link{io_yamlet.data.frame}()},
+\code{\link{io_yamlet.yamlet}()},
+\code{\link{io_yamlet}()},
+\code{\link{read_yamlet}()},
+\code{\link{write_yamlet}()}
 }
 \concept{decorate}
+\concept{interface}

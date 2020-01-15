@@ -9,20 +9,22 @@ to_yamlet(x, ...)
 \arguments{
 \item{x}{object}
 
-\item{...}{passed arguments}
+\item{...}{ignored}
 }
 \value{
 length-one character
 }
 \description{
 Coerces to yamlet storage format. Generic, with methods
-for null, character and list.
+for default, null, character and list which together
+implement the yamlet storage syntax.
 Always returns length-one character, possibly the empty string.
 }
 \seealso{
-Other to_yamlet: \code{\link{to_yamlet.NULL}},
-  \code{\link{to_yamlet.character}},
-  \code{\link{to_yamlet.default}},
-  \code{\link{to_yamlet.list}}
+Other to_yamlet: 
+\code{\link{to_yamlet.NULL}()},
+\code{\link{to_yamlet.character}()},
+\code{\link{to_yamlet.default}()},
+\code{\link{to_yamlet.list}()}
 }
 \concept{to_yamlet}

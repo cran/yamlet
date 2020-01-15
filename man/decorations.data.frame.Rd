@@ -4,15 +4,21 @@
 \alias{decorations.data.frame}
 \title{Retrieve Decorations for Data Frame}
 \usage{
-\method{decorations}{data.frame}(x, coerce = getOption("coerce", FALSE),
-  ...)
+\method{decorations}{data.frame}(
+  x,
+  coerce = getOption("yamlet_coerce_decorations", FALSE),
+  exclude_attr = getOption("yamlet_exclude_attr", character(0)),
+  ...
+)
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{coerce}{logical whether to coerce factor levels to guide; alternatively, a key for the levels}
+\item{coerce}{logical: whether to coerce factor levels to guide; alternatively, a key for the levels}
 
-\item{...}{passed arguments}
+\item{exclude_attr}{attributes to remove from the result}
+
+\item{...}{ignored}
 }
 \value{
 named list
@@ -23,20 +29,23 @@ used to decorate it. Returns a list with same names as the data.frame.
 }
 \examples{
 library(csv)
-file <- system.file(package = 'yamlet', 'extdata','yamlet.csv')
+file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 x <- decorate(as.csv(file))
 decorations(x[,1:7])
 decorations(decorate(as.csv(file), coerce = TRUE)[,1:7])
 decorations(decorate(as.csv(file), coerce = TRUE)[,1:7], coerce = TRUE)
-old <- getOption('coerce')
+old <- getOption('yamlet_coerce')
 options(coerce = TRUE)
 as.character(as_yamlet(decorate(as.csv(file))))
 options(coerce = old)
+
 }
 \seealso{
-Other decorate: \code{\link{decorate.character}},
-  \code{\link{decorate.data.frame}},
-  \code{\link{decorate.list}}, \code{\link{decorate}},
-  \code{\link{decorations}}
+Other decorate: 
+\code{\link{decorate.character}()},
+\code{\link{decorate.data.frame}()},
+\code{\link{decorate.list}()},
+\code{\link{decorate}()},
+\code{\link{decorations}()}
 }
 \concept{decorate}

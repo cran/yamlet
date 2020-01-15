@@ -4,39 +4,111 @@
 \alias{decorate.character}
 \title{Decorate Character}
 \usage{
-\method{decorate}{character}(x, meta = NULL,
-  coerce = getOption("coerce", FALSE), ...)
+\method{decorate}{character}(
+  x,
+  meta = NULL,
+  fun = getOption("yamlet_import", as.csv),
+  ext = getOption("yamlet_extension", ".yaml"),
+  coerce = getOption("yamlet_coerce", FALSE),
+  ...
+)
 }
 \arguments{
-\item{x}{file path for csv}
+\item{x}{file path for table data}
 
-\item{meta}{file path for corresponding yaml metadata, or a yamlet}
+\item{meta}{file path for corresponding yamlet metadata, or a yamlet object}
 
-\item{coerce}{whether to coerce to factor where guide is a list}
+\item{fun}{function or function name for reading x}
 
-\item{...}{passed arguments}
+\item{ext}{file extension for metadata file, if relevant}
+
+\item{coerce}{whether to coerce to factor where guide has length > 1}
+
+\item{...}{passed to fun and to \code{\link{as_yamlet.character}}}
 }
 \value{
 data.frame
 }
 \description{
-Treats \code{x} as a csv file path. By default,
+Treats \code{x} as a file path. By default,
 metadata is sought from a file with the same
 base but the 'yaml' extension.
 }
 \examples{
-file <- system.file(package = 'yamlet', 'extdata','yamlet.csv')
-meta <- system.file(package = 'yamlet', 'extdata','yamlet.yaml')
-x <- decorate(file)
-x <- decorate(file, coerce = TRUE)
-x <- decorate(file, meta = meta)
-sapply(x, attr, 'label')
+file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+meta <- system.file(package = 'yamlet', 'extdata','quinidine.yaml')
+identical(
+  decorate(file),
+  decorate(file, meta = meta)
+)
+identical(
+  decorate(file, meta = as_yamlet(meta)),
+  decorate(file, meta = meta)
+)
+a <- decorate(file)
+b <- decorate(file, coerce = TRUE)
+c <- decorate(
+  file,
+  fun = read.table,
+  quote = "",
+  as.is = FALSE,
+  sep = ',',
+  header = TRUE,
+  na.strings = c('', '\\\\s', '.','NA'),
+  strip.white = TRUE,
+  check.names = FALSE,
+  coerce = TRUE
+)
+d <- decorate(
+  file,
+  fun = read.table,
+  quote = "",
+  as.is = FALSE,
+  sep = ',',
+  header = TRUE,
+  na.strings = c('', '\\\\s', '.','NA'),
+  strip.white = TRUE,
+  check.names = FALSE,
+  coerce = FALSE
+)
 
+# Importantly, b and c are identical with respect to factors
+cbind(
+  `as.is/!coerce`   = sapply(a, class), # no factors
+  `as.is/coerce`    = sapply(b, class), # factors made during decoration
+  `!as.is/coerce`   = sapply(c, class), # factors made twice!
+  `!as.is/!coerce`  = sapply(d, class)  # factors made during read
+)
+str(a$Smoke)
+str(b$Smoke)
+str(c$Smoke)
+str(d$Smoke)
+levels(c$Creatinine)
+levels(d$Creatinine) # level detail retained as 'guide'
 }
 \seealso{
-Other decorate: \code{\link{decorate.data.frame}},
-  \code{\link{decorate.list}}, \code{\link{decorate}},
-  \code{\link{decorations.data.frame}},
-  \code{\link{decorations}}
+Other decorate: 
+\code{\link{decorate.data.frame}()},
+\code{\link{decorate.list}()},
+\code{\link{decorate}()},
+\code{\link{decorations.data.frame}()},
+\code{\link{decorations}()}
+
+Other interface: 
+\code{\link{decorate.list}()},
+\code{\link{decorate}()},
+\code{\link{io_csv.character}()},
+\code{\link{io_csv.data.frame}()},
+\code{\link{io_csv}()},
+\code{\link{io_table.character}()},
+\code{\link{io_table.data.frame}()},
+\code{\link{io_table}()},
+\code{\link{io_yamlet.character}()},
+\code{\link{io_yamlet.data.frame}()},
+\code{\link{io_yamlet.yamlet}()},
+\code{\link{io_yamlet}()},
+\code{\link{read_yamlet}()},
+\code{\link{write_yamlet}()}
 }
 \concept{decorate}
+\concept{interface}

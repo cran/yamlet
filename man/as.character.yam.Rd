@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{yam}
 
-\item{...}{passed arguments}
+\item{...}{ignored; keys is an attribute of yam}
 }
 \value{
 character
@@ -27,12 +27,15 @@ as.character(bar)
 as.character(
 as_yam(
 as_yamlet(
-'race: [label: race, guide: [ white: 0, black: 1, asian: 2 ], multiple: [yes: 1, no: 0]]'
+"race: [label: race, guide: [ white: 0, black: 1, asian: 2 ], multiple: ['yes': 1, 'no': 0]]"
 )))
 
 }
 \seealso{
-Other yam: \code{\link{as_yam.character}},
-  \code{\link{as_yam.yamlet}}, \code{\link{as_yam}}
+Other yam: 
+\code{\link{as_yam.character}()},
+\code{\link{as_yam.yamlet}()},
+\code{\link{as_yam}()}
 }
 \concept{yam}
+\keyword{internal}

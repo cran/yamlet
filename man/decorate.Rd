@@ -15,20 +15,41 @@ decorate(x, ...)
 a list-like object, typically data.frame
 }
 \description{
-Decorates a list-like object. Generic.  See \code{\link{decorate.character}}.
+Decorates a list-like object. Generic.
+See \code{\link{decorate.character}}.
 }
 \examples{
 library(csv)
-file <- system.file(package = 'yamlet', 'extdata','yamlet.csv')
+file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 x <- decorate(as.csv(file))
-sapply(x, attr, 'label')
+identical(decorate(as.csv(file)), decorate(file))
+decorations(x) # but prefer as_yamlet(x)
+
 
 }
 \seealso{
-Other decorate: \code{\link{decorate.character}},
-  \code{\link{decorate.data.frame}},
-  \code{\link{decorate.list}},
-  \code{\link{decorations.data.frame}},
-  \code{\link{decorations}}
+Other decorate: 
+\code{\link{decorate.character}()},
+\code{\link{decorate.data.frame}()},
+\code{\link{decorate.list}()},
+\code{\link{decorations.data.frame}()},
+\code{\link{decorations}()}
+
+Other interface: 
+\code{\link{decorate.character}()},
+\code{\link{decorate.list}()},
+\code{\link{io_csv.character}()},
+\code{\link{io_csv.data.frame}()},
+\code{\link{io_csv}()},
+\code{\link{io_table.character}()},
+\code{\link{io_table.data.frame}()},
+\code{\link{io_table}()},
+\code{\link{io_yamlet.character}()},
+\code{\link{io_yamlet.data.frame}()},
+\code{\link{io_yamlet.yamlet}()},
+\code{\link{io_yamlet}()},
+\code{\link{read_yamlet}()},
+\code{\link{write_yamlet}()}
 }
 \concept{decorate}
+\concept{interface}
