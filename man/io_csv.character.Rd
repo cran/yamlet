@@ -4,19 +4,12 @@
 \alias{io_csv.character}
 \title{Import Documented Table as CSV}
 \usage{
-\method{io_csv}{character}(
-  x,
-  ext = getOption("yamlet_extension", ".yaml"),
-  coerce = getOption("yamlet_coerce", FALSE),
-  ...
-)
+\method{io_csv}{character}(x, ext = getOption("yamlet_extension", ".yaml"), ...)
 }
 \arguments{
 \item{x}{character file path; passed to \code{\link[csv]{as.csv.character}} (by method dispatch)}
 
 \item{ext}{extension for metadata equivalent of x}
-
-\item{coerce}{whether to coerce to factor where guide is a list; passed to \code{\link{decorate.data.frame}}}
 
 \item{...}{passed to \code{\link[csv]{as.csv.character}} and to \code{\link{decorate}}}
 }
@@ -45,20 +38,19 @@ Other io:
 \code{\link{io_yamlet}()}
 
 Other interface: 
+\code{\link{conditionalize.data.frame}()},
 \code{\link{decorate.character}()},
-\code{\link{decorate.list}()},
-\code{\link{decorate}()},
+\code{\link{decorate.data.frame}()},
+\code{\link{ggplot.decorated}()},
 \code{\link{io_csv.data.frame}()},
-\code{\link{io_csv}()},
 \code{\link{io_table.character}()},
 \code{\link{io_table.data.frame}()},
-\code{\link{io_table}()},
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
-\code{\link{io_yamlet.yamlet}()},
-\code{\link{io_yamlet}()},
 \code{\link{read_yamlet}()},
+\code{\link{resolve.data.frame}()},
 \code{\link{write_yamlet}()}
 }
 \concept{interface}
 \concept{io}
+\keyword{internal}

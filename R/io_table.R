@@ -8,7 +8,6 @@
 #'@export
 #'@return See methods.
 #'@family io
-#'@family interface
 #'@examples
 #' file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 #' x <- decorate(file)
@@ -31,9 +30,10 @@ io_table <- function(x, ...)UseMethod('io_table')
 #'
 #' @param x character file path; passed to \code{\link{read.table}}
 #' @param ext extension for metadata equivalent of x
-#' @param coerce whether to coerce to factor where guide is a list; passed to \code{\link{decorate.data.frame}}
-#' @param ... passed to \code{\link{read.table}} and to \code{\link{decorate}}
+# @param coerce whether to coerce to factor where guide is a list; passed to \code{\link{decorate.data.frame}}
+#' @param ... passed to \code{\link{read.table}} (if accepted) and to \code{\link{decorate}}
 #' @export
+#' @keywords internal
 #' @family io
 #' @family interface
 #' @return data.frame
@@ -42,16 +42,24 @@ io_table <- function(x, ...)UseMethod('io_table')
 io_table.character <- function(
   x,
   ext = getOption('yamlet_extension', '.yaml'),
-  coerce = getOption('yamlet_coerce', FALSE),
+  #coerce = getOption('yamlet_coerce', FALSE),
   ...
 ){
-  d <- utils::read.table(file = x, ...)
+  args <- list(...)
+  args <- args[names(args) %in% names(formals(utils::read.table))]
+  args <- c(list(file = x), args)
+  d <- do.call(utils::read.table, args)
   meta <- sub('\\.[^.]*$','',x) # remove last dot and any trailing chars
   meta <- paste0(meta, ext)
   if(!file.exists(meta)){
     message('did not find ', meta)
   }else{
-    d <- decorate(d, meta = meta, coerce = coerce, ...)
+    d <- decorate(
+      d,
+      meta = meta,
+     # coerce = coerce,
+      ...
+    )
   }
   d
 }
@@ -68,8 +76,9 @@ io_table.character <- function(
 #' @param con passed to \code{\link{io_yamlet}}
 #' @param useBytes passed to \code{\link{io_yamlet}}
 #' @param default_keys passed to \code{\link{io_yamlet}}
-#' @param ... passed to \code{\link{write.table}} and to \code{\link{io_yamlet}}
+#' @param ... passed to \code{\link{write.table}} (if accepted) and to \code{\link{io_yamlet}}
 #' @export
+#' @keywords internal
 #' @family io
 #' @family interface
 #' @return invisible(file)
@@ -88,7 +97,10 @@ io_table.data.frame <- function(
   ),
   ...
 ){
-  utils::write.table(x, file = file, ...)
+  args <- list(...)
+  args <- args[names(args) %in% names(formals(utils::write.table))]
+  args <- c(list(x = x, file = file),args)
+  do.call(utils::write.table, args)
   if(is.character(file)){
     if(file != ''){
       con <- sub('\\.[^.]*$','',file) # remove last dot and any trailing chars

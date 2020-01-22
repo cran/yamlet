@@ -52,18 +52,18 @@ a <- decorate(file)
 as_yamlet(a)[1:3]
 
 ## -----------------------------------------------------------------------------
+options(csv_source = FALSE) # see ?as.csv
 file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 x <- decorate(file)
 out <- file.path(tempdir(), 'out.csv')
 io_csv(x, out)
 y <- io_csv(out)
-attr(x, 'source') <- NULL
-attr(y, 'source') <- NULL
 identical(x, y) # lossless 'round-trip'
 file.exists(out)
 meta <- sub('csv','yaml', out)
 file.exists(meta)
 meta %>% readLines %>% head %>% writeLines
+options(csv_source = TRUE) # restore
 
 ## ---- fig.width = 5.46, fig.height = 3.52, fig.cap = 'Automatic axis labels and legends using curated metadata as column attributes.'----
 suppressWarnings(library(ggplot2))
@@ -72,19 +72,17 @@ library(magrittr)
 file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 
 file %>% 
-  decorate %>% 
+  decorate %>%
   filter(!is.na(conc)) %>%
-  agplot(aes(x = time, y = conc, color = Heart)) + 
+  ggplot(aes(x = time, y = conc, color = Heart)) + 
   geom_point()
 
 
 ## -----------------------------------------------------------------------------
 suppressMessages(library(table1))
-options(yamlet_overwrite = TRUE)
 file %>%
-  as.csv %>%
-  decorate(coerce = TRUE) %>% # factor if length(guide) > 1
-  decorate(default = c('label','units')) %>% # code guide as units
+  decorate %>% 
+  resolve %>% 
   group_by(Subject) %>%
   slice(1) %>%
   table1(~ Age + Weight + Race | Heart, .)

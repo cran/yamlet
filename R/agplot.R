@@ -5,6 +5,7 @@
 #' @param ... passed arguments
 #' @return see methods; typically length-one character
 #' @export
+#' @keywords internal
 #' @family lab
 as_lab <- function(x,...)UseMethod('as_lab')
 
@@ -106,6 +107,7 @@ as_lab.list <- function(
 #' @param data data.frame
 #' @param ... ignored
 #' @export
+#' @keywords internal
 #' @return integer, possibly NA
 #' @family lab
 #' @examples
@@ -137,8 +139,18 @@ as_lab.list <- function(
 #
 singularity <- function(x, data, ...){
   if(!length(x))return(0)
-  exprs <- lapply(x, function(i)parse(text = i))
-  vals <- lapply(exprs, function(i)try(eval(i, envir = data, enclos = NULL)))
+  #exprs <- lapply(x, function(i)parse(text = i))
+  #vals <- lapply(exprs, function(i)try(eval(i, envir = data, enclos = NULL)))
+  vals <- lapply(
+    x, function(i)try(
+      silent = TRUE,
+      eval(
+        parse(text = i),
+        envir = data,
+        enclos = NULL
+      )
+    )
+  )
   defined <- lapply(vals, function(i){
     if(inherits(i, 'try-error')) i <- FALSE
     i <- as.logical(i)
@@ -156,11 +168,15 @@ singularity <- function(x, data, ...){
 }
 
 
-#' Request Automatic Labels and Units for ggplot
+#' Create a New ggplot for a Decorated Data Frame
 #'
-#' Requests automatic labels and units for ggplot.
-#' Simply subclasses the output of ggplot, in
-#' expectation of associated print method \code{\link{print.ag}}.
+#' Creates a new ggplot object for a decorated data.frame.
+#' This is the ggplot() method for class 'decorated';
+#' it tries to implement automatic labels and units in axes and legends
+#' in association with \code{\link{print.ag}}.
+#' Use \code{ggplot(as.data.frame(x))} to get default
+#' ggplot() behavior. Use \code{ggplot(as_decorated(x))}
+#' to enforce custom behavior.
 #'
 #' @param data data.frame or similar
 #' @param ... passed to \code{\link[ggplot2]{ggplot}}
@@ -168,15 +184,17 @@ singularity <- function(x, data, ...){
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @family lab
+#' @family interface
 #' @examples
 #' meta <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 #' x <- decorate(meta)
 #' library(ggplot2)
-#' class(agplot(data = x) + geom_path(aes(x = time, y = conc)))
-#' class(agplot(data = x, aes(x = time, y = conc)) + geom_path())
+#' class(ggplot(data = x) + geom_path(aes(x = time, y = conc)))
+#' class(ggplot(data = x, aes(x = time, y = conc)) + geom_path())
 #' example(print.ag)
 
-agplot <- function(data, ...){
+ggplot.decorated <- function(data, ...){
+  class(data) <- setdiff(class(data), 'decorated')
   p <- ggplot(data = data, ...)
   class(p) <- c('ag',class(p))
   p
@@ -190,7 +208,7 @@ agplot <- function(data, ...){
 #' receive existing labels one at a time
 #' and corresponding attributes (if any) from data.
 #'
-#' @param x class 'ag' from \code{\link{agplot}}
+#' @param x class 'ag' from \code{\link{ggplot.decorated}}
 #' @param labeller a function (or its name) like \code{\link{as_lab}} to generate axis labels
 #' @param ... passed arguments
 #' @return used for side effects
@@ -206,13 +224,13 @@ agplot <- function(data, ...){
 #'
 #' # Filter() strips 'label' from factors (see legend), but not vectors:
 #'
-#' file %>% decorate(coerce = TRUE) %>% filter(!is.na(conc)) %>%
-#' agplot(aes(x = time, y = conc, color = Heart)) + geom_point()
+#' file %>% decorate %>% resolve %>% filter(!is.na(conc)) %>%
+#' ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
 #'
-#' # No factors created here, but print.ag promotes to factor if it can:
+#' # No factors created here, but print.ag promotes guide to factor if it can:
 #'
 #' file %>% decorate %>% filter(!is.na(conc)) %>%
-#' agplot(aes(x = time, y = conc, color = Heart)) + geom_point()
+#' ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
 #'
 #' # Here we try a dataset with conditional labels and units.
 #'
@@ -226,7 +244,7 @@ agplot <- function(data, ...){
 #' # for a factor.  However, the keys evaluate to logical on the data.frame.
 #' # Seeing that, we test for one of them being all true, and if so we select it.
 #'
-#' file %>% decorate %>% agplot(aes(x = time, y = value, color = event)) + geom_point()
+#' file %>% decorate %>% ggplot(aes(x = time, y = value, color = event)) + geom_point()
 #'
 #' # In the above example, we are plotting doses and concentrations, which have
 #' # different labels and units, so we can't improve on the y axis label.
@@ -235,17 +253,17 @@ agplot <- function(data, ...){
 #'
 #' file %>% decorate %>%
 #' filter(event == 'conc') %>%
-#' agplot(aes(x = time, y = value, color = ApgarInd)) + geom_point()
+#' ggplot(aes(x = time, y = value, color = ApgarInd)) + geom_point()
 #'
 #' file %>% decorate %>%
 #' filter(event == 'dose') %>%
-#' agplot(aes(x = time, y = value, color = Wt)) +
+#' ggplot(aes(x = time, y = value, color = Wt)) +
 #' geom_point() +
 #' scale_y_log10() +
 #' scale_color_gradientn(colours = rainbow(4))
 #'
 # file %>% decorate %>%
-# agplot(aes(x = time, y = value, color = event)) +
+# ggplot(aes(x = time, y = value, color = event)) +
 # geom_point() +
 # facet_wrap(~ event, scales = 'free_y')
 
@@ -291,9 +309,9 @@ print.ag <- function(x, labeller = getOption('yamlet_labeller', default = as_lab
   NextMethod()
 }
 
-#' Test Expression is Conditional
+#' Test Object is Conditional
 #'
-#' Tests whether expression is conditional.
+#' Tests whether object is conditional.
 #' @param x character
 #' @param ... passed arguments
 #' @export
@@ -302,21 +320,22 @@ print.ag <- function(x, labeller = getOption('yamlet_labeller', default = as_lab
 #' @return logical
 isConditional <- function(x, ...)UseMethod('isConditional')
 
-#' Test Default Expression is Conditional
+#' Test Object is Conditional by Default
 #'
-#' Tests whether expression is conditional by default. Coerces to character.
+#' Tests whether object is conditional by default. Coerces to list.
 #' @param x default
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
 #' @family conditional
 #' @return logical
-isConditional.default <- function(x,...)isConditional(as.character(x),...)
-
-#' Test Character Expression is Conditional
 #'
-#' Tests whether character expression is conditional by default.
-#' Evaluates x on data and looks for meaningful result.
+isConditional.default <- function(x,...)isConditional(as.list(x),...)
+
+#' Test List is Conditional
+#'
+#' Tests whether a list is conditional by default.
+#' Evaluates names of x on data and looks for meaningful result.
 #' @param x default
 #' @param data environment for variable lookup
 #' @param ... passed arguments
@@ -325,7 +344,7 @@ isConditional.default <- function(x,...)isConditional(as.character(x),...)
 #' @family conditional
 #' @return logical
 
-isConditional.character <- function(x, data,...){
+isConditional.list <- function(x, data,...){
   nms <- names(x)
   status <- singularity(nms, data, ...)
   if(is.na(status))return(FALSE)
@@ -372,3 +391,5 @@ isLevels.default <- function(x, table, ...)isLevels(as.character(x), table, ...)
 isLevels.character <- function(x, table,  ...){
   as.logical(length(intersect(x,table)) >= 1)
 }
+
+

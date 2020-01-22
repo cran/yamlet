@@ -30,7 +30,7 @@
 
 \item{default_keys}{passed to \code{\link{io_yamlet}}}
 
-\item{...}{passed to \code{\link{write.table}} and to \code{\link{io_yamlet}}}
+\item{...}{passed to \code{\link{write.table}} (if accepted) and to \code{\link{io_yamlet}}}
 }
 \value{
 invisible(file)
@@ -55,20 +55,19 @@ Other io:
 \code{\link{io_yamlet}()}
 
 Other interface: 
+\code{\link{conditionalize.data.frame}()},
 \code{\link{decorate.character}()},
-\code{\link{decorate.list}()},
-\code{\link{decorate}()},
+\code{\link{decorate.data.frame}()},
+\code{\link{ggplot.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
-\code{\link{io_csv}()},
 \code{\link{io_table.character}()},
-\code{\link{io_table}()},
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
-\code{\link{io_yamlet.yamlet}()},
-\code{\link{io_yamlet}()},
 \code{\link{read_yamlet}()},
+\code{\link{resolve.data.frame}()},
 \code{\link{write_yamlet}()}
 }
 \concept{interface}
 \concept{io}
+\keyword{internal}

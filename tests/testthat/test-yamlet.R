@@ -54,17 +54,17 @@ test_that('unnest result is stable',{
 # recursively, starting at depth
 expect_equal_to_reference(file = '040.rds', to_yamlet(unnest(yaml::yaml.load('1'))))
 expect_equal_to_reference(file = '041.rds', to_yamlet(unnest(yaml::yaml.load('a'))))
-expect_equal_to_reference(file = '042.rds', to_yamlet(unnest(yaml::yaml.load('a:'))))
-expect_equal_to_reference(file = '043.rds', to_yamlet(unnest(yaml::yaml.load('a: '))))
-expect_equal_to_reference(file = '044.rds', to_yamlet(unnest(yaml::yaml.load('? a'))))
+expect_equal_to_reference(file = '042.rds', to_yamlet(unnest(yaml::yaml.load('a:')))) #
+expect_equal_to_reference(file = '043.rds', to_yamlet(unnest(yaml::yaml.load('a: ')))) #
+expect_equal_to_reference(file = '044.rds', to_yamlet(unnest(yaml::yaml.load('? a')))) #
 expect_equal_to_reference(file = '045.rds', to_yamlet(unnest(yaml::yaml.load('[ 0]'))))
 expect_equal_to_reference(file = '046.rds', to_yamlet(unnest(yaml::yaml.load('[ 0, 1]'))))
-expect_equal_to_reference(file = '047.rds', to_yamlet(unnest(yaml::yaml.load('a: 0'))))
-expect_equal_to_reference(file = '048.rds', to_yamlet(unnest(yaml::yaml.load('[a: 0]'))))
+expect_equal_to_reference(file = '047.rds', to_yamlet(unnest(yaml::yaml.load('a: 0')))) #
+expect_equal_to_reference(file = '048.rds', to_yamlet(unnest(yaml::yaml.load('[a: 0]')))) #
 expect_equal_to_reference(file = '049.rds', to_yamlet(unnest(yaml::yaml.load('[a: 0, b: 1]'))))
 expect_equal_to_reference(file = '050.rds', to_yamlet(unnest(yaml::yaml.load('[a: [0,1,2], b: 1]'))))
 expect_equal_to_reference(file = '051.rds', to_yamlet(unnest(yaml::yaml.load('[a: [0,1,2], 5 ]') )))
-expect_equal_to_reference(file = '052.rds', to_yamlet(unnest(yaml::yaml.load('[ [ [ [d: [0, 1, 2]]]]]'))))
+expect_equal_to_reference(file = '052.rds', to_yamlet(unnest(yaml::yaml.load('[ [ [ [d: [0, 1, 2]]]]]')))) #
 })
 
 test_that('more elements than keys gives warning',{
@@ -98,21 +98,20 @@ test_that('default decorations are equivalent to explicit requests',{
 })
 
 test_that('non-default import is equivalent',{
+  library(magrittr)
   file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
-  b <- decorate(file, coerce = TRUE)
-  attr(b, 'source') <- NULL
+  b <- decorate(file, source = FALSE) %>% resolve
   c <- decorate(
     file,
-    fun = read.table,
+    read = read.table,
     quote = "",
     as.is = TRUE,
     sep = ',',
     header = TRUE,
     na.strings = c('', '\\s', '.','NA'),
     strip.white = TRUE,
-    check.names = FALSE,
-    coerce = TRUE
-  )
+    check.names = FALSE
+  ) %>% resolve
   expect_identical(b, c)
 })
 
@@ -224,8 +223,8 @@ test_that('io_csv methods are reciprocal with default or modified arguments',{
   expect_identical(x, y) # lossless 'round-trip'
 
 })
-test_that('class attributes are excluded from storage on request',{
-  expect_false('class' %in% decorations(Theoph, exclude_attr = 'class')$Subject)
+test_that('class attributes are excluded from storage by default',{
+  expect_false('class' %in% decorations(Theoph)$Subject)
 })
 test_that('yamlet package writes proper yaml with non-default keys',{
   out <- file.path(tempdir(), 'out.yaml')
@@ -248,16 +247,194 @@ test_that('yamlet package writes proper yaml with non-default keys',{
 })
 test_that('dplyr filter does not drop attributes',{
  # not okay in 3.6.1: filter drops label on factors
-  head(Theoph)
-  attr(Theoph$Dose, 'label') <- 'DOSE'
-  attr(Theoph$Dose, 'levels') <- unique(Theoph$Dose)
-  str(Theoph$Dose)
-  str(Theoph[Theoph$Subject == 1,]$Dose)
+  library(dplyr)
+  library(magrittr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- file %>% decorate %>% resolve
+  x %$% Heart %>% attributes %>% names
+  x %>% filter(!is.na(conc)) %$% Heart %>% attributes %>% names
+})
+test_that('print.ag treats variable as categorical if guide has length > 1',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  library(ggplot2)
+  library(dplyr)
+  library(magrittr)
+  file %>% decorate %>% filter(!is.na(conc)) %>%
+  ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
+})
+test_that('print.ag uses conditional labels and guides',{
+  file <- system.file(package = 'yamlet', 'extdata','phenobarb.csv')
+  file %>% decorate %>%
+  filter(event == 'conc') %>%
+  ggplot(aes(x = time, y = value, color = ApgarInd)) + geom_point()
+})
+test_that('io_table accepts nuisance arguments without error',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  out <- file.path(tempdir(), 'out.tab')
+  expect_silent(foo <- io_table(x, out, foo = 'bar'))
+  expect_silent(y <- io_table(foo, as.is = TRUE, foo = 'bar'))
+})
+test_that('io_csv accepts nuisance arguments without error',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  out <- file.path(tempdir(), 'out.csv')
+  expect_silent(foo <- io_csv(x, out, foo = 'bar'))
+  expect_silent(y <- io_csv(foo, as.is = TRUE, foo = 'bar'))
+})
+test_that('explicit_guide recognizes encodings, units, formats, and codelists',{
+  library(magrittr)
+  a <- 'CONC: [ concentration, ng/mL ]' %>% as_yamlet %>% explicit_guide
+  b <- 'RACE: [ subject race, [ Caucasian, Latin, Black ]]' %>% as_yamlet %>% explicit_guide
+  c <- 'RACE: [ subject race, //Caucasian//Latin//Black// ]' %>% as_yamlet %>% explicit_guide
+  d <- 'DATE: [ date, "%Y-%m-%d" ]' %>% as_yamlet %>% explicit_guide
+  e <- c(
+    names(a[[1]])[[2]],
+    names(b[[1]])[[2]],
+    names(c[[1]])[[2]],
+    names(d[[1]])[[2]]
+  )
+  expect_identical(e, c('units','codelist','encoding','format'))
+
+ x <- data.frame(
+  ID = 1,
+  CONC = 1,
+  RACE = 1,
+  SEX = 1,
+  DATE = 1
+ )
+
+ x$ID   %<>% structure(label = 'subject identifier')
+ x$CONC %<>% structure(label = 'concentration', guide = 'ng/mL')
+ x$RACE %<>% structure(label = 'race', guide = list(white = 0, black = 1, asian = 2))
+ x$SEX  %<>% structure(label = 'sex', guide = list(female = 0, male = 1))
+ x$DATE %<>% structure(label = 'date', guide = '%Y-%m-%d')
+ expect_identical(
+   x %>% explicit_guide %>% as_yamlet %>% lapply(names) %>% unlist %>% as.character,
+   c('label','label','units','label','codelist','label','codelist','label','format')
+ )
+})
+test_that('factorize_codelist creates class factor and removes attribute codelist',{
+ library(magrittr)
+ file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+ x <- decorate(file)
+ x %<>% explicit_guide %>% factorize_codelist %>% as_yamlet(exclude_attr = NULL)
+ expect_identical(
+   x$Creatinine %>% names,
+   c('label','levels','class')
+ )
+ expect_identical(x$Heart$class, 'factor')
+})
+test_that('user can specify unit instead of units',{
+  a <- 'CONC: [ concentration, ng/mL ]' %>% as_yamlet %>% explicit_guide(default = 'unit')
+  expect_identical(names(a$CONC), c('label','unit'))
+})
+test_that('resolve correctly classifies conditional elements',{
+  file <- system.file(package = 'yamlet', 'extdata','phenobarb.csv')
+  x <- decorate(file)
+  x %>% as_yamlet
+  x %>% explicit_guide %>% as_yamlet
+  x %>% explicit_guide %>% factorize_codelist %>% as_yamlet
+  a <- x %>% resolve %>% as_yamlet
+  identical(names(a$value), c('label','units'))
+})
+test_that('resolve correctly classifies factors',{
+  library(magrittr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  expect_identical(file %>% decorate %>% resolve %$% Heart %>% class, 'factor')
+})
+test_that('filter, select, mutate, group_by, arrange, summarize and [ do not drop subclass decorated',{
+  library(dplyr)
+  library(magrittr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  expect_identical('decorated', x %>% class %>% `[[`(1))
+  expect_identical('decorated', x %>% filter(!is.na(conc)) %>% class %>% `[[`(1))
+  expect_identical(
+    'decorated',
+    x %>%
+      group_by(Subject) %>%
+      mutate(mxt = max(time)) %>%
+      class %>% `[[`(1)
+  )
+  expect_identical(
+    'decorated',
+    x %>%
+      select(Subject:interval) %>%
+      class %>% `[[`(1)
+  )
+  expect_identical(
+    'decorated',
+    x %>%
+      summarize(mx = max(time)) %>%
+      class %>% `[[`(1)
+  )
+  expect_identical(
+    'decorated',
+    x %>%
+      arrange(Subject,time) %>%
+      class %>% `[[`(1)
+  )
+  expect_identical(
+    'decorated',
+    class(x[1:5, 1:3])[[1]]
+  )
 
 })
-test_that('ag.print treats variable as categorical if guide has length > 1',{
- # see example(ag.print)
+test_that('conditionalize errors on mixed quotes',{
+  library(dplyr)
+  library(magrittr)
+  x <- data.frame(column = 'foo', test = "can't\"", value = 1)
+  expect_error(
+    x %>% conditionalize(column, label, test, value) %>% as_yamlet
+  )
 })
-test_that('ag.print uses conditional labels and guides',{
- # see example(ag.print)
+
+test_that('conditionalize alternates single and double quotes',{
+  library(dplyr)
+  library(magrittr)
+  x <- data.frame(
+    stringsAsFactors = FALSE,
+    column = 'foo',
+    test = c('"cant"',"can't"),
+    value = 1
+  )
+  expect_identical(
+    x %>% conditionalize(column, label, test, value) %>%
+      as_yamlet %$% column %$% label %>% names,
+    c( "test == '\"cant\"'", "test == \"can't\"")
+  )
 })
+test_that('conditionalize does not quote numerics',{
+  library(dplyr)
+  library(magrittr)
+  x <- data.frame(
+    column = 1,
+    test = 2,
+    value = 3
+  )
+  expect_identical(
+    x %>% conditionalize(column, label, test, value) %>%
+      as_yamlet %$% column %$% label %>% names,
+    "test == 2"
+  )
+})
+test_that('conitionalize handles factors like character',{
+  library(dplyr)
+  library(magrittr)
+  x <- data.frame(
+    stringsAsFactors = TRUE,
+    column = 'foo',
+    test = c('"cant"',"can't"),
+    value = 1
+  )
+  expect_identical(
+    x %>% conditionalize(column, label, test, value) %>%
+      as_yamlet %$% column %$% label %>% names,
+    c( "test == '\"cant\"'", "test == \"can't\"")
+  )
+})
+
+
+
+

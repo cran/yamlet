@@ -19,9 +19,10 @@ Converts to axis label. Generic, with method \code{\link{as_lab.list}}.
 }
 \seealso{
 Other lab: 
-\code{\link{agplot}()},
 \code{\link{as_lab.list}()},
+\code{\link{ggplot.decorated}()},
 \code{\link{print.ag}()},
 \code{\link{singularity}()}
 }
 \concept{lab}
+\keyword{internal}

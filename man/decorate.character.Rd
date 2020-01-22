@@ -7,9 +7,8 @@
 \method{decorate}{character}(
   x,
   meta = NULL,
-  fun = getOption("yamlet_import", as.csv),
+  read = getOption("yamlet_import", as.csv),
   ext = getOption("yamlet_extension", ".yaml"),
-  coerce = getOption("yamlet_coerce", FALSE),
   ...
 )
 }
@@ -18,16 +17,14 @@
 
 \item{meta}{file path for corresponding yamlet metadata, or a yamlet object}
 
-\item{fun}{function or function name for reading x}
+\item{read}{function or function name for reading x}
 
 \item{ext}{file extension for metadata file, if relevant}
 
-\item{coerce}{whether to coerce to factor where guide has length > 1}
-
-\item{...}{passed to fun and to \code{\link{as_yamlet.character}}}
+\item{...}{passed to read (if accepted) and to \code{\link{as_yamlet.character}}}
 }
 \value{
-data.frame
+class 'decorated' 'data.frame'
 }
 \description{
 Treats \code{x} as a file path. By default,
@@ -46,38 +43,36 @@ identical(
   decorate(file, meta = meta)
 )
 a <- decorate(file)
-b <- decorate(file, coerce = TRUE)
-c <- decorate(
+b <- resolve(decorate(file))
+c <- resolve(decorate(
   file,
-  fun = read.table,
+  read = read.table,
   quote = "",
   as.is = FALSE,
   sep = ',',
   header = TRUE,
   na.strings = c('', '\\\\s', '.','NA'),
   strip.white = TRUE,
-  check.names = FALSE,
-  coerce = TRUE
-)
+  check.names = FALSE
+))
 d <- decorate(
   file,
-  fun = read.table,
+  read = read.table,
   quote = "",
   as.is = FALSE,
   sep = ',',
   header = TRUE,
   na.strings = c('', '\\\\s', '.','NA'),
   strip.white = TRUE,
-  check.names = FALSE,
-  coerce = FALSE
+  check.names = FALSE
 )
 
 # Importantly, b and c are identical with respect to factors
 cbind(
-  `as.is/!coerce`   = sapply(a, class), # no factors
-  `as.is/coerce`    = sapply(b, class), # factors made during decoration
-  `!as.is/coerce`   = sapply(c, class), # factors made twice!
-  `!as.is/!coerce`  = sapply(d, class)  # factors made during read
+  `as.is/!resolve`   = sapply(a, class), # no factors
+  `as.is/resolve`    = sapply(b, class), # factors made during decoration
+  `!as.is/resolve`   = sapply(c, class), # factors made twice!
+  `!as.is/!resolve`  = sapply(d, class)  # factors made during read
 )
 str(a$Smoke)
 str(b$Smoke)
@@ -95,19 +90,17 @@ Other decorate:
 \code{\link{decorations}()}
 
 Other interface: 
-\code{\link{decorate.list}()},
-\code{\link{decorate}()},
+\code{\link{conditionalize.data.frame}()},
+\code{\link{decorate.data.frame}()},
+\code{\link{ggplot.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
-\code{\link{io_csv}()},
 \code{\link{io_table.character}()},
 \code{\link{io_table.data.frame}()},
-\code{\link{io_table}()},
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
-\code{\link{io_yamlet.yamlet}()},
-\code{\link{io_yamlet}()},
 \code{\link{read_yamlet}()},
+\code{\link{resolve.data.frame}()},
 \code{\link{write_yamlet}()}
 }
 \concept{decorate}

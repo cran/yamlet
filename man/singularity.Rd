@@ -52,9 +52,10 @@ singularity(
 }
 \seealso{
 Other lab: 
-\code{\link{agplot}()},
 \code{\link{as_lab.list}()},
 \code{\link{as_lab}()},
+\code{\link{ggplot.decorated}()},
 \code{\link{print.ag}()}
 }
 \concept{lab}
+\keyword{internal}
