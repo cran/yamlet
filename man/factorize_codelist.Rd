@@ -12,16 +12,18 @@ factorize_codelist(x, ...)
 \item{...}{passed arguments}
 }
 \value{
-see methods
+class 'classified' 'factor'
 }
 \description{
-Coerces codelist to factor.  Generic, with default and data.frame methods.
+Coerces codelist to factor.
+Generic, with default and data.frame methods.
+Returns 'classified' 'factor' which as an attribute-preserving
+subset method.
 }
 \seealso{
-Other factorize_codelist: 
-\code{\link{factorize_codelist.character}()},
-\code{\link{factorize_codelist.data.frame}()},
-\code{\link{factorize_codelist.default}()},
-\code{\link{factorize_codelist.factor}()}
+Other factorize_codelist: \code{\link{factorize_codelist.character}},
+  \code{\link{factorize_codelist.data.frame}},
+  \code{\link{factorize_codelist.default}},
+  \code{\link{factorize_codelist.factor}}
 }
 \concept{factorize_codelist}

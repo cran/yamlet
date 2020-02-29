@@ -1,98 +1,3 @@
-#' Coerce to Axis Label
-#'
-#' Converts to axis label. Generic, with method \code{\link{as_lab.list}}.
-#' @param x object
-#' @param ... passed arguments
-#' @return see methods; typically length-one character
-#' @export
-#' @keywords internal
-#' @family lab
-as_lab <- function(x,...)UseMethod('as_lab')
-
-#' Coerce List to Axis Label
-#'
-#' Coerces list to axis label. Accepts a default label
-#' and returns that if nothing better can be done.
-#' If the attribute list has one named 'label', it
-#' is chosen as a substitute.  But if that attribute
-#' is itself a list of values, an attempt is made
-#' to identify a single relevant value by treating
-#' the value names as conditions to evaluate on
-#' the supplied data. If a suitable value is
-#' found, it is chosen as a substitute.  See
-#' \code{\link{singularity}} for search logic.
-#'
-#' @param x list, such as returned by \code{\link{attributes}}.
-#' @param default a value to return by default
-#' @param collapse character: separator for collapsing multi-line units
-#' @param enclose length-two character for enclosing unit
-#' @param data data.frame for resolving competing named values
-#' @param ... ignored
-#' @return length-one character
-#' @export
-#' @family lab
-#' @examples
-#' meta <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
-#' x <- decorate(meta)
-#' as_lab(attributes(x$time), 'time', enclose = c('[',']'))
-#' as_lab(attributes(x$time), 'time', enclose = c('[ ',' ]'))
-as_lab.list <- function(
-  x,
-  default,
-  collapse = '\n',
-  enclose = getOption('yamlet_enclose', default = c('(',')')),
-  data,
-  ...
-){
-  stopifnot(length(default) == 1, is.character(default))
-  stopifnot(length(enclose) == 2, is.character(enclose))
-  out <- default
-  if('label' %in% names(x)){
-    candidate <- x$label
-    if(length(candidate) == 1){
-      out <- unlist(candidate)
-    }else{
-      # multiple labels
-      dex <- singularity(
-        names(candidate),
-        data
-      )
-      if(!is.na(dex)){
-        if(dex > 0){
-          out <- candidate[[dex]]
-        }
-      }
-    }
-  }
-  more <- character(0)
-  if('units' %in% names(x)) more <- x$units
-  if('unit' %in% names(x)) more <- x$unit
-  if('guide' %in% names(x)) more <- x$guide # such as encoding or unit
-  # if(length(x$guide) == 1)
-  #if(length(more) > 1) more <- paste(more, collapse = collapse)
-  if(length(more) > 1){ # named levels? or conditional units?
-    dex <- singularity(names(more), data)
-    if(!is.na(dex)){
-      if(dex > 0){
-         more <- more[[dex]]
-      }else{
-        more <- character(0)
-      }
-    }else{
-      more <- character(0)
-    }
-  }
-  if(length(more)) {
-    # at this point, more should be length-one character
-    # just in case, we can collapse it to ensure singularity
-    if(length(more) > 1){
-      more <- paste(more, collapse = collapse)
-    }
-    more <- paste0(enclose[[1]], more, enclose[[2]])
-    out <- paste(out, more)
-  }
-  out
-}
 
 
 #' Choose Singular Expression
@@ -101,7 +6,8 @@ as_lab.list <- function(
 #' this returns the index of the one expression that evaluates
 #' to an all-true vector (after coercing NA to FALSE).
 #' Returns 0 if no expressions succeed, and NA_integer_ if
-#' more than one succeed.
+#' more than one succeed. Returns -1 if any expression
+#' does not evaluate to logical or if list is empty.
 #'
 #' @param x list of expressions
 #' @param data data.frame
@@ -138,7 +44,7 @@ as_lab.list <- function(
 #' )
 #
 singularity <- function(x, data, ...){
-  if(!length(x))return(0)
+  if(!length(x))return(-1)
   #exprs <- lapply(x, function(i)parse(text = i))
   #vals <- lapply(exprs, function(i)try(eval(i, envir = data, enclos = NULL)))
   vals <- lapply(
@@ -152,8 +58,8 @@ singularity <- function(x, data, ...){
     )
   )
   defined <- lapply(vals, function(i){
-    if(inherits(i, 'try-error')) i <- FALSE
-    i <- as.logical(i)
+    if(inherits(i, 'try-error')) return(-1) # i <- FALSE
+    if(!is.logical(i)) return(-1) # i <- as.logical(i)
     i[is.na(i)] <- FALSE
     i
   })
@@ -173,7 +79,7 @@ singularity <- function(x, data, ...){
 #' Creates a new ggplot object for a decorated data.frame.
 #' This is the ggplot() method for class 'decorated';
 #' it tries to implement automatic labels and units in axes and legends
-#' in association with \code{\link{print.ag}}.
+#' in association with \code{\link{print.dg}}.
 #' Use \code{ggplot(as.data.frame(x))} to get default
 #' ggplot() behavior. Use \code{ggplot(as_decorated(x))}
 #' to enforce custom behavior.
@@ -183,7 +89,7 @@ singularity <- function(x, data, ...){
 #' @return return value like \code{\link[ggplot2]{ggplot}}
 #' @export
 #' @importFrom ggplot2 ggplot
-#' @family lab
+#' @family dg
 #' @family interface
 #' @examples
 #' meta <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
@@ -191,46 +97,51 @@ singularity <- function(x, data, ...){
 #' library(ggplot2)
 #' class(ggplot(data = x) + geom_path(aes(x = time, y = conc)))
 #' class(ggplot(data = x, aes(x = time, y = conc)) + geom_path())
-#' example(print.ag)
+#' example(print.dg)
 
 ggplot.decorated <- function(data, ...){
   class(data) <- setdiff(class(data), 'decorated')
   p <- ggplot(data = data, ...)
-  class(p) <- c('ag',class(p))
+  class(p) <- c('dg',class(p))
   p
 }
 #' Print Automatic Labels and Units for ggplot
 #'
 #' Prints automatic labels and units for ggplot.
-#' Reworks the labels as a function of attributes
-#' in corresponding data. Default for \code{labeller}
-#' (\code{\link{as_lab}}) will
-#' receive existing labels one at a time
-#' and corresponding attributes (if any) from data.
+#' Substitutes column label, if present, for default.
 #'
-#' @param x class 'ag' from \code{\link{ggplot.decorated}}
-#' @param labeller a function (or its name) like \code{\link{as_lab}} to generate axis labels
+#' @param x class 'dg' from \code{\link{ggplot.decorated}}
 #' @param ... passed arguments
-#' @return used for side effects
+#' @return see \code{\link[ggplot2]{print.ggplot}}
 #' @export
-#' @family lab
+#' @family dg
 #' @examples
 #' file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 #' library(ggplot2)
 #' library(dplyr)
 #' library(magrittr)
 #' # par(ask = FALSE)
-#' options(enclose = c('[ ',' ]'))
+#' options(yamlet_enclose = c('[ ',' ]'))
 #'
-#' # Filter() strips 'label' from factors (see legend), but not vectors:
+#' # resolve() promotes factors to a class
+#' # that retains attributes when subsetting,
+#' # so legend has access to the label from Heart,
+#' # even after a filter operation.
 #'
 #' file %>% decorate %>% resolve %>% filter(!is.na(conc)) %>%
 #' ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
 #'
-#' # No factors created here, but print.ag promotes guide to factor if it can:
+#' # No factors created here, but print.dg promotes guide to factor if it can:
 #'
 #' file %>% decorate %>% filter(!is.na(conc)) %>%
 #' ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
+#'
+#' # facet_wrap() should use decodes where available.
+#' # resolve() makes them available by promoting to
+#' # (a subclass of) factor.
+#'
+#' file %>% decorate %>% filter(!is.na(conc)) %>% resolve %>%
+#' ggplot(aes(x = time, y = conc)) + geom_point() + facet_wrap(~Creatinine)
 #'
 #' # Here we try a dataset with conditional labels and units.
 #'
@@ -261,135 +172,23 @@ ggplot.decorated <- function(data, ...){
 #' geom_point() +
 #' scale_y_log10() +
 #' scale_color_gradientn(colours = rainbow(4))
-#'
-# file %>% decorate %>%
-# ggplot(aes(x = time, y = value, color = event)) +
-# geom_point() +
-# facet_wrap(~ event, scales = 'free_y')
 
 
-print.ag <- function(x, labeller = getOption('yamlet_labeller', default = as_lab), ...){
-  fun <- match.fun(labeller)
+print.dg <- function(x, ...){
+  # fun <- match.fun(labeller)
   for(i in seq_along(x$labels)){           # x (gg object) stores names of used columns as $labels
-    lab <- x$labels[[i]]                   # deal with one label
+    lab <- x$labels[[i]]                   # handle one label
 
     if(lab %in% names(x$data)){            # if this is just a bare column name
-      attr <- attributes(x$data[[lab]])    # retrieve the attributes
-      if(!is.null(attr)){
-        val <- fun(x = attr, default = lab, data = x$data, ...)
-        x$labels[[i]] <- val               # replace default label with one from labeller
-      }
-      # while we are here, we should
-      #promote lab to factor if appropriate
-      guide <- attr$guide
-      table <- x$data[[lab]]
-      if(length(guide) > 1){
-        if(!isConditional(guide, x$data)){
-          if(!is.factor(table)){ # is.vector returns false if x has non-name attributes
-            if(isLevels(guide, table)){
-              labels <- as.character(guide)
-              if(length(names(guide))){
-                if(!any(names(guide) == '')){
-                  labels <- names(guide)
-                }
-              }
-              try(
-                x$data[[lab]] <- factor(
-                  x$data[[lab]],
-                  levels = as.character(attr$guide),
-                  labels = labels
-                )
-              )
-            }
-          }
-        }
+      col <- x$data[[lab]]
+      atr <- attributes(col)
+      label <- atr$label                   # retrieve label
+      if(!is.null(label)){
+        x$labels[[i]] <- label             # replace default label with one from labeller
       }
     }
   }
   NextMethod()
-}
-
-#' Test Object is Conditional
-#'
-#' Tests whether object is conditional.
-#' @param x character
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family conditional
-#' @return logical
-isConditional <- function(x, ...)UseMethod('isConditional')
-
-#' Test Object is Conditional by Default
-#'
-#' Tests whether object is conditional by default. Coerces to list.
-#' @param x default
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family conditional
-#' @return logical
-#'
-isConditional.default <- function(x,...)isConditional(as.list(x),...)
-
-#' Test List is Conditional
-#'
-#' Tests whether a list is conditional by default.
-#' Evaluates names of x on data and looks for meaningful result.
-#' @param x default
-#' @param data environment for variable lookup
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family conditional
-#' @return logical
-
-isConditional.list <- function(x, data,...){
-  nms <- names(x)
-  status <- singularity(nms, data, ...)
-  if(is.na(status))return(FALSE)
-  if(status == 0)return(FALSE)
-  TRUE
-}
-
-#' Test Value is Levels
-#'
-#' Tests whether value is levels.
-#' @param x character
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family levels
-#' @return logical
-isLevels <- function(x, ...)UseMethod('isLevels')
-
-#' Test Value is Levels by Default
-#'
-#' Tests whether value is levels by default.  Coerces to character.
-#' @param x default
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family levels
-#' @return logical
-isLevels.default <- function(x, table, ...)isLevels(as.character(x), table, ...)
-
-#' Test Character Value is Levels
-#'
-#' Tests whether character value is levels.
-#' Looks for any matches to vector.
-#' Uses \code{\link{intersect}}, which is fairly flexible
-#' respecting underlying data types (character 0 can match integer 0, etc.).
-#' @param x default
-#' @param table lookup vector
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family levels
-#' @return logical
-
-isLevels.character <- function(x, table,  ...){
-  as.logical(length(intersect(x,table)) >= 1)
 }
 
 

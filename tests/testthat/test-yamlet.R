@@ -197,8 +197,8 @@ test_that('io_table methods are reciprocal with default or modified arguments',{
   rownames(y) <- NULL
   expect_identical(x, y) # lossless 'round-trip'
 
-  io_table(x, out, sep = ',' , na = '.', fileEncoding = 'UTF-16')
-  y <- io_table(out, as.is = TRUE, sep = ',', na.strings = '.', fileEncoding = 'UTF-16')
+  io_table(x, out, sep = ',' , na = '.') #, fileEncoding = 'UTF-16')
+  y <- io_table(out, as.is = TRUE, sep = ',', na.strings = '.') #, fileEncoding = 'UTF-16')
   rownames(y) <- NULL
   expect_identical(x, y) # lossless 'round-trip'
 })
@@ -217,8 +217,8 @@ test_that('io_csv methods are reciprocal with default or modified arguments',{
   attr(y, 'source') <- NULL
   expect_identical(x, y) # lossless 'round-trip'
 
-  io_csv(x, out, quote = TRUE, na = 'NA', eol = '\r', fileEncoding = 'UTF-16')
-  y <- io_csv(out, na.strings = 'NA', fileEncoding = 'UTF-16')
+  io_csv(x, out, quote = TRUE, na = 'NA', eol = '\r') #, fileEncoding = 'UTF-16')
+  y <- io_csv(out, na.strings = 'NA') # , fileEncoding = 'UTF-16')
   attr(y, 'source') <- NULL
   expect_identical(x, y) # lossless 'round-trip'
 
@@ -252,9 +252,14 @@ test_that('dplyr filter does not drop attributes',{
   file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
   x <- file %>% decorate %>% resolve
   x %$% Heart %>% attributes %>% names
-  x %>% filter(!is.na(conc)) %$% Heart %>% attributes %>% names
+  expect_true(
+    setequal(
+      x %>% filter(!is.na(conc)) %$% Heart %>% attributes %>% names,
+      c('levels','class','label')
+    )
+  )
 })
-test_that('print.ag treats variable as categorical if guide has length > 1',{
+test_that('print.dg treats variable as categorical if guide has length > 1',{
   file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
   library(ggplot2)
   library(dplyr)
@@ -262,7 +267,8 @@ test_that('print.ag treats variable as categorical if guide has length > 1',{
   file %>% decorate %>% filter(!is.na(conc)) %>%
   ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
 })
-test_that('print.ag uses conditional labels and guides',{
+test_that('print.dg uses conditional labels and guides',{
+  # needs work to accommodate new paradigm
   file <- system.file(package = 'yamlet', 'extdata','phenobarb.csv')
   file %>% decorate %>%
   filter(event == 'conc') %>%
@@ -323,25 +329,26 @@ test_that('factorize_codelist creates class factor and removes attribute codelis
    x$Creatinine %>% names,
    c('label','levels','class')
  )
- expect_identical(x$Heart$class, 'factor')
+ expect_true('factor' %in% x$Heart$class)
 })
-test_that('user can specify unit instead of units',{
-  a <- 'CONC: [ concentration, ng/mL ]' %>% as_yamlet %>% explicit_guide(default = 'unit')
-  expect_identical(names(a$CONC), c('label','unit'))
-})
+# test_that('user can specify unit instead of units',{
+#   a <- 'CONC: [ concentration, ng/mL ]' %>% as_yamlet %>% explicit_guide(default = 'unit')
+#   expect_identical(names(a$CONC), c('label','unit'))
+# })
 test_that('resolve correctly classifies conditional elements',{
   file <- system.file(package = 'yamlet', 'extdata','phenobarb.csv')
   x <- decorate(file)
   x %>% as_yamlet
   x %>% explicit_guide %>% as_yamlet
+  x %>% select(value) %>% explicit_guide %>% as_yamlet
   x %>% explicit_guide %>% factorize_codelist %>% as_yamlet
   a <- x %>% resolve %>% as_yamlet
-  identical(names(a$value), c('label','units'))
+  expect_true(identical(names(a$value), c('label','units')))
 })
 test_that('resolve correctly classifies factors',{
   library(magrittr)
   file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
-  expect_identical(file %>% decorate %>% resolve %$% Heart %>% class, 'factor')
+  expect_true(file %>% decorate %>% resolve %$% Heart %>% inherits('factor'))
 })
 test_that('filter, select, mutate, group_by, arrange, summarize and [ do not drop subclass decorated',{
   library(dplyr)
@@ -434,7 +441,85 @@ test_that('conitionalize handles factors like character',{
     c( "test == '\"cant\"'", "test == \"can't\"")
   )
 })
+test_that('subset classified does not drop label', {
+ a <- as_classified(factor(letters))
+ attr(a, 'label') <- 'foo'
+ a <- a[1:3]
+ expect_identical(attr(a,'label'), 'foo')
+})
 
+test_that('is_parseable distinguishes udunits from non-udunits',{
+  expect_identical(
+    is_parseable(c('kg/m2','kg/m^2','foo','kg.m/s2','µg/L')),
+    c(TRUE, TRUE, FALSE, TRUE, TRUE)
+  )
+})
+test_that('is_pareseable is vectorized',{
+  expect_identical(
+    is_parseable(c('kg/m2','kg/m^2','foo','kg.m/s2','µg/L')),
+    c(TRUE, TRUE, FALSE, TRUE, TRUE)
+  )
+})
+test_that('is_parseable respects locally-defined units',{
+  library(units)
+  expect_false(is_parseable('foo'))
+  install_symbolic_unit('foo')
+  expect_true(is_parseable('foo'))
+  remove_symbolic_unit('foo')
+  expect_false(is_parseable('foo'))
+})
+test_that('labels parsed and unparsed, with and without units, display correctly',{
+  library(magrittr)
+  library(ggplot2)
+  Theoph %<>% as.data.frame
+  Theoph %<>% as_decorated
+  options(yamlet_enclose = c('[',']'))
+  Theoph$conc %<>% structure(label = 'CO[2] concentration', units = 'µg/m^2')
+  Theoph$Time %<>% structure(label = 'time since administration', units = 'h')
+  ggplot(data = Theoph, aes(x = Time, y = conc)) + geom_point()
+  options(yamlet_label_parse = TRUE)
+  ggplot(data = Theoph, aes(x = Time, y = conc)) + geom_point()
+})
 
+test_that('all valid spork print as axis label',{
+  library(magrittr)
+  library(dplyr)
+  library(ggplot2)
+  library(spork)
+  expect_silent(
+  data.frame(y=1:10, x=1:10) %>%
+  decorate("x: 1 joule^\\*. ~1 kg m^2./s^2") %>%
+  #decorate("x: ''") %>%
+  mutate(x = structure(x, label = x %>% attr('label') %>%
+  as_spork %>%
+  as_plotmath %>%
+  as.expression)) %>%
+  ggplot(aes(x, y))
+  )
+  expect_silent(
+  data.frame(y=1:10, x=1:10) %>%
+    decorate("x: gravitational force \\\\ (kg\\.m/s^2.)") %>%
+    mutate(x = structure(x, label = x %>% attr('label') %>%
+  as_spork %>%
+  as_plotmath %>%
+  as.expression)) %>%
+  ggplot(aes(x, y))
+  )
+})
 
-
+test_that('R reserved words survive in print.dg labels',{
+  library(magrittr)
+  library(dplyr)
+  library(ggplot2)
+  library(testthat)
+  expect_silent(
+  data.frame(y=1:10, x=1:10) %>%
+   decorate("x: for NaN% joule^\\*. ~1 kg m^2./s^2. %") %>%
+   #decorate("x: ''") %>%
+    mutate(x = structure(x, label = x %>% attr('label') %>%
+  as_spork %>%
+  as_plotmath %>%
+  as.expression)) %>%
+  ggplot(aes(x, y))
+  )
+})

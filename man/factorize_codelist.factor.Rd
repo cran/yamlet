@@ -7,23 +7,22 @@
 \method{factorize_codelist}{factor}(x, ...)
 }
 \arguments{
-\item{x}{presumably vector-like or factor}
+\item{x}{factor}
 
 \item{...}{passed arguments}
 }
 \value{
-factor
+class 'classified' 'factor'
 }
 \description{
 Coerces Codelist to Factor for Factors.
 Coerces to character and calls next method.
 }
 \seealso{
-Other factorize_codelist: 
-\code{\link{factorize_codelist.character}()},
-\code{\link{factorize_codelist.data.frame}()},
-\code{\link{factorize_codelist.default}()},
-\code{\link{factorize_codelist}()}
+Other factorize_codelist: \code{\link{factorize_codelist.character}},
+  \code{\link{factorize_codelist.data.frame}},
+  \code{\link{factorize_codelist.default}},
+  \code{\link{factorize_codelist}}
 }
 \concept{factorize_codelist}
 \keyword{internal}

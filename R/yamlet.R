@@ -403,7 +403,7 @@ decorate.character <- function(
 #'
 #'
 #' @param x object inheriting from \code{list}
-#' @param meta file path for corresponding yaml metadata, or a yamlet; an attempt will be made to guess the file path if x has a 'source' attribute (as for \code{\link[csv]{as.csv}})
+#' @param meta file path for corresponding yaml metadata, or a yamlet or something coercible to yamlet; an attempt will be made to guess the file path if x has a 'source' attribute (as for \code{\link[csv]{as.csv}})
 #' @param ext file extension for metadata file, if relevant
 # @param coerce whether to coerce to factor where guide has length > 1
 #' @param overwrite whether to overwrite attributes that are already present (else give warning)
@@ -425,6 +425,8 @@ decorate.list <- function(
 ){
   if(is.null(meta)) meta <- attr(x, 'source')
   if(is.null(meta)) stop('could not guess metadata location; supply meta')
+  m <- try(silent = TRUE, as_yamlet(meta))
+  if(inherits(m, 'yamlet')) meta <- m
   if(is.character(meta) & length(meta) == 1){
     meta <- sub('\\.[^.]*$','',meta) # remove last dot and any trailing chars
     meta <- paste0(meta, ext)
@@ -447,29 +449,6 @@ decorate.list <- function(
           }
         }
         attr(x[[item]], attrb) <- val[[attrb]]
-        # if(attrb == 'guide'){
-        #   guide <- val[[attrb]]
-        #   # if(is.list(guide)){
-        #   if(length(guide) > 1){
-        #       if(coerce){
-        #       if(any(sapply(guide,function(i)is.null(i)))){
-        #         warning('guide for ', item, ' contains NULL')
-        #       }else{
-        #         labs <- names(guide)
-        #         if(is.null(labs))labs <- rep('',length(guide))
-        #         levs <- unlist(guide)
-        #         if(any(labs == '')){
-        #           # warning('guide for ',item,' contains unlabeled level(s); using level itself')
-        #           labs[labs == ''] <- levs[labs == '']
-        #         }
-        #         reserve <- attributes(x[[item]])
-        #         reserve$guide <- NULL
-        #         try(x[[item]] <- factor(x[[item]], levels = levs, labels = labs))
-        #         if(is.factor(x[[item]])) attributes(x[[item]]) <- c(reserve, attributes(x[[item]]))
-        #       }
-        #     }
-        #   }
-        # }
       }
     }
   }

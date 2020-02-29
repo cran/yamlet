@@ -12,20 +12,21 @@
 \item{...}{passed arguments}
 }
 \value{
-factor
+class 'classified' 'factor'
 }
 \description{
 Coerces character with codelist attribute to factor.
+If attribute 'codelist' is missing, unique values of
+x are supplied.
 }
 \examples{
 example(factorize_codelist.data.fame)
 }
 \seealso{
-Other factorize_codelist: 
-\code{\link{factorize_codelist.data.frame}()},
-\code{\link{factorize_codelist.default}()},
-\code{\link{factorize_codelist.factor}()},
-\code{\link{factorize_codelist}()}
+Other factorize_codelist: \code{\link{factorize_codelist.data.frame}},
+  \code{\link{factorize_codelist.default}},
+  \code{\link{factorize_codelist.factor}},
+  \code{\link{factorize_codelist}}
 }
 \concept{factorize_codelist}
 \keyword{internal}

@@ -4,18 +4,14 @@
 \alias{decorate.list}
 \title{Decorate List}
 \usage{
-\method{decorate}{list}(
-  x,
-  meta = NULL,
+\method{decorate}{list}(x, meta = NULL,
   ext = getOption("yamlet_extension", ".yaml"),
-  overwrite = getOption("yamlet_overwrite", FALSE),
-  ...
-)
+  overwrite = getOption("yamlet_overwrite", FALSE), ...)
 }
 \arguments{
 \item{x}{object inheriting from \code{list}}
 
-\item{meta}{file path for corresponding yaml metadata, or a yamlet; an attempt will be made to guess the file path if x has a 'source' attribute (as for \code{\link[csv]{as.csv}})}
+\item{meta}{file path for corresponding yaml metadata, or a yamlet or something coercible to yamlet; an attempt will be made to guess the file path if x has a 'source' attribute (as for \code{\link[csv]{as.csv}})}
 
 \item{ext}{file extension for metadata file, if relevant}
 
@@ -36,12 +32,11 @@ example(decorate.data.frame)
 
 }
 \seealso{
-Other decorate: 
-\code{\link{decorate.character}()},
-\code{\link{decorate.data.frame}()},
-\code{\link{decorate}()},
-\code{\link{decorations.data.frame}()},
-\code{\link{decorations}()}
+Other decorate: \code{\link{decorate.character}},
+  \code{\link{decorate.data.frame}},
+  \code{\link{decorate}},
+  \code{\link{decorations.data.frame}},
+  \code{\link{decorations}}
 }
 \concept{decorate}
 \keyword{internal}
