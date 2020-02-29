@@ -34,6 +34,8 @@ append_units <- function(x, ...)UseMethod('append_units')
 #' @importFrom spork as_spork
 #' @importFrom spork as_plotmath
 #' @importFrom spork as_latex
+#' @importFrom spork plotmathToken
+#' @importFrom spork latexToken
 #' @keywords internal
 #' @family labels
 #' @return same class as x with named character label of length four; of sub-class 'latex' or 'plotmath' depending on \code{style}
@@ -48,6 +50,9 @@ append_units <- function(x, ...)UseMethod('append_units')
 #' x %>% append_units %>% attr('label')
 #' y %>% attr('label')
 #' y %>% append_units %>% attr('label')
+#' x %>% append_units(style = 'plain')
+#' x %>% append_units(style = 'plotmath')
+#' x %>% append_units(style = 'latex')
 #'
 #'
 append_units.default <- function(
@@ -105,4 +110,5 @@ append_units.data.frame <- function(x, ...){
   x[] <- lapply(x, append_units, ...)
   x
 }
-
+#' @export
+spork::latexToken
