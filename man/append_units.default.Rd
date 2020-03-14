@@ -4,13 +4,9 @@
 \alias{append_units.default}
 \title{Append Units By Default}
 \usage{
-\method{append_units}{default}(
-  x,
-  open = getOption("append_units_open", " ("),
-  close = getOption("append_units_close", ")"),
-  style = getOption("append_units_style", "plain"),
-  ...
-)
+\method{append_units}{default}(x, open = getOption("append_units_open",
+  " ("), close = getOption("append_units_close", ")"),
+  style = getOption("append_units_style", "plain"), ...)
 }
 \arguments{
 \item{x}{object}
@@ -21,7 +17,7 @@
 
 \item{style}{one of 'plain', 'latex', or 'plotmath'}
 
-\item{...}{ignored arguments}
+\item{...}{passed to \code{\link{as_latex}}, \code{\link{as_plotmath}}}
 }
 \value{
 same class as x with named character label of length four; of sub-class 'latex' or 'plotmath' depending on \code{style}
@@ -52,10 +48,9 @@ x \%>\% append_units(style = 'latex')
 
 }
 \seealso{
-Other labels: 
-\code{\link{alias.data.frame}()},
-\code{\link{append_units.data.frame}()},
-\code{\link{append_units}()}
+Other labels: \code{\link{alias.data.frame}},
+  \code{\link{append_units.data.frame}},
+  \code{\link{append_units}}, \code{\link{sub_units}}
 }
 \concept{labels}
 \keyword{internal}

@@ -29,7 +29,7 @@ append_units <- function(x, ...)UseMethod('append_units')
 #' @param open character to precede units
 #' @param close character to follow units
 #' @param style one of 'plain', 'latex', or 'plotmath'
-#' @param ... ignored arguments
+#' @param ... passed to \code{\link{as_latex}}, \code{\link{as_plotmath}}
 #' @export
 #' @importFrom spork as_spork
 #' @importFrom spork as_plotmath
@@ -76,12 +76,12 @@ append_units.default <- function(
   if(style == 'latex'){
     lab <- as_spork(as_spork(lab))
     lab <- paste(lab, collapse = '')
-    lab <- as_latex(as_spork(lab))
+    lab <- as_latex(as_spork(lab), ...)
   }
   if(style == 'plotmath'){
     lab <- as_spork(as_spork(lab))
     lab <- paste(lab, collapse = '')
-    lab <- as.expression(as_plotmath(as_spork(lab)))
+    lab <- as.expression(as_plotmath(as_spork(lab), ...))
   }
 
   attr(x, 'label') <- lab
@@ -112,3 +112,5 @@ append_units.data.frame <- function(x, ...){
 }
 #' @export
 spork::latexToken
+
+

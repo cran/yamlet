@@ -33,7 +33,6 @@ x <- data.frame(
 )
 }
 \seealso{
-Other footnote: 
-\code{\link{footnote}()}
+Other footnote: \code{\link{footnote}}
 }
 \concept{footnote}
