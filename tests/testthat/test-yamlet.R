@@ -336,6 +336,11 @@ test_that('factorize_codelist creates class factor and removes attribute codelis
 #   expect_identical(names(a$CONC), c('label','unit'))
 # })
 test_that('resolve correctly classifies conditional elements',{
+  skip_if_not( l10n_info()$`UTF-8` )
+  skip_if(
+    .Platform$OS.type == "unix" && Encoding(enc2native("\U00B5")) != "UTF-8",
+    "Skipping non-ASCII path tests on UTF-8 Unix system"
+  )
   library(magrittr)
   library(dplyr)
   file <- system.file(package = 'yamlet', 'extdata','phenobarb.csv')
@@ -462,7 +467,15 @@ test_that('is_pareseable is vectorized',{
     c(TRUE, TRUE, FALSE, TRUE)
   )
 })
+
 test_that('micro symbol is_pareseable',{
+  # https://github.com/rstudio/httpuv/issues/264
+  # https://github.com/rstudio/httpuv/commit/32ba7d34e9d0895552db8346cea8acbed7a74022
+  skip_if_not( l10n_info()$`UTF-8` )
+  skip_if(
+    .Platform$OS.type == "unix" && Encoding(enc2native("\U00B5")) != "UTF-8",
+    "Skipping non-ASCII path tests on UTF-8 Unix system"
+  )
   expect_true(is_parseable('µg/L'))
 })
 
@@ -528,4 +541,47 @@ test_that('R reserved words survive in print.dg labels',{
   as.expression)) %>%
   ggplot(aes(x, y))
   )
+})
+
+test_that('ggplot.decorated works with multiple layers',{
+  library(yamlet)
+  library(ggplot2)
+  library(magrittr)
+  library(csv)
+  a <- io_csv(system.file(package = 'yamlet', 'extdata','phenobarb.csv'))
+  b <- io_csv(system.file(package = 'yamlet', 'extdata','quinidine.csv'))
+  c <- as.csv(system.file(package = 'yamlet', 'extdata','phenobarb.csv'))
+  d <- as.csv(system.file(package = 'yamlet', 'extdata','quinidine.csv'))
+
+  x <-
+    a %>% filter(event == 'conc') %>%
+    ggplot(aes(x = time, y = value, color = ApgarInd)) + geom_point() +
+    b %>% filter(!is.na(conc)) %>%
+    geom_point(data = ., aes(x = time/10, y = conc*10, color = Heart))
+  y <-
+    c %>% filter(event == 'conc') %>%
+    ggplot2:::ggplot.default(aes(x = time, y = value, color = ApgarInd)) + geom_point() +
+    d %>% filter(!is.na(conc)) %>%
+    geom_point(data = ., aes(x = time/10, y = conc*10, color = Heart))
+
+
+
+
+
+
+})
+
+test_that('column attributes with metacharacters are quoted or escaped on write',{
+  library(magrittr)
+  library(dplyr)
+  library(ggplot2)
+  library(testthat)
+
+  datum <- "x: [ 'AUC , [0-24]', ng*h/mL ]"
+  x <- data.frame(x=1:10) %>% decorate(datum)
+  path <- tempdir()
+  file <- file.path(path,'foo.csv')
+  x %>% io_csv(file)
+  y <- readLines(sub('csv','yaml',file))
+  expect_identical(y, datum)
 })

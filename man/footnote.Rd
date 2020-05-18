@@ -2,7 +2,7 @@
 % Please edit documentation in R/xtable.R
 \name{footnote}
 \alias{footnote}
-\title{Footnote Something.}
+\title{Footnote Something}
 \usage{
 footnote(x, ...)
 }
@@ -22,7 +22,8 @@ Generic, with method \code{\link{footnote.decorated}}.
 # see methods
 }
 \seealso{
-Other footnote: \code{\link{footnote.decorated}}
+Other footnote: 
+\code{\link{footnote.decorated}()}
 }
 \concept{footnote}
 \keyword{internal}
