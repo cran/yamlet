@@ -16,16 +16,55 @@ see methods
 }
 \description{
 Prepares data for ggplot.
-Generic, with method for data.frame.
+Generic, with methods for data.frame, decorated, and resolved.
 }
 \examples{
-example(ggready.data.frame)
+file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+x <- decorate(file)
+decorations(x, Weight)
+decorations(as.data.frame(x), Weight) # downgrade still has attributes
+class(x)
+class(ggready(as.data.frame(x)))
+class(ggready(x))
+class(ggready(resolve(x)))
+x <- ggready(x)
+library(magrittr)
+library(ggplot2)
+
+# Here we filter on-the-fly
+# without loss of attributes.
+# Notice mg/L rendering; this is actually part of an expression.
+file \%>\%
+ decorate \%>\%
+ filter(!is.na(conc)) \%>\%
+ ggready \%>\%
+ ggplot(aes(x = time, y = conc, color = Heart)) +
+ geom_point()
+
+# By default ggready resolves everything decorated.
+# But we can intervene to resolve selectively,
+# And further intervene to 'ggready' selectively.
+#
+x <- file \%>\% decorate \%>\% filter(!is.na(conc))
+x \%>\%
+resolve(conc, time) \%>\%   # Heart left unresolved!
+ggready(conc, Heart) \%>\%  # time left unreadied!
+ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
+
+# Still, all the labels were actually expressions:
+x \%>\%
+resolve(conc, time) \%>\%
+ggready(conc, Heart) \%>\%
+decorations(conc, time, Heart)
 }
 \seealso{
-Other resolve: 
+Other ggready: 
+\code{\link{ggplot.ggready}()},
+\code{\link{ggplot_build.ggready_ggplot}()},
 \code{\link{ggready.data.frame}()},
-\code{\link{resolve.data.frame}()},
-\code{\link{resolve}()}
+\code{\link{ggready.decorated}()},
+\code{\link{ggready.resolved}()},
+\code{\link{print.ggready_ggplot}()}
 }
-\concept{resolve}
+\concept{ggready}
 \keyword{internal}

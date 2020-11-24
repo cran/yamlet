@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{data.frame}
 
-\item{...}{passed arguments}
+\item{...}{passed to \code{\link[dplyr]{select}} to limit scope}
 }
 \value{
 data.frame
@@ -21,8 +21,9 @@ Coerces items in data.frame with codelist attribute to factor.
 library(magrittr)
 file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 x <- decorate(file)
-x \%>\% explicit_guide \%>\% as_yamlet
-x \%>\% explicit_guide \%>\% factorize_codelist \%>\% as_yamlet
+x \%>\% explicit_guide \%>\% decorations(Age, Race, Heart:glyco)
+x \%>\% explicit_guide \%>\% factorize_codelist \%>\% decorations(Age, Race, Heart:glyco)
+x \%>\% explicit_guide \%>\% factorize_codelist(Heart:glyco) \%>\% decorations(Age, Race, Heart:glyco)
 }
 \seealso{
 Other factorize_codelist: 

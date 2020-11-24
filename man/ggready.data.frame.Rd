@@ -4,62 +4,36 @@
 \alias{ggready.data.frame}
 \title{Prepare Data Frame for GGplot}
 \usage{
-\method{ggready}{data.frame}(x, parse = getOption("ggready_parse", TRUE), ...)
+\method{ggready}{data.frame}(x, ..., parse = getOption("ggready_parse", TRUE))
 }
 \arguments{
 \item{x}{object}
 
-\item{parse}{passed to \code{\link{append_units}}}
+\item{...}{passed to \code{\link{append_units}}; may include unquoted column names}
 
-\item{...}{passed to \code{\link{append_units}}}
+\item{parse}{passed to \code{\link{append_units}}}
 }
 \value{
-decorated
+ggready
 }
 \description{
-Prepares data.frame for ggplot. Calls
-\code{\link{resolve}} and appends
+Prepares data.frame for ggplot. Appends
 units to label using \code{\link{append_units}}
 (passing \code{style = 'plotmath'} if \code{parse}
 is true, else \code{style = 'plain'}).
-Enforces class 'decorated'.
+Enforces class 'ggready'.
 }
 \examples{
-file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
-x <- decorate(file)
-x <- ggready(x)
-str(x$conc)
-library(magrittr)
-library(ggplot2)
-file \%>\%
- decorate \%>\%
- filter(!is.na(conc)) \%>\%
- ggready \%>\%
- ggplot(aes(x = time, y = conc, color = Heart)) +
- geom_point()
+example(ggready)
 }
 \seealso{
-Other resolve: 
+Other ggready: 
+\code{\link{ggplot.ggready}()},
+\code{\link{ggplot_build.ggready_ggplot}()},
+\code{\link{ggready.decorated}()},
+\code{\link{ggready.resolved}()},
 \code{\link{ggready}()},
-\code{\link{resolve.data.frame}()},
-\code{\link{resolve}()}
-
-Other interface: 
-\code{\link{as_classified.factor}()},
-\code{\link{conditionalize.data.frame}()},
-\code{\link{decorate.character}()},
-\code{\link{decorate.data.frame}()},
-\code{\link{ggplot.decorated}()},
-\code{\link{io_csv.character}()},
-\code{\link{io_csv.data.frame}()},
-\code{\link{io_table.character}()},
-\code{\link{io_table.data.frame}()},
-\code{\link{io_yamlet.character}()},
-\code{\link{io_yamlet.data.frame}()},
-\code{\link{is_parseable.default}()},
-\code{\link{read_yamlet}()},
-\code{\link{resolve.data.frame}()},
-\code{\link{write_yamlet}()}
+\code{\link{print.ggready_ggplot}()}
 }
-\concept{interface}
-\concept{resolve}
+\concept{ggready}
+\keyword{internal}
