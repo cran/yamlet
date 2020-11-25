@@ -144,7 +144,7 @@ explicit_guide.data.frame <- function(
 ){
   y <- do.call(as_yamlet, c(list(x), named(...)))
   nms <- selected(x, ...)
-  y <- y[nms]
+  y <- y[as.character(nms)] # selected may have incompatible class path
   y <- do.call(explicit_guide, c(list(y, data = x), named(...)))
   if(simplify){
     for(nm in nms){

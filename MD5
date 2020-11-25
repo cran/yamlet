@@ -1,13 +1,13 @@
-5daa4d47193d8a41fbcad360dbfab5fc *DESCRIPTION
+ce596e984ec002d5bbe7f25d1d155100 *DESCRIPTION
 a28e98217d904243da873313eeffd3b1 *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 7db77b29628153f41941d2649da00bf0 *R/append_units.R
 7582914acb77fe9c7f3bc73cbcb1c923 *R/classified.R
 7ea7cc1596063338643453bad84cce4f *R/conditional.R
 594c1bf437a1dc8938a2992fc7f17e91 *R/conditionalize.R
-da255cc159f839cb952127b05439798c *R/decorate.R
+80fa4aeec8988fb5932bb89e0411085f *R/decorate.R
 3541a934ea8b3befebcc1580d426859c *R/dplyr.R
-018b11b9209ae7b3420a2cf24c3ca2c5 *R/explicit_guide.R
+68bcb2736898ccf874c1d5abfe6069d2 *R/explicit_guide.R
 67823d4865d7a7133ff1eed3e2dd39b2 *R/factorize_codelist.R
 c49ed5e28b7071d4906b55c5d6ffdd9d *R/ggplot.R
 c153d12f60aec2a7d8bf96bed704aec2 *R/ggplot_ggready.R
