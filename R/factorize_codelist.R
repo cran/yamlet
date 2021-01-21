@@ -105,11 +105,13 @@ factorize_codelist.character <- function(x,...){
 #' x %>% explicit_guide %>% factorize_codelist(Heart:glyco) %>% decorations(Age, Race, Heart:glyco)
 
 factorize_codelist.data.frame <- function(x,...){
+  my_class <- class(x)
   for(nm in selected(x,...)){
     if('codelist' %in% names(attributes(x[[nm]]))){
-      x[[nm]] <- factorize_codelist(x[[nm]])
+      x[[nm]] <- factorize_codelist(x[[nm]]) # grouped_df can drop subclass!
     }
   }
+  class(x) <- my_class
   x
 }
 
