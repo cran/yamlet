@@ -14,10 +14,10 @@
 \item{...}{passed to \code{\link{io_csv.character}}}
 }
 \value{
-data.frame, also inheriting 'resolved' if possible
+decorated
 }
 \description{
-Imports a documented table and coerces to class 'resolved'.
+Imports a documented table resolve ambiguouous guide elements.
 A wrapper for \code{\link{io_csv.character}} that also
 reads associated yamlet metadata, if present, and applies it
 as attributes. Invokes \code{\link{resolve}} to resolve
@@ -46,8 +46,10 @@ Other io:
 \code{\link{io_yamlet}()}
 
 Other interface: 
+\code{\link{classified.data.frame}()},
 \code{\link{decorate.character}()},
 \code{\link{decorate.data.frame}()},
+\code{\link{desolve.decorated}()},
 \code{\link{ggplot.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
@@ -56,6 +58,7 @@ Other interface:
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
 \code{\link{is_parseable.default}()},
+\code{\link{mimic.default}()},
 \code{\link{modify.default}()},
 \code{\link{promote.default}()},
 \code{\link{read_yamlet}()},

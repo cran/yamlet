@@ -2,7 +2,7 @@
 % Please edit documentation in R/classified.R
 \name{[.classified}
 \alias{[.classified}
-\title{Subset Classified.}
+\title{Subset Classified}
 \usage{
 \method{[}{classified}(x, ...)
 }
@@ -18,15 +18,23 @@ class 'classified' 'factor'
 Subsets classified factor, retaining attributes.
 }
 \examples{
-a <- as_classified(factor(letters))
+a <- classified(letters[1:3])
 attr(a, 'label') <- 'foo'
 a <- a[1:3]
 attributes(a)
 }
 \seealso{
 Other classified: 
-\code{\link{as_classified.factor}()},
-\code{\link{as_classified}()}
+\code{\link{[<-.classified}()},
+\code{\link{[[.classified}()},
+\code{\link{[[<-.classified}()},
+\code{\link{c.classified}()},
+\code{\link{classified.data.frame}()},
+\code{\link{classified.default}()},
+\code{\link{classified}()},
+\code{\link{unclassified.classified}()},
+\code{\link{unclassified.data.frame}()},
+\code{\link{unclassified}()}
 }
 \concept{classified}
 \keyword{internal}

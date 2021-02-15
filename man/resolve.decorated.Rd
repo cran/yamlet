@@ -9,16 +9,16 @@
 \arguments{
 \item{x}{object}
 
-\item{...}{passed to \code{\link{explicit_guide}} and \code{\link{factorize_codelist}}}
+\item{...}{passed to \code{\link{explicit_guide}} and \code{\link{classified}}}
 }
 \value{
-class 'resolved' (and inherited classes)
+decorated
 }
 \description{
 Resolves implicit usage of default key 'guide' to
 explicit usage for decorated class.
 Simply calls \code{\link{explicit_guide}}
-followed by \code{\link{factorize_codelist}}.
+followed by \code{\link{classified}}.
 }
 \examples{
 library(magrittr)
@@ -29,11 +29,15 @@ x \%>\% resolve(glyco) \%>\% decorations(Age, glyco)
 }
 \seealso{
 Other resolve: 
+\code{\link{desolve.decorated}()},
+\code{\link{desolve}()},
 \code{\link{resolve}()}
 
 Other interface: 
+\code{\link{classified.data.frame}()},
 \code{\link{decorate.character}()},
 \code{\link{decorate.data.frame}()},
+\code{\link{desolve.decorated}()},
 \code{\link{ggplot.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
@@ -43,6 +47,7 @@ Other interface:
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
 \code{\link{is_parseable.default}()},
+\code{\link{mimic.default}()},
 \code{\link{modify.default}()},
 \code{\link{promote.default}()},
 \code{\link{read_yamlet}()},

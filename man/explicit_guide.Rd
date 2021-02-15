@@ -24,7 +24,9 @@ explicit in case required downstream.
 \seealso{
 Other explicit_guide: 
 \code{\link{explicit_guide.data.frame}()},
-\code{\link{explicit_guide.yamlet}()}
+\code{\link{explicit_guide.yamlet}()},
+\code{\link{implicit_guide.data.frame}()},
+\code{\link{implicit_guide}()}
 }
 \concept{explicit_guide}
 \keyword{internal}

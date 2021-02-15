@@ -171,6 +171,7 @@ unnest.list <- function(x,...){
 #' @param ... passed arguments
 #' @return a named list
 #' @export
+#' @keywords internal
 #' @family yamlet
 #' @examples
 #' file <- system.file(package = 'yamlet', 'extdata','quinidine.yaml')
@@ -277,11 +278,11 @@ as_yamlet.character <- function(x, default_keys = getOption('yamlet_default_keys
 
 #' Coerce Data Frame to Yamlet
 #'
-#' Coerces data.frame to yamlet. Assigns class 'yamlet' to a data.frame's decorations.
+#' Coerces data.frame to yamlet by calling {\code{\link{decorations.data.frame}}}.
 #'
 #' @param x data.frame
 #' @param ... passed to \code{\link{decorations}}
-#' @family as_yamlet
+#' @family yamlet
 #' @export
 #' @keywords internal
 #' @return yamlet
@@ -292,7 +293,7 @@ as_yamlet.character <- function(x, default_keys = getOption('yamlet_default_keys
 #' as_yamlet(x)
 as_yamlet.data.frame <- function(x, ...){
   out <- decorations(x,...)
-  class(out) <- 'yamlet'
+  # class(out) <- 'yamlet' # as of 0.6.2 decorations() returns yamlet
   out
 }
 #' Coerce List to Yamlet
@@ -302,7 +303,7 @@ as_yamlet.data.frame <- function(x, ...){
 #'
 #' @param x list
 #' @param ... ignored
-#' @family as_yamlet
+#' @family yamlet
 #' @export
 #' @keywords internal
 #' @return yamlet
@@ -320,7 +321,7 @@ as_yamlet.list <- function(x, ...){
 #'
 #' @param x yamlet
 #' @param ... ignored
-#' @family as_yamlet
+#' @family yamlet
 #' @export
 #' @keywords internal
 #' @return yamlet
@@ -418,6 +419,7 @@ as.character.yam <- function(x, ...){
 #' @param x object
 #' @param ... ignored
 #' @export
+#' @keywords internal
 #' @return length-one character
 #' @family to_yamlet
 to_yamlet <- function(x, ...)UseMethod('to_yamlet')
@@ -473,6 +475,12 @@ to_yamlet.character <- function(x, ...){
   # must quote existing ][, to disambiguate
   index <- grepl('[],[]', x)                   # contains collapse meta
   x[index] <- paste0("'",x[index],"'")         # wrapped in '
+
+  # leading colon trapped above
+  # must quote embedded colon-space (multi-char syntactical element)
+  index <- grepl(': +', x)                   # contains collapse meta
+  x[index] <- paste0("'",x[index],"'")         # wrapped in '
+
 
   if(length(x) == 1) return(x)
 
@@ -557,7 +565,7 @@ to_yamlet.list <- function(x, ...){
 #' @param ... passed to \code{\link{as.character.yam}} and \code{\link{as_yam.yamlet}}
 #' @export
 #' @keywords internal
-#' @family as_yamlet
+#' @family yamlet
 #' @return character
 #' @examples
 #'
@@ -683,7 +691,7 @@ encode::encode
 #' @return yamlet
 #' @export
 #' @keywords internal
-#' @family as_yamlet
+#' @family yamlet
 #' @examples
 #' meta <- system.file(package = 'yamlet', 'extdata','quinidine.yaml')
 #' meta <- as_yamlet(meta)

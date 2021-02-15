@@ -71,7 +71,7 @@ singularity <- function(x, data, ...){
   res
 }
 
-#' Promote Something.
+#' Promote Something
 #'
 #' Promotes something.  Generic, with default method.
 #' @param x object
@@ -84,7 +84,7 @@ singularity <- function(x, data, ...){
 #' example(promote.data.frame)
 promote <- function(x, ...)UseMethod('promote')
 
-#' Promote by Default.
+#' Promote by Default
 #'
 #' Promotes attributes of list-like objects.
 #' For the plural attributes of each element,
@@ -96,6 +96,7 @@ promote <- function(x, ...)UseMethod('promote')
 #' @param ... indicated elements
 #' @param .reserved attributes to leave untouched
 #' @export
+#' @keywords internal
 #' @importFrom rlang f_rhs eval_tidy quo_set_env quos
 #' @return same class as x
 #' @family promote
@@ -193,6 +194,7 @@ filter.decorated <- function(
 ){
   y <- NextMethod()
   if(.promote) y <- promote(y)
+  y <- as_decorated(y)
   y
 }
 
@@ -239,6 +241,7 @@ filter.decorated <- function(
     attributes(y[[nm]]) <- attributes(x[[nm]])
   }
   if(.promote) y <- promote(y)
+  y <- as_decorated(y)
   y
 }
 

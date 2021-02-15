@@ -48,6 +48,7 @@ than the guide as a whole.
 library(magrittr)
 'CONC: [ concentration, Âµg/mL ]' \%>\% as_yamlet \%>\% explicit_guide
 'RACE: [ subject race, [ Caucasian: 0, Latin: 1, Black: 2 ]]' \%>\% as_yamlet \%>\% explicit_guide
+'RACE: [ subject race, [ Caucasian, Latin, Black ]]' \%>\% as_yamlet \%>\% explicit_guide
 'RACE: [ subject race, //0/Caucasian//1/Latin//2/Black// ]' \%>\% as_yamlet \%>\% explicit_guide
 'DATE: [ date, "\%Y-\%m-\%d" ]' \%>\% as_yamlet \%>\% explicit_guide
 'PRSE: [ standard error, "\%" ]' \%>\% as_yamlet \%>\% explicit_guide
@@ -56,7 +57,9 @@ library(magrittr)
 \seealso{
 Other explicit_guide: 
 \code{\link{explicit_guide.data.frame}()},
-\code{\link{explicit_guide}()}
+\code{\link{explicit_guide}()},
+\code{\link{implicit_guide.data.frame}()},
+\code{\link{implicit_guide}()}
 }
 \concept{explicit_guide}
 \keyword{internal}

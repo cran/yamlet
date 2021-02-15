@@ -1,3 +1,4 @@
+library(testthat)
 test_that('yaml package result is stable',{
   expect_equal_to_reference(file = '001.rds', yaml::yaml.load('[ID: ]'))
   expect_equal_to_reference(file = '002.rds', yaml::yaml.load('ID: '))
@@ -261,7 +262,7 @@ test_that('dplyr filter does not drop attributes',{
   expect_true(
     setequal(
       x %>% filter(!is.na(conc)) %$% Heart %>% attributes %>% names,
-      c('levels','class','label')
+      c('levels','class','label','codelist')
     )
   )
 })
@@ -331,14 +332,14 @@ test_that('explicit_guide recognizes encodings, units, formats, and codelists',{
  )
 })
 
-test_that('factorize_codelist creates class factor and removes attribute codelist',{
+test_that('classified() creates class factor and removes attribute codelist',{
  library(magrittr)
  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
  x <- decorate(file)
- x %<>% explicit_guide %>% factorize_codelist %>% as_yamlet(exclude_attr = NULL)
+ x %<>% explicit_guide %>% classified %>% as_yamlet(exclude_attr = NULL)
  expect_identical(
    x$Creatinine %>% names,
-   c('label','levels','class')
+   c('levels','class','label','codelist')
  )
  expect_true('factor' %in% x$Heart$class)
 })
@@ -361,7 +362,7 @@ test_that('resolve correctly classifies conditional elements',{
   x %>% as_yamlet
   x %>% explicit_guide %>% as_yamlet
   x %>% select(value) %>% explicit_guide %>% as_yamlet
-  x %>% explicit_guide %>% factorize_codelist %>% as_yamlet
+  x %>% explicit_guide %>% classified %>% as_yamlet
   a <- x %>% resolve %>% as_yamlet
   expect_true(setequal(names(a$value), c('label','units')))
 })
@@ -468,7 +469,7 @@ test_that('conitionalize handles factors like character',{
 })
 
 test_that('subset classified does not drop label', {
- a <- as_classified(factor(letters))
+ a <- classified(factor(letters))
  attr(a, 'label') <- 'foo'
  a <- a[1:3]
  expect_identical(attr(a,'label'), 'foo')
@@ -601,6 +602,7 @@ test_that('column attributes with metacharacters are quoted or escaped on write'
   y <- readLines(sub('csv','yaml',file))
   expect_identical(y, datum)
 })
+
 test_that('ggready supports axis label line breaks',{
   library(yamlet)
   library(ggplot2)
@@ -915,4 +917,202 @@ expect_silent(print(x %>% filter(event == 'conc') %>% ggplot(map) + geom_point()
 
 })
 
+test_that('unclassified is the inverse of classified',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  x %<>% explicit_guide
+  y <- classified(x)
+  z <- unclassified(y)
+  x %>% decorations(Creatinine)
+  y %>% decorations(Creatinine)
+  z %>% decorations(Creatinine)
+  attr(y$Creatinine, 'codelist')
+  identical(
+  attr(x$Creatinine, 'codelist'),
+  attr(z$Creatinine, 'codelist')
+  )
+  str(attr(x$Creatinine,'codelist'))
+  str(attr(z$Creatinine,'codelist'))
 
+  names(names(attr(x$Creatinine,'codelist')))
+  names(names(attr(z$Creatinine,'codelist')))
+
+  expect_identical(x, z)
+})
+
+test_that('implicit_guide is the inverse of explicit_guide',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  expect_identical(x, implicit_guide(explicit_guide(x)))
+})
+
+
+test_that('desolve is the inverse of resolve',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  expect_identical(x, desolve(resolve(x)))
+})
+test_that('resolve and desolve retain class',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  expect_true(inherits(resolve(x), 'decorated'))
+  expect_true(inherits(desolve(resolve(x)), 'decorated'))
+})
+test_that('labels and guide elements with colon-space are quoted',{
+  foo <- data.frame(x = 1)
+  attr(foo$x,'label') <- 'foo: x'
+  guide <- list(1)
+  names(guide) <- 'H: M'
+  attr(foo$x, 'guide') <- guide
+  dir <- tempdir()
+  file <- file.path(dir, 'foo.csv')
+  foo %>% io_csv(file)
+  expect_silent(io_csv(file))
+})
+
+test_that('classified methods do not lose attributes',{
+foo <- classified(letters[1:5])
+bar <- classified(LETTERS[1:5])
+attr(foo, 'label') <- 'letters'
+attr(bar, 'label') <- 'LETTERS'
+foo[2:3] <- c('a','b')
+foo[[4]] <- 'c'
+expect_true(
+  setequal(
+    names(attributes(c(foo,bar))),
+    c('levels','class','codelist','label')
+  )
+)
+expect_true(
+  setequal(
+    names(attributes(foo[1:2])),
+    c('levels','class','codelist','label')
+  )
+)
+expect_true(
+  setequal(
+    names(attributes(foo[[2]])),
+    c('levels','class','codelist','label')
+  )
+)
+
+})
+test_that('unclassified methods do not lose attributes',{
+  foo <- classified(letters[1:5])
+  attr(foo, 'label') <- 'letters'
+  foo <- unclassified(foo)
+  expect_true(
+    setequal(
+      names(attributes(foo)),
+      c('codelist','label')
+    )
+  )
+})
+test_that('classified() works the same on character and factor',{
+expect_identical(classified(LETTERS), classified(factor(LETTERS)))
+})
+test_that('as_yamlet does not capture levels of classified by default',{
+  library(magrittr)
+  library(dplyr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  y <- x
+  y$Heart %<>% classified
+  expect_true(
+    setequal(
+      names(decorations(y, Heart)[[1]]),
+      c('label','guide','codelist')
+    )
+  )
+  decorations(x, Heart)
+})
+
+test_that('decorations() does not print colon for un-named list',{})
+test_that('filter.decorated retains class', {
+  library(dplyr)
+  library(magrittr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  expect_true(inherits(x %>% filter(Subject == 1), 'decorated'))
+
+})
+test_that('promote() retains class decorated', {
+  library(dplyr)
+  library(magrittr)
+  file <- system.file(package = 'yamlet', 'extdata','phenobarb.csv')
+  x <- decorate(file)
+  x %<>% filter(event == 'dose')
+  decorations(x)
+  expect_true(inherits(x, 'decorated'))
+})
+
+test_that('decorations() treats factor levels the same for factor and classified',{
+  library(dplyr)
+  library(magrittr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  expect_false('levels' %in% (x %>% decorations(Race) %>% `[[`(1) %>% names))
+  expect_false('levels' %in% (x %>% resolve %>% decorations(Race) %>% `[[`(1) %>% names))
+})
+
+test_that('mimic() is stable',{
+  library(dplyr)
+  library(magrittr)
+  let <- letters[1:5]
+  LET <- LETTERS[1:5]
+  int <- 0L:4L
+  num <- as.numeric(int)
+  fac <- factor(let)
+  css <- classified(let)
+
+  expect_equal_to_reference(mimic(let, let), '086.rds')
+  expect_equal_to_reference(mimic(LET, let), '087.rds')
+  expect_equal_to_reference(mimic(int, let), '088.rds')
+  expect_equal_to_reference(mimic(num, let), '089.rds')
+  expect_equal_to_reference(mimic(fac, let), '090.rds')
+  expect_equal_to_reference(mimic(css, let), '091.rds')
+  expect_equal_to_reference(mimic(character(0)), '092.rds')
+  expect_equal_to_reference(mimic(numeric(0)), '093.rds')
+  expect_equal_to_reference(mimic(LET), '094.rds')
+  x <- data.frame(let, LET)
+  x %<>% mutate(let = mimic(let, LET), LET = mimic(LET))
+  expect_equal_to_reference(str(x), '095.rds')
+
+})
+
+test_that('subset retains class for decorated inheriting grouped_df',{
+  library(dplyr)
+  library(magrittr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  x <- decorate(file)
+  x %<>% group_by(Subject)
+  attr(x[['time']], 'foo') <- 'bar'
+  expect_true(inherits(x, 'decorated'))
+  #  also for names<-
+})
+test_that('classified may contain NA',{
+  expect_silent(
+    classified(c(1,NA))
+  )
+  expect_silent(
+    classified(c(1,NA), exclude = NULL)
+  )
+})
+
+test_that('bind_rows() works for grouped_df containing classified factors',{
+  library(magrittr)
+  library(dplyr)
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  b <- decorate(file) %>% resolve
+  b %<>% group_by(Subject)
+  expect_silent(bind_rows(b,b))
+
+  a <- data.frame(i = c(1,1,2), x = classified(1:3))
+  b <- data.frame(i = c(2,2,3), x = classified(3:5))
+  a %<>% group_by(i)
+  b %<>% group_by(i)
+  str(a)
+  str(b)
+  bind_rows(a,b) %$% x %>% attributes
+  expect_silent(bind_rows(a,b))
+})

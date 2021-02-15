@@ -8,7 +8,6 @@
   x,
   file = "",
   ext = getOption("yamlet_extension", ".yaml"),
-  coerce = getOption("yamlet_coerce_decorations", FALSE),
   con = stdout(),
   useBytes = FALSE,
   default_keys = getOption("yamlet_default_keys", list("label", "guide")),
@@ -21,8 +20,6 @@
 \item{file}{passed to \code{\link{write.table}}}
 
 \item{ext}{= extension for metadata equivalent of x}
-
-\item{coerce}{logical; whether to coerce factor levels to guide; alternatively, a key for the levels}
 
 \item{con}{passed to \code{\link{io_yamlet}}}
 
@@ -57,8 +54,10 @@ Other io:
 \code{\link{io_yamlet}()}
 
 Other interface: 
+\code{\link{classified.data.frame}()},
 \code{\link{decorate.character}()},
 \code{\link{decorate.data.frame}()},
+\code{\link{desolve.decorated}()},
 \code{\link{ggplot.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
@@ -67,6 +66,7 @@ Other interface:
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
 \code{\link{is_parseable.default}()},
+\code{\link{mimic.default}()},
 \code{\link{modify.default}()},
 \code{\link{promote.default}()},
 \code{\link{read_yamlet}()},

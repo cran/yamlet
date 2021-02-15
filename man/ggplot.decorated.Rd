@@ -23,13 +23,9 @@ is invoked; see \code{\link{print.decorated_ggplot}}.
 }
 \details{
 This approach is similar to but more flexible than
-the method for \code{\link{ggready}}. Currently,
-there is only one method for resolve() (\code{\link{resolve.decorated}})
-with the result that all 'resolved' objects inherit 'decorated'
-and thus can use \code{\link{ggplot.decorated}}.
-
+the method for \code{\link{ggready}}.
 For finer control, you can switch between 'data.frame'
-and to 'decorated' using \code{\link{as_decorated}}
+and 'decorated' using \code{\link{as_decorated}}
 (supplies null decorations) and \code{\link{as.data.frame}}
 (preserves decorations).
 }
@@ -122,8 +118,10 @@ Other decorated_ggplot:
 \code{\link{print.decorated_ggplot}()}
 
 Other interface: 
+\code{\link{classified.data.frame}()},
 \code{\link{decorate.character}()},
 \code{\link{decorate.data.frame}()},
+\code{\link{desolve.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
 \code{\link{io_res.character}()},
@@ -132,6 +130,7 @@ Other interface:
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
 \code{\link{is_parseable.default}()},
+\code{\link{mimic.default}()},
 \code{\link{modify.default}()},
 \code{\link{promote.default}()},
 \code{\link{read_yamlet}()},

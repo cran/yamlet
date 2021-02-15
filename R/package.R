@@ -12,8 +12,8 @@
 #'
 #' Storage format for 'yamlet' is a text file containing
 #' well-formed yaml.  Technically, it is a map of sequences.
-#' Though well formed, it need not be complete, and therefore
-#' has utility over a longer life cycle of data development.
+#' Though well formed, it need not be complete attibutes
+#' or their names may be missing.
 #'
 #' In the simplest case, the data specification consists
 #' of a list of column (item) names, followed by semicolons.
@@ -54,13 +54,13 @@
 #' and datetimes.)  You could give just the units
 #' but you would have to be specific:
 #'
-#' \code{mpg: [unit: miles/gallon]}
+#' \code{mpg: [units: miles/gallon]}
 #'
 #' You can over-ride default keys by providing them in your data:
 #'
 #' \preformatted{
-#' mpg: [unit: miles/gallon]
-#' _keys: [label, unit]
+#' mpg: [units: miles/gallon]
+#' _keys: [label, units]
 #' }
 #'
 #' Notice that stored yamlet can be informationally defective
@@ -80,7 +80,7 @@
 #'
 #' To get started using yamlet, see \code{?as_yamlet.character} and
 #' examples there. See also \code{?decorate} which adds yamlet
-#' values to corresponding items in your data. See also \code{?print.dg}
+#' values to corresponding items in your data. See also \code{?print.decorated}
 #' which uses label attributes, if present, as axis labels.
 #'
 #' Note: the quinidine and phenobarb datasets in the examples

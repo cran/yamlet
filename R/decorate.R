@@ -16,9 +16,9 @@
 #' library(csv)
 #' file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 #' x <- decorate(as.csv(file))
-#' x %>% select(Subject) %>% as_yamlet
+#' x %>% select(Subject) %>% decorations
 #' x %<>% redecorate('Subject: Patient Identifier')
-#' x %>% select(Subject) %>% as_yamlet
+#' x %>% select(Subject) %>% decorations
 #'
 redecorate <- function(x, ..., overwrite = TRUE)decorate(x, ..., overwrite = overwrite)
 
@@ -39,7 +39,7 @@ redecorate <- function(x, ..., overwrite = TRUE)decorate(x, ..., overwrite = ove
 #' file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 #' x <- decorate(as.csv(file))
 #' identical(decorate(as.csv(file)), decorate(file))
-#' decorations(x) # but prefer as_yamlet(x)
+#' decorations(x)
 #'
 #'
 decorate <- function(x,...)UseMethod('decorate')
@@ -146,8 +146,7 @@ decorate.character <- function(
 #'
 #' Decorates a list-like object. Takes metadata
 #' in yamlet format and loads it onto corresponding
-#' list elements as attributes. This is the only
-#' function that creates class 'decorated'.
+#' list elements as attributes.
 #'
 #'
 #' @param x object inheriting from \code{list}
@@ -200,6 +199,7 @@ decorate.list <- function(
       }
     }
   }
+  # as of 0.6.2, this is the only constructor for 'decorated'
   class(x) <- union('decorated', class(x))
   x
 }
@@ -249,7 +249,7 @@ decorate.data.frame <- function(
 #' Retrieve Decorations
 #'
 #' Retrieve the decorations of something.
-#' Generic, with method for data.frame.
+#' Generic, with method \code{\link{decorations.data.frame}}.
 #'
 #' @param x object
 #' @param ... passed arguments
@@ -261,7 +261,7 @@ decorate.data.frame <- function(
 #' library(csv)
 #' file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
 #' x <- decorate(as.csv(file))
-#' decorations(x) # prefer as_yamlet(x)
+#' decorations(x)
 
 decorations <- function(x,...)UseMethod('decorations')
 
@@ -269,19 +269,22 @@ decorations <- function(x,...)UseMethod('decorations')
 #'
 #' Retrieve the decorations of a data.frame; i.e., the metadata
 #' used to decorate it. Returns a list with same names as the data.frame.
-#' By default, \code{class} attributes are excluded from the result,
-#' as this is an attribute you likely don't want to manipulate independently.
-#' Consider carefully whether the default handling of factor levels
-#' (see \code{coerce} argument) is appropriate for your application.
+#' By default, 'class' and 'level' attributes are excluded from the result,
+#' as you likely don't want to manipulate these independently.
+
+# As of 0.6.1, dropping coerce argument because of conflicts with classified().
+# former help:
+# Consider carefully whether the default handling of factor levels
+# (see \code{coerce} argument) is appropriate for your application.
 
 #'
 #' @param x data.frame
 #' @param ... optional unquoted column names to limit output (passed to \code{\link[dplyr]{select}})
-#' @param coerce logical: whether to coerce factor levels to guide; alternatively, a key for the levels
+# @param coerce logical: whether to coerce factor levels to guide; alternatively, a key for the levels
 #' @param exclude_attr attributes to remove from the result
 #' @export
 #' @family decorate
-#' @return named list of class 'decorations'
+#' @return named list of class 'yamlet'
 #' @examples
 #' library(csv)
 #' library(magrittr)
@@ -291,42 +294,41 @@ decorations <- function(x,...)UseMethod('decorations')
 #' decorations(x)
 #' decorations(y)
 #' decorations(y, conc)
-#' decorations(y, coerce = TRUE)
-#' decorations(y, coerce = 'codelist')
 #' decorations(y, exclude_attr = NULL)
 
 decorations.data.frame <- function(
   x,
   ...,
-  coerce = getOption('yamlet_coerce_decorations', FALSE),
-  exclude_attr = getOption('yamlet_exclude_attr', 'class')
+#  coerce = getOption('yamlet_coerce_decorations', FALSE),
+  exclude_attr = getOption('yamlet_exclude_attr', c('class','levels'))
 ){
+  # coerce <- FALSE
   stopifnot(length(exclude_attr) == 0 || is.character(exclude_attr))
   nms <- selected(x, ...)
   x <- x[, as.character(nms), drop = FALSE] # selected may have incompatible class path
   out <- lapply(x, attributes)
   levs_key <- 'guide'
-  if(!is.logical(coerce)){
-    if(is.character(coerce))
-      if(length(coerce) == 1){
-        levs_key <- coerce
-        coerce <- TRUE
-      }
-  }
-  if(!is.logical(coerce)){
-    warning('coerce value not logical')
-  }else{
-    if(coerce){
-      for(i in seq_along(out)){
-        if('class' %in% names(out[[i]])){
-          if(any(out[[i]]$class == 'factor')){ # factor or ordered factor
-            out[[i]]$class <- NULL
-            names(out[[i]])[names(out[[i]]) == 'levels'] <- levs_key
-          }
-        }
-      }
-    }
-  }
+  # if(!is.logical(coerce)){
+  #   if(is.character(coerce))
+  #     if(length(coerce) == 1){
+  #       levs_key <- coerce
+  #       coerce <- TRUE
+  #     }
+  # }
+  # if(!is.logical(coerce)){
+  #   warning('coerce value not logical')
+  # }else{
+  #   if(coerce){
+  #     for(i in seq_along(out)){
+  #       if('class' %in% names(out[[i]])){
+  #         if(any(out[[i]]$class == 'factor')){ # factor or ordered factor
+  #           out[[i]]$class <- NULL
+  #           names(out[[i]])[names(out[[i]]) == 'levels'] <- levs_key
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
   for(i in exclude_attr){
     for(j in names(out)){
       if(i %in% names(out[[j]])) out[[j]][[i]] <- NULL
@@ -336,30 +338,34 @@ decorations.data.frame <- function(
   out
 }
 
-#' Print Decorations
-#'
-#' Prints decorations.  Coerces to yamlet and prints result.
-#'
-#' @param x decorations, i.e. a named list of class 'decorations'
-#' @param ... ignored
-#' @export
-#' @family decorate
-#' @return invisible x (yamlet)
-#' @examples
-#' example(decorations.data.frame)
-print.decorations <- function(x, ...){
-  x <- as_yamlet(x)
-  print(x)
-}
+# Print Decorations
+#
+# Prints decorations.  Coerces to yamlet and prints result.
+#
+# @param x decorations, i.e. a named list of class 'decorations'
+# @param ... ignored
+# @export
+# @family decorate
+# @keywords internal
+# @return invisible x (yamlet)
+# @examples
+# example(decorations.data.frame)
+# print.decorations <- function(x, ...){
+#   x <- as_yamlet(x)
+#   print(x)
+# }
+
+# there is no actual class 'decorations' so methods unnecessary at 0.6.2.
 
 #' Coerce to Decorated
 #'
-#' Coerces to class 'decorated'. Generic, with default method.
+#' Coerces to class 'decorated'. Generic, with method \code{\link{as_decorated.default}}.
 #'
 #' @param x object
 #' @param ... passed arguments
 #' @export
 #' @family decorate
+#' @keywords internal
 #' @return decorated
 #' @examples
 #' class(Puromycin)
@@ -375,6 +381,7 @@ as_decorated <- function(x, ...)UseMethod('as_decorated')
 #' @param meta see \code{\link{decorate.list}}
 #' @param ... passed arguments
 #' @export
+#' @keywords internal
 #' @family decorate
 #' @return decorated
 #' @examples

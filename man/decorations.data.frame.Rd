@@ -7,8 +7,7 @@
 \method{decorations}{data.frame}(
   x,
   ...,
-  coerce = getOption("yamlet_coerce_decorations", FALSE),
-  exclude_attr = getOption("yamlet_exclude_attr", "class")
+  exclude_attr = getOption("yamlet_exclude_attr", c("class", "levels"))
 )
 }
 \arguments{
@@ -16,20 +15,16 @@
 
 \item{...}{optional unquoted column names to limit output (passed to \code{\link[dplyr]{select}})}
 
-\item{coerce}{logical: whether to coerce factor levels to guide; alternatively, a key for the levels}
-
 \item{exclude_attr}{attributes to remove from the result}
 }
 \value{
-named list of class 'decorations'
+named list of class 'yamlet'
 }
 \description{
 Retrieve the decorations of a data.frame; i.e., the metadata
 used to decorate it. Returns a list with same names as the data.frame.
-By default, \code{class} attributes are excluded from the result,
-as this is an attribute you likely don't want to manipulate independently.
-Consider carefully whether the default handling of factor levels
-(see \code{coerce} argument) is appropriate for your application.
+By default, 'class' and 'level' attributes are excluded from the result,
+as you likely don't want to manipulate these independently.
 }
 \examples{
 library(csv)
@@ -40,8 +35,6 @@ y <- decorate(as.csv(file))[,c('conc','Race')] \%>\% resolve
 decorations(x)
 decorations(y)
 decorations(y, conc)
-decorations(y, coerce = TRUE)
-decorations(y, coerce = 'codelist')
 decorations(y, exclude_attr = NULL)
 }
 \seealso{
@@ -53,7 +46,6 @@ Other decorate:
 \code{\link{decorate.list}()},
 \code{\link{decorate}()},
 \code{\link{decorations}()},
-\code{\link{print.decorations}()},
 \code{\link{redecorate}()}
 }
 \concept{decorate}

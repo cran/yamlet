@@ -2,7 +2,7 @@
 % Please edit documentation in R/singularity.R
 \name{promote.default}
 \alias{promote.default}
-\title{Promote by Default.}
+\title{Promote by Default}
 \usage{
 \method{promote}{default}(
   x,
@@ -60,8 +60,10 @@ Other promote:
 \code{\link{singularity}()}
 
 Other interface: 
+\code{\link{classified.data.frame}()},
 \code{\link{decorate.character}()},
 \code{\link{decorate.data.frame}()},
+\code{\link{desolve.decorated}()},
 \code{\link{ggplot.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
@@ -71,6 +73,7 @@ Other interface:
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},
 \code{\link{is_parseable.default}()},
+\code{\link{mimic.default}()},
 \code{\link{modify.default}()},
 \code{\link{read_yamlet}()},
 \code{\link{resolve.decorated}()},
@@ -79,3 +82,4 @@ Other interface:
 }
 \concept{interface}
 \concept{promote}
+\keyword{internal}

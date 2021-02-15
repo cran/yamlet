@@ -23,6 +23,8 @@ example(resolve.decorated)
 }
 \seealso{
 Other resolve: 
+\code{\link{desolve.decorated}()},
+\code{\link{desolve}()},
 \code{\link{resolve.decorated}()}
 }
 \concept{resolve}
