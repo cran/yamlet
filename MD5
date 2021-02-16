@@ -1,8 +1,8 @@
-d588dba49fed31bdcf09aef7d2d5852a *DESCRIPTION
+7c5d754bc2bb5d8629e317fe0f146f65 *DESCRIPTION
 5d2fa32b0173ae28e24f11daa465f4e8 *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 7db77b29628153f41941d2649da00bf0 *R/append_units.R
-b758ecb261b06f3bb23dfe6e72289d57 *R/classified.R
+9f5dca67289e4f5859054f681ba7db21 *R/classified.R
 7ea7cc1596063338643453bad84cce4f *R/conditional.R
 594c1bf437a1dc8938a2992fc7f17e91 *R/conditionalize.R
 9ba8b57bcee933e014068be9013f1ad7 *R/decorate.R
@@ -11,7 +11,7 @@ add8ac10812c1fc07266fa74bfc4e5b5 *R/decorated.R
 c1597d24188c1381b78333324c631e02 *R/dplyr.R
 3c0fb229d12ceb5e5f6e70d7d2b365b6 *R/explicit_guide.R
 a6cadef06ebe1f1e30dd863a2417c4c1 *R/factorize_codelist.R
-82ba6bcf6f726058f32481ebbf27216a *R/gather.R
+21e4a1b87f479b0ab0f8d8087a9a2a82 *R/gather.R
 5fd14b1e3783aa65a809f39684c82de6 *R/ggplot.R
 8fc5d7c456ba86eae30ca1eb4ec9a593 *R/ggplot_ggready.R
 d9e874c6f92249eaee7831e52748496c *R/ggready.R
@@ -37,7 +37,7 @@ a4a6762fae74974c5dd55b06c745ded1 *R/yamlet.R
 8292ade6094d75793a32fe4e90e80958 *build/vignette.rds
 4ad3ee42d7879924fd2cce60036ed0fa *inst/doc/yamlet-introduction.R
 05f9244bfeaa79bcc541eb9da8a94635 *inst/doc/yamlet-introduction.Rmd
-6a7973b88020c90f573f2bb764f3277c *inst/doc/yamlet-introduction.html
+84d0350d5bcccea73397d7a3a3512526 *inst/doc/yamlet-introduction.html
 a53ce9d6f4a91b525179245fd19d31a3 *inst/extdata/phenobarb.csv
 426ac780e03a58bcb6177e55e74dcfdc *inst/extdata/phenobarb.yaml
 a44c232bd5d0a34dd7b31c7fc2336a11 *inst/extdata/quinidine.csv
@@ -182,5 +182,5 @@ ebdb207b4a629976821f62f18b98133d *man/write_yamlet.Rd
 f7c8b35d1059bd161389ae39cd827db2 *man/xtable.decorated.Rd
 fa8cdd22f5bacfc5caafc0bbd6012a57 *man/yamlet.Rd
 2179aa553e55d1baf148529ffe5fc154 *tests/testthat.R
-2e8932e1992c6c55b6bec216672cb70f *tests/testthat/test-yamlet.R
+8391adef24999ca17f310384da227b2b *tests/testthat/test-yamlet.R
 05f9244bfeaa79bcc541eb9da8a94635 *vignettes/yamlet-introduction.Rmd

@@ -18,6 +18,7 @@
 #' @export
 #' @importFrom dplyr select
 #' @importFrom tidyr gather
+#' @importFrom rlang ensym
 #' @return decorated
 #' @keywords internal
 #' @examples
@@ -37,15 +38,32 @@ gather.decorated <- function(
   convert = FALSE,
   factor_key = FALSE
 ){
-  x <- NextMethod()
-  token <- names(select(x, key))
-  val <- names(select(x, value))
-  nms <- unique(x[[token]])
-  labs <- sapply(nms, function(nm)attr(data[[nm]],'label'))
-  names(nms) <- labs
-  attr(x[[token]], 'guide') <- nms
-  guides <- lapply(nms, function(nm)attr(data[[nm]],'guide'))
-  guides <- unique(guides)
-  if(length(guides) == 1)attr(x[[val]], 'guide') <- guides[[1]]
+  # NextMethod()
+  # @ tidyr 1.1.2, NextMethod() i.e. tidyr.data.frame does not respect key/value.
+  args <- quos(...)
+  args <- args[names(args) == ""]
+  if(length(args) == 0) return(data)
+  #if(length(args[[1]] == 0)) return(data)
+  class(data) <- setdiff(class(data), 'decorated')
+  x <- gather(
+    data = data,
+    key = !!key,
+    value = !!value,
+    ...,
+    na.rm = na.rm,
+    convert = convert,
+    factor_key = factor_key
+  )
+  if(key %in% names(x)){
+    token <- names(select(x, !!key))
+    val <- names(select(x, !!value))
+    nms <- unique(x[[token]])
+    labs <- sapply(nms, function(nm)attr(data[[nm]],'label'))
+    names(nms) <- labs
+    attr(x[[token]], 'guide') <- nms
+    guides <- lapply(nms, function(nm)attr(data[[nm]],'guide'))
+    guides <- unique(guides)
+    if(length(guides) == 1)attr(x[[val]], 'guide') <- guides[[1]]
+  }
   as_decorated(x)
 }
