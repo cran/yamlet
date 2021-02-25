@@ -1,4 +1,4 @@
-52579a252dbe368f1db994e5e232b19f *DESCRIPTION
+8ca53952ad0c2c45a7e8c07f5bb6a669 *DESCRIPTION
 ff30d30834714e02e31e6b13f58af501 *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 7db77b29628153f41941d2649da00bf0 *R/append_units.R
@@ -19,11 +19,11 @@ d9e874c6f92249eaee7831e52748496c *R/ggready.R
 95939a4ce0f36c74d9e58c819a42177e *R/io_res.R
 9adead0aaf6a866c307055e68ad4776e *R/io_table.R
 f16876232e2c5015b336202c17ddbc8b *R/io_yamlet.R
-95270dd08c4e4d92554a38223e849285 *R/mimic.R
+8d2c1267632f028612a2f3b222097b56 *R/mimic.R
 5bbf5b85067546a9727fa66fa7af1d2a *R/modify.R
 6fd0da81bf10d53e009b1044c436d106 *R/named.R
 d32a79c5c2f792b5aa01f50b4dcd8690 *R/package.R
-95d5a034b3d9b56a56c4d5e032e128b7 *R/parseable.R
+3bb8c4d3e16fdbab9d4c9bb079eb61f7 *R/parseable.R
 dcd817331e326f55ee11d4e797d3fbda *R/proxy.R
 f60fb75e17ecdc5a5b7f009c424e4225 *R/resolve.R
 0a8fa475bec8009aac6e87a4a1bbdd34 *R/selected.R
@@ -37,7 +37,7 @@ a4a6762fae74974c5dd55b06c745ded1 *R/yamlet.R
 8292ade6094d75793a32fe4e90e80958 *build/vignette.rds
 4ad3ee42d7879924fd2cce60036ed0fa *inst/doc/yamlet-introduction.R
 05f9244bfeaa79bcc541eb9da8a94635 *inst/doc/yamlet-introduction.Rmd
-60c30facfdfc170582792fe4dba23332 *inst/doc/yamlet-introduction.html
+70fe31bf58e080917b02fbef90f35e6f *inst/doc/yamlet-introduction.html
 a53ce9d6f4a91b525179245fd19d31a3 *inst/extdata/phenobarb.csv
 426ac780e03a58bcb6177e55e74dcfdc *inst/extdata/phenobarb.yaml
 a44c232bd5d0a34dd7b31c7fc2336a11 *inst/extdata/quinidine.csv
@@ -123,12 +123,12 @@ fb7fd11aaae30728eb064764bfbb276e *man/isConditional.default.Rd
 849809436703021076380a8b43003efc *man/isLevels.character.Rd
 4df1c6d376c8e87eaa43d362840b0ab8 *man/isLevels.default.Rd
 3249ad49e1318a406ce278cdcd613285 *man/is_parseable.Rd
-3b145c2313cd7dfc0c6457dac8cd4382 *man/is_parseable.default.Rd
+527534b1ab2e70412f30210aba05d0fc *man/is_parseable.default.Rd
 9cf8948dba43e7c402048d2d6a2029e5 *man/left_join.decorated.Rd
 0afe040e3e395424676405a17304d1e1 *man/list2encoding.Rd
 54a46611731e6dce6088b1a0fcb8bbf5 *man/mimic.Rd
-deffbc0bed4dad95a7f75b8253668204 *man/mimic.classified.Rd
-4fc130c0bf82b7246e497c7e5b44b7d0 *man/mimic.default.Rd
+fd3d6e4cf14e64670d1ab3ea9993bb77 *man/mimic.classified.Rd
+41998a16a187322efca816a17ba17eea *man/mimic.default.Rd
 d6fa8e7128fd6a4ed1d7f32ccc7154f8 *man/modify.Rd
 16c130f635432eb8858471fe85182881 *man/modify.default.Rd
 0b225240ca709e64e69572a6fd5b9568 *man/mutate.decorated.Rd
@@ -183,6 +183,5 @@ ebdb207b4a629976821f62f18b98133d *man/write_yamlet.Rd
 f7c8b35d1059bd161389ae39cd827db2 *man/xtable.decorated.Rd
 fa8cdd22f5bacfc5caafc0bbd6012a57 *man/yamlet.Rd
 2179aa553e55d1baf148529ffe5fc154 *tests/testthat.R
-be2ab0e7209ed9c93ae8e289a4340316 *tests/testthat/Rplots.pdf
-7d76a65ef0c3af3fb2cd04515f617378 *tests/testthat/test-yamlet.R
+4c1bbe6662713a9f2888edd43884ed54 *tests/testthat/test-yamlet.R
 05f9244bfeaa79bcc541eb9da8a94635 *vignettes/yamlet-introduction.Rmd

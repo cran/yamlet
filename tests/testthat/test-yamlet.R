@@ -503,9 +503,9 @@ test_that('micro symbol is_pareseable',{
 test_that('is_parseable respects locally-defined units',{
   library(units)
   expect_false(is_parseable('foo'))
-  install_symbolic_unit('foo')
+  install_unit('foo')
   expect_true(is_parseable('foo'))
-  remove_symbolic_unit('foo')
+  remove_unit('foo')
   expect_false(is_parseable('foo'))
 })
 
@@ -1213,3 +1213,4 @@ test_that('as.integer.classified() is equivalent to as.numeric.classified()',{
   css <- classified(c('knife','fork','spoon'))
   expect_true(all(as.integer(css) == as.numeric(css)))
 })
+
