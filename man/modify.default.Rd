@@ -34,6 +34,11 @@ The name of the component itself is available during assignments as
 attribute 'name' (any pre-existing attribute 'name' is temporarily masked).
 After all assignments are complete, the value of 'name' is enforced at the object level.
 Thus, \code{modify} expressions can modify component names.
+
+As currently implemented, the expression is evaluated by
+\code{\link[rlang]{eval_tidy}}, with attributes supplied as
+the \code{data} argument.  Thus, names in the expression
+may be disambiguated, e.g. with \code{.data}.  See examples.
 }
 \examples{
 library(magrittr)
@@ -66,6 +71,19 @@ x \%<>\% modify(title = foo, time)
 list(a = 1, b = 1:10, c = letters) \%>\%
 modify(length = length(.), b:c)
 
+x \%<>\% select(Subject) \%>\% modify(label = NULL, `defined values` = NULL)
+
+# distinguish data and environment
+location <- 'environment'
+x \%>\% modify(where = location) \%>\% decorations
+x \%>\% modify(where = .env$location) \%>\% decorations
+\dontrun{
+\donttest{
+x\%>\% modify(where = .data$location) \%>\% decorations
+}}
+x \%>\% modify(location = 'attributes', where = location) \%>\% decorations
+x \%>\% modify(location = 'attributes', where = .data$location) \%>\% decorations
+
 }
 \seealso{
 Other modify: 
@@ -89,7 +107,7 @@ Other interface:
 \code{\link{io_yamlet.data.frame}()},
 \code{\link{is_parseable.default}()},
 \code{\link{mimic.default}()},
-\code{\link{promote.default}()},
+\code{\link{promote.list}()},
 \code{\link{read_yamlet}()},
 \code{\link{resolve.decorated}()},
 \code{\link{selected.default}()},

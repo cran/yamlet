@@ -1,7 +1,7 @@
 #' Modify Attributes of Indicated Components
 #'
 #' Modifies the attributes of indicated components.
-#' Generic, with default method.
+#' Generic, with method \code{\link{modify.default}}.
 #' @param x object
 #' @param ... passed arguments
 #' @export
@@ -26,11 +26,16 @@ modify <- function(x, ...)UseMethod('modify')
 #' After all assignments are complete, the value of 'name' is enforced at the object level.
 #' Thus, \code{modify} expressions can modify component names.
 #'
+#' As currently implemented, the expression is evaluated by
+#' \code{\link[rlang]{eval_tidy}}, with attributes supplied as
+#' the \code{data} argument.  Thus, names in the expression
+#' may be disambiguated, e.g. with \code{.data}.  See examples.
+#'
 #' @param x object
 #' @param ... indicated columns, or name-value pairs
 #' @param .reserved reserved labels that warn on assignment
 #' @export
-#' @importFrom rlang f_rhs eval_tidy quo_set_env quos
+#' @importFrom rlang f_rhs eval_tidy quo_set_env quos new_data_mask
 #' @return same class as x
 #' @family modify
 #' @family interface
@@ -60,10 +65,23 @@ modify <- function(x, ...)UseMethod('modify')
 #' \dontrun{
 #' \donttest{
 #' x %<>% modify(title = foo, time)
-#'}}
+#' }}
 #' # support lists
 #' list(a = 1, b = 1:10, c = letters) %>%
 #' modify(length = length(.), b:c)
+#'
+#'x %<>% select(Subject) %>% modify(label = NULL, `defined values` = NULL)
+#'
+#' # distinguish data and environment
+#' location <- 'environment'
+#' x %>% modify(where = location) %>% decorations
+#' x %>% modify(where = .env$location) %>% decorations
+#' \dontrun{
+#' \donttest{
+#' x%>% modify(where = .data$location) %>% decorations
+#' }}
+#' x %>% modify(location = 'attributes', where = location) %>% decorations
+#' x %>% modify(location = 'attributes', where = .data$location) %>% decorations
 #'
 modify.default <- function(
   x,
@@ -87,10 +105,11 @@ modify.default <- function(
      attr <- attributes(x[[var]])
      attr <- attr[names(attr) != ''] # see ?list2env
      attr <- c(attr, list(. = x[[var]]))
-     env <- list2env(attr)
-     expr <- rlang::quo_set_env(quo = expr, env = env)
+     # env <- list2env(attr)
+     # expr <- rlang::quo_set_env(quo = expr, env = env)
+     # mask <- new_data_mask(env)
       tryCatch(
-        attr(x[[var]], mod) <- rlang::eval_tidy(expr),
+        attr(x[[var]], mod) <- rlang::eval_tidy(expr, data = attr),
         error = function(e)warning(var, ': ', e)
       )
     }

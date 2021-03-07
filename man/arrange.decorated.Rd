@@ -11,7 +11,7 @@
 lazy data frame (e.g. from dbplyr or dtplyr). See \emph{Methods}, below, for
 more details.}
 
-\item{...}{<\code{\link[dplyr:dplyr_data_masking]{data-masking}}> Variables, or functions or
+\item{...}{<\code{\link[dplyr:dplyr_data_masking]{data-masking}}> Variables, or functions of
 variables. Use \code{\link[dplyr:desc]{desc()}} to sort a variable in descending order.}
 }
 \description{
@@ -20,7 +20,6 @@ Preserves class when arranging decorated.
 \seealso{
 Other dplyr: 
 \code{\link{anti_join.decorated}()},
-\code{\link{filter.decorated}()},
 \code{\link{full_join.decorated}()},
 \code{\link{group_by.decorated}()},
 \code{\link{inner_join.decorated}()},
