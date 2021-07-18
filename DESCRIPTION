@@ -1,7 +1,7 @@
 Package: yamlet
 Type: Package
 Title: Versatile Curation of Table Metadata
-Version: 0.7.5
+Version: 0.7.7
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 BugReports: https://github.com/bergsmat/yamlet/issues
@@ -22,6 +22,6 @@ VignetteBuilder: knitr
 Suggests: testthat (>= 2.1.0), magrittr, table1, knitr, rmarkdown,
         gridExtra
 NeedsCompilation: no
-Packaged: 2021-04-28 18:40:05 UTC; tim.bergsma
+Packaged: 2021-07-17 23:05:46 UTC; tim.bergsma
 Repository: CRAN
-Date/Publication: 2021-04-28 23:20:03 UTC
+Date/Publication: 2021-07-18 23:10:02 UTC
