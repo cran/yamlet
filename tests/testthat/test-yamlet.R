@@ -1,71 +1,76 @@
 library(testthat)
+library(magrittr)
+library(yaml)
 test_that('yaml package result is stable',{
-  expect_equal_to_reference(file = '001.rds', yaml::yaml.load('[ID: ]'))
-  expect_equal_to_reference(file = '002.rds', yaml::yaml.load('ID: '))
-  expect_equal_to_reference(file = '003.rds', yaml::yaml.load('[  ID: ]'))
-  expect_equal_to_reference(file = '004.rds', yaml::yaml.load('[ ID: ]'))
-  expect_equal_to_reference(file = '005.rds', yaml::yaml.load('RACE'))
-  expect_equal_to_reference(file = '006.rds', yaml::yaml.load('RACE:'))
-  expect_equal_to_reference(file = '007.rds', yaml::yaml.load('? RACE'))
-  expect_equal_to_reference(file = '008.rds', yaml::yaml.load('[{RACE: }, ID: ]'))
-  expect_equal_to_reference(file = '009.rds', yaml::yaml.load('[? RACE, ? ID]'))
-  expect_equal_to_reference(file = '010.rds', yaml::yaml.load('[RACE: , ID: ]'))
-  expect_equal_to_reference(file = '011.rds', yaml::yaml.load('RACE: [ race, [ foo: bar, hey: baz ]]'))
-  expect_equal_to_reference(file = '012.rds', yaml::yaml.load('RACE: [ race, [ {foo: bar}, {hey: baz} ]]'))
-  expect_equal_to_reference(file = '013.rds', yaml::yaml.load('RACE: [ race, [ {foo: bar}, hey: baz ]]'))
-  expect_equal_to_reference(file = '014.rds', yaml::yaml.load('RACE: [ race, [ {foo: bar}, ? baz ]]'))
-  expect_equal_to_reference(file = '015.rds', yaml::yaml.load('RACE: [ race, [ {foo: bar},  baz: ]]'))
-  expect_equal_to_reference(file = '016.rds', yaml::yaml.load('RACE: [ race, [ {foo: bar}, hey: ]]'))
-  expect_equal_to_reference(file = '017.rds', yaml::yaml.load('RACE: [ race, [ bar, baz ]]'))
-  expect_equal_to_reference(file = '018.rds', yaml::yaml.load('RACE: [ race, [ {foo: bar} ]]'))
-  expect_equal_to_reference(file = '019.rds', yaml::yaml.load('RACE: [ label: race, [ foo: bar ]]'))
-  expect_equal_to_reference(file = '020.rds', yaml::yaml.load('RACE: [ label: race, [ foo: bar, hey: baz ]]'))
-  expect_equal_to_reference(file = '021.rds', yaml::yaml.load('RACE: [ label: race, [ foo: bar, baz ]]'))
-  expect_equal_to_reference(file = '022.rds', yaml::yaml.load('1'))                       # a length-one vector
-  expect_equal_to_reference(file = '023.rds', yaml::yaml.load('a'))                       # a length-one vector
-  expect_equal_to_reference(file = '024.rds', yaml::yaml.load('a:'))                      # a length-one named list
-  expect_equal_to_reference(file = '025.rds', yaml::yaml.load('a: '))                     # a length-one named list
-  expect_equal_to_reference(file = '026.rds', yaml::yaml.load('? a'))                     # a length-one named list
-  expect_equal_to_reference(file = '027.rds', yaml::yaml.load('[ 0]'))                    # a length-one sequence, represented as a vector
-  expect_equal_to_reference(file = '028.rds', yaml::yaml.load('[ 0, 1]'))                 # a sequence, represented as a vector
-  expect_equal_to_reference(file = '029.rds', yaml::yaml.load('a: 0'))                    # a length-one mapping, represented as a length-one named list
-  expect_equal_to_reference(file = '030.rds', yaml::yaml.load('[a: 0]'))                  # a list of named list * recursive
-  expect_equal_to_reference(file = '031.rds', yaml::yaml.load('[a: 0, b: 1]'))            # a list of named lists *
-  expect_equal_to_reference(file = '032.rds', yaml::yaml.load('[a: [0,1,2], b: 1]'))      # a list of lists *
-  expect_equal_to_reference(file = '033.rds', yaml::yaml.load('[a: [0,1,2], 5 ]'))        # a list of one list and one int
-  expect_equal_to_reference(file = '034.rds', yaml::yaml.load('[ [ [ [d: [0, 1, 2]]]]]')) # a list of named list * recursive
+  expect_equal_to_reference(file = '001.rds', yaml.load('[ID: ]'))
+  expect_equal_to_reference(file = '002.rds', yaml.load('ID: '))
+  expect_equal_to_reference(file = '003.rds', yaml.load('[  ID: ]'))
+  expect_equal_to_reference(file = '004.rds', yaml.load('[ ID: ]'))
+  expect_equal_to_reference(file = '005.rds', yaml.load('RACE'))
+  expect_equal_to_reference(file = '006.rds', yaml.load('RACE:'))
+  expect_equal_to_reference(file = '007.rds', yaml.load('? RACE'))
+  expect_equal_to_reference(file = '008.rds', yaml.load('[{RACE: }, ID: ]'))
+  expect_equal_to_reference(file = '009.rds', yaml.load('[? RACE, ? ID]'))
+  expect_equal_to_reference(file = '010.rds', yaml.load('[RACE: , ID: ]'))
+  expect_equal_to_reference(file = '011.rds', yaml.load('RACE: [ race, [ foo: bar, hey: baz ]]'))
+  expect_equal_to_reference(file = '012.rds', yaml.load('RACE: [ race, [ {foo: bar}, {hey: baz} ]]'))
+  expect_equal_to_reference(file = '013.rds', yaml.load('RACE: [ race, [ {foo: bar}, hey: baz ]]'))
+  expect_equal_to_reference(file = '014.rds', yaml.load('RACE: [ race, [ {foo: bar}, ? baz ]]'))
+  expect_equal_to_reference(file = '015.rds', yaml.load('RACE: [ race, [ {foo: bar},  baz: ]]'))
+  expect_equal_to_reference(file = '016.rds', yaml.load('RACE: [ race, [ {foo: bar}, hey: ]]'))
+  expect_equal_to_reference(file = '017.rds', yaml.load('RACE: [ race, [ bar, baz ]]'))
+  expect_equal_to_reference(file = '018.rds', yaml.load('RACE: [ race, [ {foo: bar} ]]'))
+  expect_equal_to_reference(file = '019.rds', yaml.load('RACE: [ label: race, [ foo: bar ]]'))
+  expect_equal_to_reference(file = '020.rds', yaml.load('RACE: [ label: race, [ foo: bar, hey: baz ]]'))
+  expect_equal_to_reference(file = '021.rds', yaml.load('RACE: [ label: race, [ foo: bar, baz ]]'))
+  expect_equal_to_reference(file = '022.rds', yaml.load('1'))                       # a length-one vector
+  expect_equal_to_reference(file = '023.rds', yaml.load('a'))                       # a length-one vector
+  expect_equal_to_reference(file = '024.rds', yaml.load('a:'))                      # a length-one named list
+  expect_equal_to_reference(file = '025.rds', yaml.load('a: '))                     # a length-one named list
+  expect_equal_to_reference(file = '026.rds', yaml.load('? a'))                     # a length-one named list
+  expect_equal_to_reference(file = '027.rds', yaml.load('[ 0]'))                    # a length-one sequence, represented as a vector
+  expect_equal_to_reference(file = '028.rds', yaml.load('[ 0, 1]'))                 # a sequence, represented as a vector
+  expect_equal_to_reference(file = '029.rds', yaml.load('a: 0'))                    # a length-one mapping, represented as a length-one named list
+  expect_equal_to_reference(file = '030.rds', yaml.load('[a: 0]'))                  # a list of named list * recursive
+  expect_equal_to_reference(file = '031.rds', yaml.load('[a: 0, b: 1]'))            # a list of named lists *
+  expect_equal_to_reference(file = '032.rds', yaml.load('[a: [0,1,2], b: 1]'))      # a list of lists *
+  expect_equal_to_reference(file = '033.rds', yaml.load('[a: [0,1,2], 5 ]'))        # a list of one list and one int
+  expect_equal_to_reference(file = '034.rds', yaml.load('[ [ [ [d: [0, 1, 2]]]]]')) # a list of named list * recursive
 })
 
 test_that('as_yamlet result is stable',{
   expect_equal_to_reference(file = '035.rds', as_yamlet('RACE: [white: 0, 1 ]'))         # surprising, but correct.
   expect_equal_to_reference(file = '036.rds', as_yamlet('RACE: [race, [white: 0, 1 ]]'))
-  expect_equal_to_reference(file = '037.rds', as_yamlet('RACE: [ race, [ foo: bar ]]'))
-  expect_equal_to_reference(file = '038.rds', ('RACE: [ label: race, [ foo: bar ]]'))    # must not be label, label; must not drop foo
-  expect_equal_to_reference(file = '039.rds', as_yamlet('RACE: [ label: race, [ foo: bar, hey: baz ]]'))
+  expect_equal_to_reference(
+    file = '037.rds', # @ 0.7.7 this was runaway parsimony
+    as_yamlet(
+      'RACE: [ race, [ foo: bar ]]' # @ 0.7.8 we see (correctly) label, guide not label, foo
+    )
+  )
 })
 
-test_that('unnest result is stable',{
-# each element of a list
-#  that is itself a list
-#  and does not have a name
-#  but has exactly one element
-#  that DOES have a name
-# should BE that element
-# and HAVE that name
-# recursively, starting at depth
-expect_equal_to_reference(file = '040.rds', to_yamlet(unnest(yaml::yaml.load('1'))))
-expect_equal_to_reference(file = '041.rds', to_yamlet(unnest(yaml::yaml.load('a'))))
-expect_equal_to_reference(file = '042.rds', to_yamlet(unnest(yaml::yaml.load('a:')))) #
-expect_equal_to_reference(file = '043.rds', to_yamlet(unnest(yaml::yaml.load('a: ')))) #
-expect_equal_to_reference(file = '044.rds', to_yamlet(unnest(yaml::yaml.load('? a')))) #
-expect_equal_to_reference(file = '045.rds', to_yamlet(unnest(yaml::yaml.load('[ 0]'))))
-expect_equal_to_reference(file = '046.rds', to_yamlet(unnest(yaml::yaml.load('[ 0, 1]'))))
-expect_equal_to_reference(file = '047.rds', to_yamlet(unnest(yaml::yaml.load('a: 0')))) #
-expect_equal_to_reference(file = '048.rds', to_yamlet(unnest(yaml::yaml.load('[a: 0]')))) #
-expect_equal_to_reference(file = '049.rds', to_yamlet(unnest(yaml::yaml.load('[a: 0, b: 1]'))))
-expect_equal_to_reference(file = '050.rds', to_yamlet(unnest(yaml::yaml.load('[a: [0,1,2], b: 1]'))))
-expect_equal_to_reference(file = '051.rds', to_yamlet(unnest(yaml::yaml.load('[a: [0,1,2], 5 ]') )))
-expect_equal_to_reference(file = '052.rds', to_yamlet(unnest(yaml::yaml.load('[ [ [ [d: [0, 1, 2]]]]]')))) #
+test_that('as_yamlet result is still stable',{
+
+  # yaml.load('foo: bar')
+  # yaml.load('foo: bar', handlers = list(seq = parsimonious))
+  # yaml.load('[foo: bar]')
+  # yaml.load('[foo: bar]', handlers = list(seq = parsimonious))
+  #
+  # yaml.load('RACE: [ label: race, [ foo: bar ]]')
+  # yaml.load('RACE: [ label: race, [ foo: bar ]]', handlers = list(seq = parsimonious))
+  #
+  # yaml.load('RACE: [ label: race, [ foo: bar, hey: baz ]]')
+  # yaml.load('RACE: [ label: race, [ foo: bar, hey: baz ]]', handlers = list(seq = parsimonious))
+  #
+  # as_yamlet('RACE: [ label: race, [ foo: bar ]]')
+  # as_yamlet('RACE: [ label: race, [ foo: bar, hey: baz ]]')
+  #
+  # as_yam('RACE: [ label: race, [ foo: bar ]]') %>% str
+  # as_yam('RACE: [ label: race, [ foo: bar, hey: baz ]]') %>% str
+
+  expect_equal_to_reference(file = '038.rds',as_yamlet('RACE: [ label: race, [ foo: bar ]]'))    # must not be label, label; must not drop foo
+  expect_equal_to_reference(file = '039.rds', as_yamlet('RACE: [ label: race, [ foo: bar, hey: baz ]]')) # 'label: race' must reduce in presence of plural list
+
 })
 
 test_that('more elements than keys gives warning',{
@@ -76,19 +81,23 @@ test_that('yamlet reads length-one character equivalently to vector',{
   expect_identical(as_yam(c('ID:','TIME:')),as_yam('ID:\nTIME:'))
 })
 
-test_that('uninformative nesting is removed',{
-  expect_identical(names(unnest(yaml::yaml.load('[foo: 1, bar: 3]'))), c('foo','bar'))
-})
-
 test_that('key priority by source is explicit > object > argument > option > default',{
-  expect_identical(names(as_yamlet('a: value')$a), 'label')
+  expect_identical(names(as_yamlet('a: value')$a), 'label') # default
   old <- getOption('yamlet_default_keys')
   options(yamlet_default_keys = 'option')
-  expect_identical(names(as_yamlet('a: value')$a), 'option')
-  expect_identical(names(as_yamlet('a: value', default_keys = 'argument')$a), 'argument')
-  expect_identical(names(as_yamlet('a: value\n_keys: object', default_keys = 'argument')$a), 'object')
-  expect_identical(names(as_yamlet('a: [explicit: value]\n_keys: object', default_keys = 'argument')$a), 'explicit')
+  expect_identical(names(as_yamlet('a: value')$a), 'option') # option
+  expect_identical(names(as_yamlet('a: value', default_keys = 'argument')$a), 'argument') # argument
+  expect_identical(names(as_yamlet('a: value\n_keys: object', default_keys = 'argument')$a),'object')
+  expect_identical(names(as_yamlet('a: [explicit: value]\n_keys: object', default_keys = 'argument')$a),'explicit')
   options(yamlet_default_keys = old)
+})
+
+test_that('mixed-length vector types are respected',{
+  expect_equal_to_reference(file = '099.rds', as_yamlet('RACE: [ race, [white, black, asian ]]'))
+})
+
+test_that('mixed-depth nesting is supported',{
+  expect_equal_to_reference(file = '100.rds', as_yamlet('ITEM: [ label: item, [ foo: bar, hey: baz ]]'))
 })
 
 test_that('default decorations are equivalent to explicit requests',{
@@ -154,8 +163,9 @@ test_that('read_yamlet and write_yamlet are reciprocal',{
 test_that('decorate will not overwrite existing attributes',{
   foo <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
   x <- decorate(foo)
-  expect_warning(y <- decorate(x))
-  expect_identical(x, y)
+  expect_warning(y <- decorate(x, 'Subject: subject identifier'))
+  expect_silent(y <- redecorate(x, 'Subject: subject identifier'))
+
 })
 
 test_that('decorate ignores anonymous attributes',{
@@ -267,22 +277,6 @@ test_that('dplyr filter does not drop attributes',{
   )
 })
 
-test_that('print.dg treats variable as categorical if guide has length > 1',{
-  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
-  library(ggplot2)
-  library(dplyr)
-  library(magrittr)
-  file %>% decorate %>% filter(!is.na(conc)) %>%
-  ggplot(aes(x = time, y = conc, color = Heart)) + geom_point()
-})
-
-test_that('print.dg uses conditional labels and guides',{
-  file <- system.file(package = 'yamlet', 'extdata','phenobarb.csv')
-  file %>% decorate %>%
-  filter(event == 'conc') %>%
-  ggplot(aes(x = time, y = value, color = ApgarInd)) + geom_point()
-})
-
 test_that('io_table accepts nuisance arguments without error',{
   file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
   x <- decorate(file)
@@ -343,11 +337,6 @@ test_that('classified() creates class factor and removes attribute codelist',{
  )
  expect_true('factor' %in% x$Heart$class)
 })
-
-# test_that('user can specify unit instead of units',{
-#   a <- 'CONC: [ concentration, ng/mL ]' %>% as_yamlet %>% explicit_guide(default = 'unit')
-#   expect_identical(names(a$CONC), c('label','unit'))
-# })
 
 test_that('resolve correctly classifies conditional elements',{
   skip_if_not( l10n_info()$`UTF-8` )
@@ -509,19 +498,6 @@ test_that('is_parseable respects locally-defined units',{
   expect_false(is_parseable('foo'))
 })
 
-test_that('labels parsed and unparsed, with and without units, display correctly',{
-  library(magrittr)
-  library(ggplot2)
-  Theoph %<>% as.data.frame
-  Theoph %<>% as_decorated
-  options(yamlet_enclose = c('[',']'))
-  Theoph$conc %<>% structure(label = 'CO[2] concentration', units = 'µg/m^2')
-  Theoph$Time %<>% structure(label = 'time since administration', units = 'h')
-  ggplot(data = Theoph, aes(x = Time, y = conc)) + geom_point()
-  options(yamlet_label_parse = TRUE)
-  ggplot(data = Theoph, aes(x = Time, y = conc)) + geom_point()
-})
-
 test_that('all valid spork print as axis label',{
   library(magrittr)
   library(dplyr)
@@ -565,29 +541,6 @@ test_that('R reserved words survive in print.dg labels',{
   )
 })
 
-test_that('ggplot.decorated works with multiple layers',{
-  library(yamlet)
-  library(ggplot2)
-  library(magrittr)
-  library(csv)
-  a <- io_csv(system.file(package = 'yamlet', 'extdata','phenobarb.csv'))
-  b <- io_csv(system.file(package = 'yamlet', 'extdata','quinidine.csv'))
-  c <- as.csv(system.file(package = 'yamlet', 'extdata','phenobarb.csv'))
-  d <- as.csv(system.file(package = 'yamlet', 'extdata','quinidine.csv'))
-
-  x <-
-    a %>% filter(event == 'conc') %>%
-    ggplot(aes(x = time, y = value, color = ApgarInd)) + geom_point() +
-    b %>% filter(!is.na(conc)) %>%
-    geom_point(data = ., aes(x = time/10, y = conc*10, color = Heart))
-  y <-
-    c %>% filter(event == 'conc') %>%
-    ggplot2:::ggplot.default(aes(x = time, y = value, color = ApgarInd)) + geom_point() +
-    d %>% filter(!is.na(conc)) %>%
-    geom_point(data = ., aes(x = time/10, y = conc*10, color = Heart))
-
-})
-
 test_that('column attributes with metacharacters are quoted or escaped on write',{
   library(magrittr)
   library(dplyr)
@@ -601,33 +554,6 @@ test_that('column attributes with metacharacters are quoted or escaped on write'
   x %>% io_csv(file)
   y <- readLines(sub('csv','yaml',file))
   expect_identical(y, datum)
-})
-
-test_that('ggready supports axis label line breaks',{
-  library(yamlet)
-  library(ggplot2)
-  library(magrittr)
-  library(dplyr)
-  library(encode)
-  data(mtcars)
-  mtcars %>%
-    select(mpg, vs, am) %>%
-    data.frame %>%
-    mutate(
-      plotgroup = case_when(
-        vs == 0 & am == 0 ~ 'v-shaped\nautomatic',
-        vs == 0 & am == 1 ~ 'v-shaped\nmanual',
-        vs == 1 & am == 0 ~ 'straight\nautomatic',
-        vs == 1 & am == 1 ~ 'straight\nmanual'
-      )
-    ) %>%
-    redecorate("
-mpg: [ milage, mi/gal ]
-plotgroup: [ engine\\ntransmission, [v-shaped\n\nautomatic,v-shaped\n\nmanual,straight\n\nautomatic,straight\n\nmanual]]
-") %>%
-    ggready %>%
-    ggplot(aes(x = plotgroup, y = mpg)) +
-    geom_boxplot()
 })
 
 test_that('for each named column, or all if none named, the data.frame method for modify() assigns a value in the attributes environment',{
@@ -676,6 +602,7 @@ test_that('the data.frame method for modify() gives a warning if the assignment 
 test_that('the data.frame method for modify() fails gracefully if assignment cannot be made',{
     file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
     x <- decorate(file)
+    if(exists('foo'))rm(foo)
     expect_warning(x %<>% modify(title = foo, time))
 
 })
@@ -906,19 +833,19 @@ test_that('unclassified is the inverse of classified',{
   x %<>% explicit_guide
   y <- classified(x)
   z <- unclassified(y)
-  x %>% decorations(Creatinine)
-  y %>% decorations(Creatinine)
-  z %>% decorations(Creatinine)
-  attr(y$Creatinine, 'codelist')
-  identical(
-  attr(x$Creatinine, 'codelist'),
-  attr(z$Creatinine, 'codelist')
-  )
-  str(attr(x$Creatinine,'codelist'))
-  str(attr(z$Creatinine,'codelist'))
-
-  names(names(attr(x$Creatinine,'codelist')))
-  names(names(attr(z$Creatinine,'codelist')))
+  # x %>% decorations(Creatinine)
+  # y %>% decorations(Creatinine)
+  # z %>% decorations(Creatinine)
+  # attr(y$Creatinine, 'codelist')
+  # identical(
+  # attr(x$Creatinine, 'codelist'),
+  # attr(z$Creatinine, 'codelist')
+  # )
+  # str(attr(x$Creatinine,'codelist'))
+  # str(attr(z$Creatinine,'codelist'))
+  #
+  # names(names(attr(x$Creatinine,'codelist')))
+  # names(names(attr(z$Creatinine,'codelist')))
 
   expect_identical(x, z)
 })
@@ -1014,8 +941,6 @@ test_that('as_yamlet does not capture levels of classified by default',{
   decorations(x, Heart)
 })
 
-test_that('decorations() does not print colon for un-named list',{})
-
 test_that('filter.decorated retains class', {
   library(dplyr)
   library(magrittr)
@@ -1064,8 +989,8 @@ test_that('mimic() is stable',{
   expect_equal_to_reference(mimic(numeric(0)), '093.rds')
   expect_equal_to_reference(mimic(LET), '094.rds')
   x <- data.frame(let, LET)
-  x %<>% mutate(let = mimic(let, LET), LET = mimic(LET))
-  expect_equal_to_reference(str(x), '095.rds')
+  # x %<>% mutate(let = mimic(let, LET), LET = mimic(LET))
+  expect_equal_to_reference(x, '095.rds')
 
 })
 
@@ -1219,7 +1144,7 @@ test_that('print.yamlet handles unexpected objects nicely',{
   file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
   x <- decorate(file)
   x %<>% modify(time, SORT = sort)
-  print(decorations(x,time))
+  # print(decorations(x,time))
   expect_equal_to_reference(file = '097.rds', decorations(x, time))
 })
 
@@ -1235,34 +1160,107 @@ test_that('NA names and values in lists can be converted to yamlet',{
   expect_silent(to_yamlet(setNames(c(1,2,NA), c('a','b','c'))))
 })
 
-test_that('subplots respect metadata assignments',{
+test_that('a length one sequence resolves parsimoniously',{
+  y <- as_yamlet('RACE: [ race, [ Asian: 1 ]]')
+  expect_equal(names(y[[1]][2]), 'guide')
+})
 
-  library(ggplot2)
+test_that('column named *n* can be decorated',{
   library(magrittr)
   library(dplyr)
-  library(gridExtra)
-  a <- io_csv(system.file(package = 'yamlet', 'extdata','phenobarb.csv'))
-  b <- io_csv(system.file(package = 'yamlet', 'extdata','quinidine.csv'))
-  c <- as.csv(system.file(package = 'yamlet', 'extdata','phenobarb.csv'))
-  d <- as.csv(system.file(package = 'yamlet', 'extdata','quinidine.csv'))
+  x <- data.frame(n = 1)
+  x %<>% decorate('"n": count')
+  expect_identical('count',decorations(x)$n$label)
+})
 
-  x <-
-    a %>% filter(event == 'conc') %>%
-    ggplot(aes(x = time, y = value, color = ApgarInd)) + geom_point() +
-    b %>% filter(!is.na(conc)) %>%
-    geom_point(data = ., aes(x = time/10, y = conc*10, color = Heart))
+test_that('column named *scenario* can have label *Scenario* even if there is a column with this name',{
+  library(magrittr)
+  library(dplyr)
+  x <- data.frame(scenario = 1, Scenario = 1)
+  x %<>% decorate('scenario: Scenario')
+  x %<>% decorate('Scenario: scenario')
+  expect_identical('Scenario', decorations(x)$scenario$label)
+})
 
-  y <-
-    a %>% filter(event == 'conc') %>%
-    ggplot2:::ggplot.default(aes(x = time, y = value, color = ApgarInd)) + geom_point() +
-    d %>% filter(!is.na(conc)) %>%
-    geom_point(data = ., aes(x = time/10, y = conc*10, color = Heart))
+test_that('write_yamlet uses canonical attribute order by default',{
+  x <- data.frame(x = 1, y = 1, z = factor('a'))
+  x %<>% decorate('
+  x: [ guide: mm, desc: this, label: foo ]
+  "y": [ guide: bar, desc: other ]
+  ')
+  expect_equal_to_reference(file = '101.rds', foo <- write_yamlet(x))
+})
 
-  grid.arrange(x, y)
-
-  p <- x %>% ggplot_build
-  q <- p %>% ggplot_gtable
-  plot(q)
-  expect_equal_to_reference(file = '098.rds', p)
+test_that('moot redecorate warnings are suppressed',{
+  x <- data.frame(x = 1, y = 1, z = factor('a'))
+  x %<>% decorate('
+  x: [ guide: mm, desc: this, label: foo ]
+  "y": [ guide: bar, desc: other ]
+  ')
+  expect_silent(x %>% decorate(decorations(x)))
+  expect_warning(x %>% decorate('x: bar'))
+  expect_silent(x %>% decorate('x: bar', overwrite = TRUE))
 
 })
+
+test_that('class "decorated" persists after merges, joins, enumerations',{
+  library(magrittr)
+  library(dplyr)
+  x <- data.frame(foo = 1, bar = 2)
+  x %<>% decorate('foo: [distance, mm]')
+  x %<>% decorate('bar: [height, mm]')
+  expect_true(inherits(x, 'decorated'))
+  expect_true(inherits(full_join(x,x), 'decorated'))
+  expect_true(inherits(left_join(x,x), 'decorated'))
+  expect_true(inherits(left_join(x, as.data.frame(x)), 'decorated'))
+  expect_false(inherits(full_join(as.data.frame(x), x), 'decorated'))
+  expect_true(inherits(what = 'decorated', merge(x,x)))
+  # if(require(wrangle)){
+  #   expect_true(inherits(what = 'decorated', enumerate(x, foo, bar)))
+  # } # check gives warning
+})
+
+test_that('decorations() does not print colon for un-named list',{
+  x <- data.frame(foo = c('a','b','c'))
+  x %<>% decorate('foo: [title, [[1,2],[2,3]]]')
+  foo <- capture_output(decorations(x), print = TRUE)
+  foo <- sub(':','', foo) # remove the only expected colon
+  expect_false(grepl(':', foo))
+})
+
+test_that('read_yamlet and write_yamlet reproduce block quote',{
+  x <- read_yamlet('
+    x:
+      background: |
+        x is so happy
+        a variable of note
+        it wants to help you
+      sentence: >
+        Sometimes we don\'t really
+        care where the line breaks
+        are.')
+  expect_equal_to_reference(
+    file = '102.rds',
+    capture_output(
+      print = TRUE,
+      write_yamlet(x)
+    )
+  )
+  expect_equal_to_reference(
+    file = '103.rds',
+    capture_output(
+      print = TRUE,
+      write_yamlet(x, block = TRUE)
+    )
+  )
+})
+
+test_that('class "guided" or similar supports concatenation of guides',{
+  # Use vctrs to achieve consistent attribute treatment.
+})
+
+test_that('variables with units support unit math',{
+  # write converters for guided -> units and back
+})
+
+

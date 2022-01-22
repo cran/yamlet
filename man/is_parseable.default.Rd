@@ -22,7 +22,7 @@ See also \code{\link[units]{install_unit}}
 for finer control.
 }
 \examples{
-is_parseable(c('kg/m2','kg/m^2','kg.m/s2','Âµg/L'))
+is_parseable(c('kg/m2','kg/m^2','kg.m/s2','µg/L'))
 is_parseable('foo')
 library(units)
 install_unit('foo')
@@ -35,6 +35,7 @@ Other parseable:
 
 Other interface: 
 \code{\link{as.data.frame.yamlet}()},
+\code{\link{canonical.decorated}()},
 \code{\link{classified.data.frame}()},
 \code{\link{decorate.character}()},
 \code{\link{decorate.data.frame}()},

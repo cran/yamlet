@@ -41,17 +41,43 @@ as_yam <- function(x, ...)UseMethod('as_yam')
 as_yam.character <- function(
   x,
   as.named.list,
+  handlers = list(seq = parsimonious, map = function(x)lapply(x, unclass)),
   ...
 ){
   if(length(x) == 1 & file.exists(x[[1]])){
     allowed <- c(names(formals(read_yaml)), names(formals(yaml.load)))
     args <- list(...)
     args <- args[names(args) %in% allowed ]
-    args <- c(list(x), args)
-    y <- do.call(read_yaml, args) # as.named.list TRUE by default
+    args <- c(
+      list(
+        file = x,
+        as.named.list = TRUE,
+        handlers = handlers
+      ),
+      args
+    )
+    y <- do.call(read_yaml, args)
   }else{
-    y <- try(yaml.load(paste(x, collapse = '\n')))
+    allowed <- c(names(formals(yaml.load)))
+    args <- list(...)
+    args <- args[names(args) %in% allowed ]
+    dat <- paste(x, collapse = '\n')
+    args <- c(
+      list(
+        string = dat,
+        handlers = handlers,
+        as.named.list = TRUE
+      ),
+      args
+    )
+    y <- do.call(yaml.load, args)
   }
+  # should just be a bare list
+  y <- unclass(y)
+
+  # its members should be bare lists
+  y[] <- lapply(y, unclass)
+
   if(!inherits(y, 'list')){
     if(length(x) == 1){
       stop('x is not YAML or path to YAML')
@@ -60,10 +86,13 @@ as_yam.character <- function(
     }
   }
 
-  # each member of y must be a list
-  for(m in seq_along(y)) y[[m]] <- as.list(y[[m]])
+  # ? each member of y must be a list
+  # for(m in seq_along(y)) y[[m]] <- as.list(y[[m]])
 
-  y[] <- lapply(y, unnest)
+  # un-nesting is now applied at parsing using 'parsimonious'
+  # y[] <- lapply(y, unnest)
+
+  # but list coercion still important ...
   y[] <- lapply(y, as.list)
 
   if('_keys' %in% names(y)){
@@ -82,6 +111,7 @@ as_yam.character <- function(
 #' that DOES have a name should become that element
 #' and have that name (recursively, from depth).
 #' Collapses uninformative levels of nested lists.
+#' Formerly used in as_yam; now superceded by \code{\link{parsimonious.list}}.
 #'
 #' @param x object
 #' @return named list
@@ -206,7 +236,7 @@ as_yamlet.yam <- function(x, default_keys = getOption('yamlet_default_keys',list
   k <- attr(x,'keys')
   if(is.null(k))k <- as.list(default_keys)
   stopifnot(length(k) == length(unlist(k)))
-  if(!is.character(unlist(k))){
+  if(!is.character(unlist(k)) & !identical(k,list())){
     warning('default keys do not appear to be character: ignoring')
     k <- list()
   }
@@ -406,7 +436,7 @@ as.character.yam <- function(x, ...){
   if(!identical(k, list('label','guide'))){
     x <- c(x, list(`_keys` = k))
   }
-  out <- paste0(names(x), ': ', sapply(x, to_yamlet))
+  out <- paste0(names(x), ': ', sapply(x, to_yamlet, ...))
 }
 
 #' Coerce to Yamlet Storage Format
@@ -439,15 +469,37 @@ to_yamlet <- function(x, ...)UseMethod('to_yamlet')
 #' to_yamlet(c(a = 4,b = 5.8))
 #' to_yamlet(TRUE)
 
-to_yamlet.default <- function(x,...)to_yamlet(sapply(x, as.character))
+to_yamlet.default <- function(x,...)to_yamlet(sapply(x, as.character, ...))
+
+#' Coerce Yamlet to Yamlet Storage Format
+#'
+#' Coerces yamlet to yamlet storage format by unclassing to list.
+#' @param x object
+#' @param ... ignored
+#' @export
+#' @keywords internal
+#' @return length-one character
+#' @family to_yamlet
+#' @examples
+#' library(magrittr)
+#'  'a: [[d: [0, 1, 2]]]' %>% as_yamlet %>% to_yamlet
+
+to_yamlet.yamlet <- function(x,...)to_yamlet(unclass(x), ...)
 
 #'
 #' Coerce Character to Yamlet Storage Format
 #'
 #' Coerces character to yamlet storage format.
 #' Named character is processed as a named list.
-#' NA_character is treated as the string 'NA'.
+#' NA_character_ is treated as the string 'NA'.
+#'
+#' If block is TRUE, an attempt will be made
+#' to represent character strings as literal
+#' block scalars if they contain
+#' newlines (experimental in yamlet >= 0.8).
+#'
 #' @param x character
+#' @param block whether to write block scalars
 #' @param ... ignored
 #' @export
 #' @keywords internal
@@ -460,7 +512,7 @@ to_yamlet.default <- function(x,...)to_yamlet(sapply(x, as.character))
 #' to_yamlet(c(no = 'n', yes = 'y'))
 #' to_yamlet(NA)
 
-to_yamlet.character <- function(x, ...){
+to_yamlet.character <- function(x, block = FALSE, ...){
 
   if(!is.null(names(x))){
     x <- as.list(x)
@@ -489,7 +541,11 @@ to_yamlet.character <- function(x, ...){
   index <- grepl(': +', x)                   # contains collapse meta
   x[index] <- paste0("'",x[index],"'")         # wrapped in '
 
-
+  if(block){
+     has_newline <- grepl('\n', x)
+     x[has_newline] <- gsub('\n','\n  ', x[has_newline])
+     x[has_newline] <- paste0('|\n  ', x[has_newline])
+  }
   if(length(x) == 1) return(x)
 
   # multiples get [,,]
@@ -534,7 +590,7 @@ to_yamlet.list <- function(x, ...){
   if(length(x) == 0) x <- list(NULL)
   nms <- names(x)
   nms <- sapply(nms, to_yamlet) # assures individual treatment
-  out <- lapply(x, to_yamlet)
+  out <- lapply(x, to_yamlet, ...)
   # if member not null (''), attach name using colon-space,
   # else using ? name
   # if name is '', do not attach
@@ -550,13 +606,24 @@ to_yamlet.list <- function(x, ...){
   # separate members with commas
   out <- unlist(out) # converts empty list to NULL
   if(is.null(out)) out <- ''
+
   if(length(out) == 1){ # a singlet
-    if(length(names(out))){ # not all singlets have names
-      if(names(out) != ''){ # a singlet may have an empty name
-        out <-paste0('[ ', out, ' ]') # named singlets need brackets
-      }
-    }
+
+   # maybe *all* singlets need brackets.
+   bracket_all <- FALSE # adjust if necessary
+   has_name    <- as.logical(length(names(out))) # not all singlets have names
+   if(has_name){
+     if(is.na(names(out)) | names(out) == ''){  # a singlet may have an empty name
+       has_name <- FALSE
+     }
+   }
+
+   if(bracket_all | has_name){
+     out <-paste0('[ ', out, ' ]') # named singlets may need brackets
+   }
   }
+
+
   if(length(out) > 1){ # sequences need brackets
     out <- paste(out, collapse = ', ')
     out <- paste0('[ ', out, ' ]')
@@ -740,8 +807,11 @@ print.yamlet <- function(x, ...){
   render.default <- function(x, indent = 0, name = NULL, ...){
     margin <-  paste(rep(' ',indent), collapse = '')
     leader <- paste0(margin, '- ',name)
-    data <- paste(format(x), collapse = ', ')
+   #data <- paste(format(x), collapse = ', ')
+    data <- paste(x, collapse = ', ')
+    # don't print colon if name is null
     msg <- paste0(leader,': ', data)
+    if(is.null(name)) msg <- paste0(leader, data)
     writeLines(msg)
   }
   # render.function <- function(x, indent = 0, name = NULL, ...){
@@ -809,6 +879,8 @@ read_yamlet <- function(
 #' @param useBytes passed to \code{\link{writeLines}}
 #' @param default_keys character: default keys for the first n anonymous members of each element
 #' @param fileEncoding if \code{con} is character, passed to \code{\link{file}} as \code{encoding}
+#' @param sort whether to coerce attribute order using \code{\link{canonical.yamlet}}
+#' @param block whether to write block scalars
 #' @export
 #' @family interface
 #' @seealso \code{\link{decorate.list}}
@@ -835,10 +907,13 @@ write_yamlet <- function(
     list('label','guide')
   ),
   fileEncoding = getOption('encoding'),
+  sort = TRUE,
+  block = FALSE,
   ...
 ){
   x <- as_yamlet(x, default_keys = default_keys)
-  y <- as.character(x, default_keys = default_keys, ...)
+  if(sort) x <- canonical(x, keys = default_keys, ...)
+  y <- as.character(x, default_keys = default_keys, block = block, ...)
   if(is.character(con)){
     con <- file(con, 'w', encoding = fileEncoding)
     on.exit(close(con))

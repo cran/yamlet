@@ -191,8 +191,15 @@ decorate.list <- function(
         }
         if(attrb %in% names(attributes(x[[item]]))){
           if(!overwrite){
-            warning('not overwriting ', attrb, ' attribute of ', item)
-            next
+            if(
+              !identical(               # avoid moot warnings
+                attr(x[[item]], attrb), # current
+                val[[attrb]]            # proposed
+              )
+            ){
+              warning('not overwriting ', attrb, ' attribute of ', item)
+            }
+            next                      # avoid all overwrites, moot or otherwise
           }
         }
         attr(x[[item]], attrb) <- val[[attrb]]
@@ -301,6 +308,8 @@ decorations.data.frame <- function(
   ...,
 #  coerce = getOption('yamlet_coerce_decorations', FALSE),
   exclude_attr = getOption('yamlet_exclude_attr', c('class','levels'))
+# and possibly comment, dim, dimnames, names, row.names, and tsp
+# see help for attributes
 ){
   # coerce <- FALSE
   stopifnot(length(exclude_attr) == 0 || is.character(exclude_attr))
