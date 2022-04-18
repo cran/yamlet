@@ -1,9 +1,9 @@
-8d6c61922e7818c4cce153eaaa0f2310 *DESCRIPTION
+c6747116303b219639da262e7d53b57c *DESCRIPTION
 4fde0de7019a56e9e617ca2de5b5e64a *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 7db77b29628153f41941d2649da00bf0 *R/append_units.R
 1b705fd6cf880dd2ce521c238ea94f9d *R/canonical.R
-05813f92cce04c7184c24c12368ebafd *R/classified.R
+87783a714c269e07bee2e94db597096a *R/classified.R
 7ea7cc1596063338643453bad84cce4f *R/conditional.R
 594c1bf437a1dc8938a2992fc7f17e91 *R/conditionalize.R
 9bb9bb088f0337d9ca456390516f0b9a *R/data.frame.R
@@ -28,7 +28,7 @@ d9e874c6f92249eaee7831e52748496c *R/ggready.R
 25aa08a37fb9a30a1901c25312ebdca3 *R/package.R
 3bb8c4d3e16fdbab9d4c9bb079eb61f7 *R/parseable.R
 adfaf7edc783c5be03474d8325a9af3d *R/parsimonious.R
-dcd817331e326f55ee11d4e797d3fbda *R/proxy.R
+8302cab411f7e58181a87d0327faa69b *R/proxy.R
 f60fb75e17ecdc5a5b7f009c424e4225 *R/resolve.R
 0a8fa475bec8009aac6e87a4a1bbdd34 *R/selected.R
 a47c11eba8d66757cd05b9d01d08aac1 *R/singularity.R
@@ -41,7 +41,7 @@ bae4057300b924ae5db419e6311491c1 *R/unit_string.R
 1124a786cb6fc19aa68f869bdc9151ea *build/vignette.rds
 12981a408daad5859a95a7fa8dc4b1ec *inst/doc/yamlet-introduction.R
 3b5f945ccd1217754fb06c61a262fe0e *inst/doc/yamlet-introduction.Rmd
-afe0692b0fb7185a76d2f95d8dcee2b6 *inst/doc/yamlet-introduction.html
+12a124c0fd9acfda026ae982887dc473 *inst/doc/yamlet-introduction.html
 a53ce9d6f4a91b525179245fd19d31a3 *inst/extdata/phenobarb.csv
 426ac780e03a58bcb6177e55e74dcfdc *inst/extdata/phenobarb.yaml
 a44c232bd5d0a34dd7b31c7fc2336a11 *inst/extdata/quinidine.csv
@@ -81,7 +81,7 @@ f4cf1ac2627161d2a7d47996c7991c4a *man/as_yamlet.yam.Rd
 115b1759fc2676ede15edd0ea448932a *man/canonical.yamlet.Rd
 f561c170c2053688b0b3f7fa0ab8fcf7 *man/cell_value.Rd
 3bf8f0e18174873fd29480852bf7c888 *man/classified.Rd
-011cce132eb0f4142bc010a8baedb090 *man/classified.data.frame.Rd
+5244222ccb3a1e37b3c9c4dbaf5def76 *man/classified.data.frame.Rd
 783c41555de68449fac54fd664038a31 *man/classified.default.Rd
 70a105b167a90461c2c3dec968be7f92 *man/conditionalize.Rd
 8b150b48aa2c1ef4c995e9670428615e *man/conditionalize.data.frame.Rd
@@ -205,5 +205,5 @@ ddb08b274a58448d3195d81949d60ec8 *man/yamlet.Rd
 b83997411192e3e23904dca4a5c8171f *tests/testthat/Rplots.pdf
 b0bffb85881a07e05fc002939ac649fe *tests/testthat/donttest-yamlet.R
 f755090f9e744c8439be4821ef389f06 *tests/testthat/graphics-yamlet.R
-41a02977a438e77ded6cfd7188d664a8 *tests/testthat/test-yamlet.R
+ca91a9df7f01c664c195c4b19a9da3b9 *tests/testthat/test-yamlet.R
 3b5f945ccd1217754fb06c61a262fe0e *vignettes/yamlet-introduction.Rmd
