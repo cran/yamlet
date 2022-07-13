@@ -352,7 +352,7 @@ test_that('resolve correctly classifies conditional elements',{
   x <- decorate(file)
   x %>% as_yamlet
   x %>% explicit_guide %>% as_yamlet
-  x %>% select(value) %>% explicit_guide %>% as_yamlet
+  expect_warning( x %>% select(value) %>% explicit_guide %>% as_yamlet) # value looks like codelist because event not available to signal conditional
   x %>% explicit_guide %>% classified %>% as_yamlet
   a <- x %>% resolve %>% as_yamlet
   expect_true(setequal(names(a$value), c('label','units')))
@@ -655,6 +655,7 @@ test_that('output of as_decorated inherits class decorated',{
 test_that('xtable.decorated is stable',{
 library(magrittr)
 library(xtable)
+options(yamlet_persistence = FALSE)
 set.seed(0)
 x <- data.frame(
  auc = rnorm(100, mean = 2400, sd = 200),
@@ -671,6 +672,7 @@ y <- xtable(x, auc:bmi)
 expect_equal_to_reference(file = '065.rds', y)
 expect_equal_to_reference(file = '066.rds', resolve(x))
 expect_equal_to_reference(file = '067.rds', xtable(resolve(x)))
+options(yamlet_persistence = TRUE)
 })
 
 test_that('promote is stable',{
@@ -918,7 +920,7 @@ test_that('unclassified methods do not lose attributes',{
   expect_true(
     setequal(
       names(attributes(foo)),
-      c('codelist','label')
+      c('codelist','label','class')
     )
   )
 })
@@ -1113,20 +1115,21 @@ test_that('factor and character can mimic numeric',{
 
 
   expect_true(
-    inherits(
+    is.integer(
       unclassified(
         mimic(css, as.numeric(css))
-      ),'integer')
+      )
+    )
   )
   # expect_error(mimic(css, as.integer(css))) # don't know why this should be an error
   expect_silent(mimic(css, as.integer(css)))
 })
 
-test_that('as.integer.classified() returns integer with codelist',{
+test_that('as.integer.classified() returns integer with guide',{
   css <- classified(letters[1:3], labels = LETTERS[1:3])
   int <- as.integer(css)
-  expect_true('codelist' %in% names(attributes(int)))
-  expect_true(inherits(int, 'integer'))
+  expect_true('guide' %in% names(attributes(int)))
+  expect_true(is.integer(int))
 })
 
 test_that('as.integer.classified() is equivalent to as.numeric.classified()',{
@@ -1326,20 +1329,117 @@ test_that('named codelists are back-transformed consistently',{
 
 test_that('class "guided" or similar supports concatenation of guides',{
   # Use vctrs to achieve consistent attribute treatment.
+  # see test-dvec.R
 })
 
 test_that('variables with units support unit math',{
   # write converters for guided -> units and back
+  # see test-dvec.R
 })
 
 test_that('classified.data.frame passes exclude = NULL to member factors',{
   x <- data.frame(letters = c('a','b','c','d', NA))
   x %<>% decorate('letters: [Letters, [ a, b, c ]]')
   x %>% decorations
-  x %<>% explicit_guide
+  suppressWarnings(x %<>% explicit_guide)
   x %>% decorations
   x %<>% classified(exclude = NULL)
   expect_true(NA %in% attr(x$letters, 'codelist'))
   expect_true(NA %in% levels(x$letters))
 })
 
+test_that('when two different decodes have the same code, classified levels match classified codelist values',{
+  x <- data.frame(letters = c('a','a','b'))
+  x %<>% decorate('letters: [Letters, [ TRT1: a, TRT2: a, TRT3: b ]]')
+  x
+  x %>% resolve
+  x %>% resolve %>% desolve
+  x %>% resolve %>% desolve %>% resolve
+  x %<>% resolve
+  expect_identical(
+    levels(x$letters), 
+    unlist(as.character(attr(x$letters, 'codelist')))
+  )
+})
+
+test_that('when two different codes have the same decode, classified levels match unique classified codelist values',{
+  x <- data.frame(letters = c('a','b','c'))
+  x %<>% decorate('letters: [Letters, [ TRT1: a, TRT2: b, TRT2: c ]]')
+  x
+  x %>% resolve
+  x %>% resolve %>% desolve 
+  x %>% resolve %>% desolve  %>% decorations
+  x %>% resolve %>% desolve %>% resolve
+  x %<>% resolve
+  levels(x$letters)
+  as.character(attr(x$letters, 'codelist'))
+  expect_identical(
+    x %$% letters %>% levels, 
+    x %$% letters %>% attr('codelist') %>% 
+      as.character %>% unlist %>% unique
+  )
+})
+
+
+test_that('ggplot succeeds for class decorated that has no labels',{
+  file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
+  library(ggplot2)
+  library(dplyr)
+  library(magrittr)
+  expect_silent(a <- file %>% as.csv %>% filter(!is.na(conc)) %>% as_decorated %>%
+    ggplot(aes(x = time, y = conc, color = Heart)) + geom_point())
+  # look for legend: congestive heart failure (mod/no/sev)
+  
+})
+
+test_that('classified does not re-classify',{
+  # avoid alternating states
+  x <- data.frame(
+    age = c(53, 58, 60),
+    sex = c(0, 1, 1),
+    race = c(1, 1, 2)
+  )
+  x %<>% decorate('
+  age: [ Age, year ]
+  sex: [ Sex, [ Female: 0, Male: 1 ]]
+  race: [ Race, [White: 1, Asian: 2 ]]
+  ')
+  x
+  x %>% resolve
+  x %>% resolve(sex)
+  x %>% resolve(sex) %>% resolve
+  expect_identical(
+    x %>% resolve,
+    x %>% resolve(sex) %>% resolve
+  )
+  expect_identical(
+    x %>% resolve,
+    x %>% resolve(race) %>% resolve
+  )
+  expect_identical(
+    x %>% resolve,
+    x %>% resolve(age) %>% resolve
+  )
+})
+
+test_that('io_csv.character allows user to over-ride meta',{
+  # issue 3
+  expect_silent(
+    x <- io_csv(
+      system.file(package = 'yamlet','extdata/phenobarb.csv'),
+      meta = system.file(package = 'yamlet','extdata/quinidine.yaml')
+    )
+  )
+  expect_identical(NULL, attr(x$Wt, 'label'))
+})
+
+test_that('[ can be the first character of a code or decode',{
+  # issue 2
+  x <- data.frame(range = '[min,max]')
+  expect_silent(x %<>% decorate('range: [ Range, [ "[minimum,maximum]": "[min,max]" ]]'))
+  expect_silent(decorations(x))
+  where <- tempdir()
+  x %>% io_csv(file.path(where, 'bracket.csv'))
+  y <- io_csv(file.path(where, 'bracket.csv'), source = FALSE)
+  expect_identical(x,y)
+})

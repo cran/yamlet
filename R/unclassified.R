@@ -21,6 +21,7 @@ unclassified <- function(x, ...)UseMethod('unclassified')
 #' (and rebuilding codelist).
 #' @param x classified
 #' @param ... ignored
+#' @param persistence whether to reclass as dvec
 #' @export
 #' @importFrom utils type.convert
 #' @keywords internal
@@ -28,13 +29,15 @@ unclassified <- function(x, ...)UseMethod('unclassified')
 #' @return vector
 #' @examples
 #' example(unclassified.data.frame)
-unclassified.classified <- function(x, ...){
+unclassified.classified <- function(x, ..., persistence = getOption('yamlet_persistence', TRUE)){
   codelist <- attr(x, 'codelist')
   levels <- unlist(codelist)
   labels <- names(codelist)
   if(is.null(labels))labels <- as.character(codelist)
+  # as of 0.8.9 ...
+  labels <- type.convert(labels, as.is = TRUE)
   y <- labels[match(as.character(x), levels)]
-  y <- type.convert(y, as.is = TRUE)
+  #y <- type.convert(y, as.is = TRUE)
   nms <- names(attributes(x))
   nms <- setdiff(nms, c('class','levels','contrasts','codelist'))
   for(nm in nms){
@@ -48,6 +51,7 @@ unclassified.classified <- function(x, ...){
     # codelist <- unlist(codelist) # @ 0.8.2 codelist remains list
   }
   attr(y, 'codelist') <- codelist
+  if(persistence) y <- as_dvec(y)
   y
 }
 
@@ -75,9 +79,28 @@ unclassified.data.frame <- function(x,...){
   for(nm in selected(x,...)){
     if(inherits(x[[nm]], 'classified')){
       x[[nm]] <- unclassified(x[[nm]])
+      
     }
   }
   class(x) <- my_class
   x
 }
+
+#' Unclassify Decorated Vector
+#'
+#' Unclassifies dvec.  A non-operation, since dvec is not classified.
+#' Needed for completness by \code{\link{resolve.dvec}}.
+#'
+#' @param x dvec
+#' @param ... ignored
+#' @export
+#' @keywords internal
+#' @return dvec
+#' @family dvec
+#' @examples
+#' library(magrittr)
+#' x <- structure(as_dvec(1), guide = 'misc')
+#' unclassified(x)
+unclassified.dvec <- function(x,...)x
+
 

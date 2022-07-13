@@ -17,7 +17,7 @@
 decorated
 }
 \description{
-Imports a documented table resolve ambiguouous guide elements.
+Imports a documented table and resolves ambiguous guide elements.
 A wrapper for \code{\link{io_csv.character}} that also
 reads associated yamlet metadata, if present, and applies it
 as attributes. Invokes \code{\link{resolve}} to resolve
@@ -36,6 +36,7 @@ Other io:
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
 \code{\link{io_csv}()},
+\code{\link{io_res.decorated}()},
 \code{\link{io_res}()},
 \code{\link{io_table.character}()},
 \code{\link{io_table.data.frame}()},
@@ -55,6 +56,7 @@ Other interface:
 \code{\link{ggplot.decorated}()},
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
+\code{\link{io_res.decorated}()},
 \code{\link{io_table.character}()},
 \code{\link{io_table.data.frame}()},
 \code{\link{io_yamlet.character}()},

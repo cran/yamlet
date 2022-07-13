@@ -95,7 +95,7 @@ classified.default <- function(
   # simplify codelist if possible
   if(identical(paste(names(codelist)), paste(unlist(codelist)))) {
     names(codelist) <- NULL
-    codelist <- unlist(codelist)
+    # codelist <- unlist(codelist) # @v0.8.9 for consistency with other methods
   }
 
 
@@ -341,7 +341,8 @@ classified.default <- function(
 #' a factor with a codelist attribute.
 #'
 #' @param x data.frame
-#' @param ... passed to \code{\link[dplyr]{select}} to limit column scope; also passed to \code{\link{classified.default}} to modify behavior
+#' @param ... passed to \code{\link[dplyr]{select}} to limit column scope
+#; also passed to \code{\link{classified.default}} to modify behavior
 #' @param exclude see \code{\link{factor}}
 #' @param ordered see \code{\link{factor}}
 #' @param nmax see \code{\link{factor}}
@@ -359,11 +360,11 @@ classified.default <- function(
 #' x %>% explicit_guide %>% classified(Heart:glyco) %>% decorations(Age, Race, Heart:glyco)
 
 classified.data.frame <- function(
-  x,
-  ...,
-  exclude = NA,
-  ordered = is.ordered(x),
-  nmax = NA
+    x,
+    ...,
+    exclude = NA,
+    ordered = is.ordered(x),
+    nmax = NA
 ){
   my_class <- class(x)
   for(nm in selected(x,...)){
@@ -380,37 +381,167 @@ classified.data.frame <- function(
   class(x) <- my_class
   x
 }
+#' Classify Decorated Vector
+#'
+#' Coerces dvec to 'classified':
+#' a factor with a codelist attribute.
+#' Results may differ if explicit_guide()
+#' is called first.
+#'
+#' @param x dvec
+#' @param ... un-named arguments ignored.  Named arguments passed to \code{\link{classified.default}} to modify behavior
+#' @param exclude see \code{\link{factor}}
+#' @param ordered see \code{\link{factor}}
+#' @param nmax see \code{\link{factor}}
+#' @export
+#' @keywords internal
+#' @return classified
+#' @family classified
+#' @family dvec
+#' @examples
+#' library(magrittr)
+#' x <- as_dvec(1:3)
+#' attr(x, 'guide') <- list(a = 1, b = 2, c = 3)
+#' x %>% str
+#' x %>% classified %>% str
+#' x %>% explicit_guide %>% classified %>% str
+
+classified.dvec <- function(
+    x,
+    ...,
+    exclude = NA,
+    ordered = is.ordered(x),
+    nmax = NA
+){
+  y <- unclass(x)
+  y <- classified(
+    y,
+    exclude = exclude,
+    ordered = ordered,
+    nmax = nmax,
+    ...
+  )
+  y
+}
 
 #' Coerce Classified to Integer
 #'
 #' Coerces classified to integer.
 #' Result is like \code{as.integer(as.numeric(x)) + offset}
-#' but has a codelist giving original values. If you need
+#' but has a guide giving original values. If you need
 #' a simple integer, consider coercing first to numeric.
 #'
 #' @param x classified, see \code{\link{classified}}
 #' @param offset an integer value to add to intermediate result
-#' @param ... ignored
+#' @param ... passed to \code{\link{as.numeric}}, code{\link{as.integer}}, and code{\link{desolve}}
+#' @param persistence whether to return 'dvec' (is.integer(): TRUE) or just integer.
 #' @export
 #' @family classified
-#' @return integer
+#' @return integer (possibly of class dvec)
 #' @examples
 #' library(magrittr)
 #' classified(c('knife','fork','spoon'))
 #' classified(c('knife','fork','spoon')) %>% as.numeric
 #' classified(c('knife','fork','spoon')) %>% as.integer
 #' classified(c('knife','fork','spoon')) %>% as.integer(-1)
+#' 
+#' options(yamlet_persistence = FALSE)
+#' c('knife','fork','spoon') %>% 
+#'   classified %>%
+#'   as.integer %>% 
+#'   class
+#'   
+#' options(yamlet_persistence = NULL)
+#' c('knife','fork','spoon') %>% 
+#'   classified %>%
+#'   as.integer %>% 
+#'   class
+#'   
+#' c('knife','fork','spoon') %>% 
+#'   classified %>%
+#'   as.integer(persistence = FALSE) %>% 
+#'   class
+#'   
 #'
-as.integer.classified <- function(x, offset = 0L, ...){
+as.integer.classified <- function(x, offset = 0L, ..., persistence = getOption('yamlet_persistence', TRUE)){
   stopifnot(
     length(offset) == 1,
     !is.na(offset),
     as.integer(offset) == offset
   )
   offset <- as.integer(offset)
-  y <- as.numeric(x)
+  y <- as.numeric(x, ...)
+  y <- as.integer(y, ...) # explicitly casting to int as of 0.9.0
   y <- y + offset
   z <- mimic(x, y)
-  r <- unclassified(z)
+# r <- unclassified(z)
+  r <- desolve(z, persistence = TRUE, ...) # gives guide instead of codelist at 0.9.0
+  # at this point, r should be dvec
+  # passing persistence to desolve fails because there is no 
+  # vector method for implicit_guide (only a data.frame method)
+  if(!persistence) {
+    r <- unclass(r)
+  }
   r
+}
+
+#' Create Classified from Classified
+#'
+#' See \code{\link{classified.default}}.
+#' Currently, calling classified on a
+#' classified object is a non-operation.
+#'
+#' @export
+#' @return 'classified' 'factor'
+#' @param x classified
+#' @param ... ignored
+#' @keywords internal
+#' @family classified
+#' @examples
+#' 
+#' a <- 4:6
+#' attr(a, 'codelist') <- list(d = 4, e = 5, f = 6, g = 7)
+#' b <- classified(a)
+#' a
+#' b
+#' class(b)
+#' classified(b)
+#' identical(b, classified(b))
+
+classified.classified <- function(x, ...)x
+
+# Abbreviate Classified
+# 
+# Abbreviated class name for 'classified'.
+# 
+# @export
+# @importFrom vctrs vec_ptype_abbr
+# @method vec_ptype_abbr classified
+# @return character
+# @keywords internal
+# @param x classified
+# @param ... ignored
+# @examples
+# cat(vec_ptype_abbr(classified(0)))
+# vec_ptype_abbr.classified <- function(x, ...) {
+#   "clsfd"
+# }
+
+#' @importFrom pillar type_sum
+#' @export
+pillar::type_sum
+
+#' Summarize Type of Classified
+#' 
+#' Summarizes type of classified.
+#' 
+#' @param x classified
+#' @importFrom pillar type_sum
+#' @export
+#' @keywords internal
+#' @method type_sum classified
+#' @examples 
+#' type_sum(classified(0))
+type_sum.classified <- function(x){
+  'clfac'
 }

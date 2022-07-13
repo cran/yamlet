@@ -4,12 +4,14 @@
 \alias{io_table.character}
 \title{Import Documented Table}
 \usage{
-\method{io_table}{character}(x, ext = getOption("yamlet_extension", ".yaml"), ...)
+\method{io_table}{character}(x, ext = getOption("yamlet_extension", ".yaml"), meta = NULL, ...)
 }
 \arguments{
 \item{x}{character file path; passed to \code{\link{read.table}}}
 
 \item{ext}{extension for metadata equivalent of x}
+
+\item{meta}{explicit file path for metadata}
 
 \item{...}{passed to \code{\link{read.table}} (if accepted) and to \code{\link{decorate}}}
 }
@@ -31,6 +33,7 @@ Other io:
 \code{\link{io_csv.data.frame}()},
 \code{\link{io_csv}()},
 \code{\link{io_res.character}()},
+\code{\link{io_res.decorated}()},
 \code{\link{io_res}()},
 \code{\link{io_table.data.frame}()},
 \code{\link{io_table}()},
@@ -50,6 +53,7 @@ Other interface:
 \code{\link{io_csv.character}()},
 \code{\link{io_csv.data.frame}()},
 \code{\link{io_res.character}()},
+\code{\link{io_res.decorated}()},
 \code{\link{io_table.data.frame}()},
 \code{\link{io_yamlet.character}()},
 \code{\link{io_yamlet.data.frame}()},

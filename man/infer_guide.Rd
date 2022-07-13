@@ -42,12 +42,12 @@ a codelist with elements not present.
 }
 \examples{
 infer_guide('a') # recognized unit
-infer_guide('z') # unrecognized as unit, evaluates to codelist
+infer_guide('z') # unrecognized as unit, evaluates to guide
 \dontrun{
 # evaluates to codelist but data suggests otherwise (warning)
 infer_guide(letters, data = LETTERS)
 }
-infer_guide(c(1,2,3))                   # codelist
+infer_guide(c(1,2,3))                   # guide
 infer_guide(list('a','b','c'))          # codelist
 infer_guide(list(a = 1, b = 2, c = 3))  # codelist
 infer_guide(list(a = 1))                # codelist
@@ -60,9 +60,11 @@ infer_guide('//a/1//b/2//c/3//')        # encoding
 \seealso{
 Other explicit_guide: 
 \code{\link{explicit_guide.data.frame}()},
+\code{\link{explicit_guide.dvec}()},
 \code{\link{explicit_guide.yamlet}()},
 \code{\link{explicit_guide}()},
 \code{\link{implicit_guide.data.frame}()},
+\code{\link{implicit_guide.dvec}()},
 \code{\link{implicit_guide}()}
 }
 \concept{explicit_guide}

@@ -40,12 +40,12 @@ than the guide as a whole.
 This method iterates across the guide elements, renaming them
 as specified by the value of \code{test}. (default: \code{\link{infer_guide}}).
 \code{test} should be a function (or name of one) that accepts x, data, and dots.
-If a data.frame is passed to exlicit_guide(), the relevant column will
+If a data.frame is passed to explicit_guide(), the relevant column will
 be passed as data to \code{test}.
 }
 \examples{
 library(magrittr)
-'CONC: [ concentration, Âµg/mL ]' \%>\% as_yamlet \%>\% explicit_guide
+'CONC: [ concentration, µg/mL ]' \%>\% as_yamlet \%>\% explicit_guide
 'RACE: [ subject race, [ Caucasian: 0, Latin: 1, Black: 2 ]]' \%>\% as_yamlet \%>\% explicit_guide
 'RACE: [ subject race, [ Caucasian, Latin, Black ]]' \%>\% as_yamlet \%>\% explicit_guide
 'RACE: [ subject race, //0/Caucasian//1/Latin//2/Black// ]' \%>\% as_yamlet \%>\% explicit_guide
@@ -56,8 +56,10 @@ library(magrittr)
 \seealso{
 Other explicit_guide: 
 \code{\link{explicit_guide.data.frame}()},
+\code{\link{explicit_guide.dvec}()},
 \code{\link{explicit_guide}()},
 \code{\link{implicit_guide.data.frame}()},
+\code{\link{implicit_guide.dvec}()},
 \code{\link{implicit_guide}()},
 \code{\link{infer_guide}()}
 }

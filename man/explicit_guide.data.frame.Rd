@@ -56,11 +56,37 @@ x \%>\% explicit_guide(DATE) \%>\% decorations # limit scope
 }
 \seealso{
 Other explicit_guide: 
+\code{\link{explicit_guide.dvec}()},
 \code{\link{explicit_guide.yamlet}()},
 \code{\link{explicit_guide}()},
 \code{\link{implicit_guide.data.frame}()},
+\code{\link{implicit_guide.dvec}()},
 \code{\link{implicit_guide}()},
 \code{\link{infer_guide}()}
+
+Other dvec: 
+\code{\link{[.dvec}()},
+\code{\link{[<-.dvec}()},
+\code{\link{[[.dvec}()},
+\code{\link{[[<-.dvec}()},
+\code{\link{as.data.frame.dvec}()},
+\code{\link{as_dvec.character}()},
+\code{\link{as_dvec.complex}()},
+\code{\link{as_dvec.dvec}()},
+\code{\link{as_dvec.integer}()},
+\code{\link{as_dvec.logical}()},
+\code{\link{as_dvec.numeric}()},
+\code{\link{as_dvec}()},
+\code{\link{c.dvec}()},
+\code{\link{classified.dvec}()},
+\code{\link{desolve.dvec}()},
+\code{\link{format.dvec}()},
+\code{\link{implicit_guide.dvec}()},
+\code{\link{length.dvec}()},
+\code{\link{print.dvec}()},
+\code{\link{resolve.dvec}()},
+\code{\link{unclassified.dvec}()}
 }
+\concept{dvec}
 \concept{explicit_guide}
 \keyword{internal}

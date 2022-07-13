@@ -4,12 +4,14 @@
 \alias{unclassified.classified}
 \title{Unclassify Classified}
 \usage{
-\method{unclassified}{classified}(x, ...)
+\method{unclassified}{classified}(x, ..., persistence = getOption("yamlet_persistence", TRUE))
 }
 \arguments{
 \item{x}{classified}
 
 \item{...}{ignored}
+
+\item{persistence}{whether to reclass as dvec}
 }
 \value{
 vector
@@ -30,9 +32,12 @@ Other classified:
 \code{\link{[[<-.classified}()},
 \code{\link{as.integer.classified}()},
 \code{\link{c.classified}()},
+\code{\link{classified.classified}()},
 \code{\link{classified.data.frame}()},
 \code{\link{classified.default}()},
+\code{\link{classified.dvec}()},
 \code{\link{classified}()},
+\code{\link{desolve.classified}()},
 \code{\link{unclassified.data.frame}()},
 \code{\link{unclassified}()}
 }
