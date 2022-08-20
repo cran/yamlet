@@ -8,7 +8,7 @@
   x,
   file = "",
   ext = getOption("yamlet_extension", ".yaml"),
-  con = stdout(),
+  meta = stdout(),
   useBytes = FALSE,
   default_keys = getOption("yamlet_default_keys", list("label", "guide")),
   ...
@@ -21,7 +21,7 @@
 
 \item{ext}{= extension for metadata equivalent of x}
 
-\item{con}{passed to \code{\link{io_yamlet}}}
+\item{meta}{passed as \code{con} to \code{\link{io_yamlet}}}
 
 \item{useBytes}{passed to \code{\link{io_yamlet}}}
 
