@@ -24,7 +24,7 @@ is invoked; see \code{\link{print.decorated_ggplot}}.
 \details{
 This approach is similar to but more flexible than
 the method for \code{\link{ggready}}.
-For finer control, you can switch between 'data.frame'
+For fine control, you can switch between 'data.frame'
 and 'decorated' using \code{\link{as_decorated}}
 (supplies null decorations) and \code{\link{as.data.frame}}
 (preserves decorations).
@@ -44,16 +44,26 @@ class(x)
 class(data.frame(x))
 class(as_decorated(data.frame(x)))
 
-# The bare data.frame gives boring labels and unordered groups.
+# The bare data.frame gives boring labels and un-ordered groups.
 map <- aes(x = time, y = conc, color = Heart)
 data.frame(x) \%>\% ggplot(map) + geom_point()
 
 # Decorated data.frame uses supplied labels.
-# Notice CHF levels are still not ordered.
+# Notice CHF levels are still not ordered. (Moderate first.)
 x \%>\% ggplot(map) + geom_point()
 
-# We can resolve guide for a chance to enrich the output with units.
-# Notice CHF levels are now ordered.
+# If we resolve Heart, CHF levels are ordered.
+x \%<>\% resolve(Heart)
+x \%>\% ggplot(map) + geom_point()
+
+# We can map aesthetics as decorations.
+x \%<>\% decorate('Heart: [ color: [gold, purple, green]]')
+x \%>\% ggplot(map) + geom_point()
+
+# Colors are matched to particular levels. Purple drops out here:
+x \%>\% filter(Heart != 'Moderate') \%>\% ggplot(map) + geom_point()
+
+# We can resolve other columns for a chance to enrich the output with units.
 x \%<>\% resolve
 suppressWarnings( # because this complains for columns with no units
   x <- modify(x, title = paste0(label, '\n(', units, ')'))
@@ -109,6 +119,26 @@ ggplot(aes(x = time, y = value, color = Wt)) +
 geom_point() +
 scale_y_log10() +
 scale_color_gradientn(colours = rainbow(4))
+
+# print.decorated_ggplot will attempt to honor coordinated aesthetics.
+x <- data.frame(x = c(1:6, 3:8), y = c(1:6,1:6), z = letters[c(1:6,1:6)])
+x \%<>\% decorate('z: [color: ["red", "blue", "green", "gold", "black", "magenta"]]')
+x \%<>\% decorate('z: [fill: ["red", "blue", "green", "gold", "black", "magenta"]]')
+x \%<>\% decorate('z: [shape: [20, 21, 22, 23, 24, 25]]')
+x \%<>\% decorate('z: [linetype: [6, 5, 4, 3, 2, 1]]')
+x \%<>\% decorate('z: [alpha: [ .9, .8, .7, .6, .5, .4]]')
+x \%<>\% decorate('z: [size: [1, 1.5, 2, 2.5, 3, 3.5]]')
+x \%>\% ggplot(aes(
+ x, y,
+  color = z,
+  fill = z,
+  shape = z,
+  linetype = z, 
+  alpha = z,
+  size = z,
+)) + 
+  geom_point() +
+  geom_line(size = 1)
 }
 \seealso{
 decorate resolve ggready
@@ -118,7 +148,6 @@ Other decorated_ggplot:
 \code{\link{print.decorated_ggplot}()}
 
 Other interface: 
-\code{\link{as.data.frame.yamlet}()},
 \code{\link{canonical.decorated}()},
 \code{\link{classified.data.frame}()},
 \code{\link{decorate.character}()},
