@@ -1,4 +1,4 @@
-fc850ede31eb2687b2a21eae0a5e4235 *DESCRIPTION
+a6284c4bc804e7e38e8a8c71b6abbf56 *DESCRIPTION
 2d8c20ef30b29e7ecaa62b4151f4f11e *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 7db77b29628153f41941d2649da00bf0 *R/append_units.R
@@ -22,7 +22,7 @@ f71dec3b5cedbd505b32f9e51bfba472 *R/gather.R
 0826792cea0ed5a47a29e1dc325321a6 *R/io_res.R
 94f6e3a921285e556ab7daf336d7baa9 *R/io_table.R
 5d9b2eb8ad0bb087e2af2b2b2504519e *R/io_yamlet.R
-b99a7c80187d57baff28c7bd4dc037ad *R/isometric.R
+a5282545be05222e2064525e9a209e36 *R/isometric.R
 b0b4646041685cc302c3507b7877c5e1 *R/merge.R
 637f55dbe1bcab04ab57773add8c6643 *R/mimic.R
 00f856d6bd11193443fdfa139cbc8b44 *R/modify.R
@@ -38,14 +38,14 @@ a47c11eba8d66757cd05b9d01d08aac1 *R/singularity.R
 4ee36ae3a116688d0e22de5a63ff1a86 *R/sub_units.R
 e10359a06132e8926b03efa63e5614a4 *R/unclassified.R
 bae4057300b924ae5db419e6311491c1 *R/unit_string.R
-01ed26bfd3921d000730fd560b5e4f48 *R/vec_cast.R
-aadcedad54e83261bef98301e8874723 *R/vec_ptype2.R
+102e7b73be56bb11ef52bc71cfd6e5cb *R/vec_cast.R
+2a43dafceb81127df9e8d6900a7078e3 *R/vec_ptype2.R
 916af488ef283f794e9c8ccbad47207f *R/xtable.R
 330d4d0bc710cd09dd5d7001762c6dc1 *R/yamlet.R
 c6b53ee8aa5daefee49f024a49fa40fa *build/vignette.rds
 12981a408daad5859a95a7fa8dc4b1ec *inst/doc/yamlet-introduction.R
 3b5f945ccd1217754fb06c61a262fe0e *inst/doc/yamlet-introduction.Rmd
-1cd1d5ee66eaa0f963e36210df3604ff *inst/doc/yamlet-introduction.html
+09148192a5383df453ffdc67f25de15e *inst/doc/yamlet-introduction.html
 255842f52fbd8095276ccc05a3bf9a8c *inst/extdata/dm.xpt.gz
 bdf3edfcbe6b60654f070070552f101d *inst/extdata/ex.xpt.gz
 cafea32947c3e721c349e52d695b9be5 *inst/extdata/pc.R
@@ -142,9 +142,9 @@ bce37affbc1f73b9f9e395140d475587 *man/filter.decorated.Rd
 7fab4eff13cb38cfc09b8916c58f832e *man/full_join.decorated.Rd
 6cb293d51968cdeb778657b75163e6ff *man/gather.decorated.Rd
 12647bc276148e7694bfcc9b93a77429 *man/ggplot.decorated.Rd
-96cae6d4f7ea10798cec31f112c804da *man/ggplot_add.ggplot_isometric.Rd
-0f37eea7070d7f2506ba6b8a7ca392c6 *man/ggplot_add.ggplot_symmetric.Rd
-0c84b8909f4d770405f7f171ff9a5421 *man/ggplot_build.decorated_ggplot.Rd
+d99019b444ecda789a2e0d556be4a67a *man/ggplot_add.ggplot_isometric.Rd
+24febcd4970c9e3b2b2a3989bd839b61 *man/ggplot_add.ggplot_symmetric.Rd
+fd253edef8d1276f0ea5cf8790a9612c *man/ggplot_build.decorated_ggplot.Rd
 3c831a75b2ceed2cbb073c5b364cf2fd *man/ggready.Rd
 d634314233bcf3ddd7313f097270fcf3 *man/ggready.data.frame.Rd
 672d744a06f50685ed59b311c3d093cd *man/ggready.decorated.Rd
@@ -175,7 +175,7 @@ bfdbf3df4e8a3fe06aa4186ab8a307cd *man/isConditional.list.Rd
 473f5a8d3922f0cbb5db57d3a7c35c1e *man/isLevels.default.Rd
 ee2683ac28b09591cac58da0d3a77e49 *man/is_parseable.Rd
 21ba08be7dc490571deac60e141a2652 *man/is_parseable.default.Rd
-5f7e2b0d687ceb9b59bc7e01c197fe5a *man/isometric.Rd
+ff9fb16ea1438d003e367f86dce924c3 *man/isometric.Rd
 1c2454f9c95cb206045cc5e8c3c60800 *man/left_join.decorated.Rd
 1a289063ed24b7863637e258e0522345 *man/length.dvec.Rd
 2738bbdbfbfe35402275441b4d963d70 *man/list2encoding.Rd
@@ -191,7 +191,7 @@ ad5d9314ea15fbcfbba91a0d4f9f24d2 *man/named.Rd
 476686d07aca474fe5b7020177996e34 *man/parsimonious.Rd
 c5229dd1a04584d3f428ed7a0dd4df9e *man/parsimonious.default.Rd
 46873f65ae10b14001bfdc31a1a2c789 *man/parsimonious.list.Rd
-958a4329bf656bd11d2df9bd6fd718a3 *man/print.decorated_ggplot.Rd
+831aa43cbfd4c451c804651568474633 *man/print.decorated_ggplot.Rd
 fc1acb9065526bcd13004d7deec530f8 *man/print.decorated_xtable.Rd
 f850a4d1ca3180bd870d84ea6c3c80b4 *man/print.dvec.Rd
 fd497d0968f680900251d00da9c94949 *man/print.yamlet.Rd
@@ -236,7 +236,7 @@ c04fe42ea5893a0dcfd36041a2c7dfbd *man/subset-.classified.Rd
 fc521e7db579d0b81d9e28084df85135 *man/subset-.dvec.Rd
 282252b1c63f4126489ffc8a4fac405a *man/summarise.decorated.Rd
 9f76508071d45ffe09185870677271d0 *man/summarize.decorated.Rd
-8443a816172daf767f4c463496b30e7d *man/symmetric.Rd
+a0f6fa7b7c897ae074f5e1ae35471e2f *man/symmetric.Rd
 356a1bd9f37b5b08e97735a67d56ee82 *man/to_yamlet.NULL.Rd
 48c2d3b6de6f7ddcce4b3a03fda6d543 *man/to_yamlet.Rd
 940883af00267fe1452ecc89a0258fdb *man/to_yamlet.character.Rd
@@ -269,7 +269,7 @@ cafaf9f9faed71664a340db275e8abe6 *man/vec_ptype2.complex.dvec.Rd
 4bf66499a48461be407015a981518d09 *man/vec_ptype2.dvec.character.Rd
 8fe89d58eb6c4c751fa1436a7317b10d *man/vec_ptype2.dvec.complex.Rd
 dd8e304f9460c2f6ad7a32fbe1a98f10 *man/vec_ptype2.dvec.double.Rd
-c85758839feb2fc71e09806ad8d2dc05 *man/vec_ptype2.dvec.dvec.Rd
+814c85cfbf5fdede20d273715596eede *man/vec_ptype2.dvec.dvec.Rd
 ba5a044f2e3c8752baedaabd35bc4a2d *man/vec_ptype2.dvec.integer.Rd
 5800ae424420b63cdf68d01530ff0beb *man/vec_ptype2.dvec.logical.Rd
 027e8dd8d9dbbb6383d758ead957d306 *man/vec_ptype2.integer.dvec.Rd
@@ -389,7 +389,7 @@ f9e5690b2efa76ca6c88a91802bf3c82 *tests/testthat/107.rds
 49c86744a55b5278e873423afee1cc16 *tests/testthat/Rplots.pdf
 b0bffb85881a07e05fc002939ac649fe *tests/testthat/donttest-yamlet.R
 66f36cb0bebebd311afe8a22844fbb60 *tests/testthat/graphics-yamlet.R
-3221177892174ae70627f35ada6893bc *tests/testthat/test-dvec.R
+8cc8ebd116663eb7a6c0f83da563dcbc *tests/testthat/test-dvec.R
 eb22523a71ce91a93f92ed7167b451da *tests/testthat/test-gz.R
 e457df08d1800f451a82a76e4221efce *tests/testthat/test-yamlet.R
 3b5f945ccd1217754fb06c61a262fe0e *vignettes/yamlet-introduction.Rmd

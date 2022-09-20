@@ -7,7 +7,6 @@ globalVariables(c('_yamlet_ymin','_yamlet_ymax','_yamlet_xmin','_yamlet_xmax'))
 #' @return ggplot_isometric
 #' @seealso ggplot_add.ggplot_isometric
 #' @export
-#' @importFrom ggplot2 geom_blank aes
 #' @keywords internal
 #' @family isometric
 #' @examples
@@ -25,7 +24,7 @@ isometric <- function()structure(list(), class = 'ggplot_isometric')
 #' @seealso isometric
 #' @export
 #' @keywords internal
-#' @importFrom ggplot2 ggplot_add theme
+#' @importFrom ggplot2 ggplot_add theme geom_blank aes
 #' @importFrom rlang sym
 #' @method ggplot_add ggplot_isometric
 #' @family isometric
