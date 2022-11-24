@@ -17,5 +17,6 @@
 decorated
 }
 \description{
-Determines common type for decorated and data.frame
+Determines common type for decorated and data.frame.
 }
+\keyword{internal}

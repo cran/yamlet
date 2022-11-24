@@ -19,19 +19,29 @@ Appends units attribute to label attribute.
 Generic, with methods
 \code{\link{append_units.default}} and
 \code{\link{append_units.data.frame}}.
-Deprecated, in favor of a general strategy using \code{\link{modify}}.
+For a more general strategy see \code{\link{modify}}.
 }
 \examples{
 # see methods
 }
 \seealso{
 Other deprecated: 
-\code{\link{alias.data.frame}()}
+\code{\link{alias.data.frame}()},
+\code{\link{drop_title}()},
+\code{\link{make_title}()}
 
 Other labels: 
 \code{\link{alias.data.frame}()},
 \code{\link{append_units.data.frame}()},
 \code{\link{append_units.default}()},
+\code{\link{drop_title.decorated}()},
+\code{\link{drop_title.default}()},
+\code{\link{drop_title.dvec}()},
+\code{\link{drop_title}()},
+\code{\link{make_title.decorated}()},
+\code{\link{make_title.default}()},
+\code{\link{make_title.dvec}()},
+\code{\link{make_title}()},
 \code{\link{sub_units}()}
 }
 \concept{deprecated}

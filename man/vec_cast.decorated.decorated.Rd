@@ -17,5 +17,6 @@
 decorated
 }
 \description{
-Casts to decorated from decorated
+Casts to decorated from decorated.
 }
+\keyword{internal}
