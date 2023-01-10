@@ -356,7 +356,7 @@ test_that('resolve correctly classifies conditional elements',{
   x %>% explicit_guide %>% as_yamlet
   expect_warning( x %>% select(value) %>% explicit_guide %>% as_yamlet) # value looks like codelist because event not available to signal conditional
   x %>% explicit_guide %>% classified %>% as_yamlet
-  a <- x %>% resolve %>% as_yamlet
+  a <- x %>%  resolve %>% as_yamlet
   expect_true(setequal(names(a$value), c('label','units', 'title')))
 })
 
@@ -1362,10 +1362,13 @@ test_that('when two different decodes have the same code, classified levels matc
   x <- data.frame(letters = c('a','a','b'))
   x %<>% decorate('letters: [Letters, [ TRT1: a, TRT2: a, TRT3: b ]]')
   x
+  expect_warning({
   x %>% resolve
   x %>% resolve %>% desolve
   x %>% resolve %>% desolve %>% resolve
   x %<>% resolve
+    
+})
   expect_identical(
     levels(x$letters), 
     unlist(as.character(attr(x$letters, 'codelist')))
@@ -1376,11 +1379,14 @@ test_that('when two different codes have the same decode, classified levels matc
   x <- data.frame(letters = c('a','b','c'))
   x %<>% decorate('letters: [Letters, [ TRT1: a, TRT2: b, TRT2: c ]]')
   x
+  expect_warning({
   x %>% resolve
   x %>% resolve %>% desolve 
   x %>% resolve %>% desolve  %>% decorations
   x %>% resolve %>% desolve %>% resolve
   x %<>% resolve
+   
+  })
   levels(x$letters)
   as.character(attr(x$letters, 'codelist'))
   expect_identical(
@@ -1389,7 +1395,6 @@ test_that('when two different codes have the same decode, classified levels matc
       as.character %>% unlist %>% unique
   )
 })
-
 
 test_that('ggplot succeeds for class decorated that has no labels',{
   file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
@@ -1565,9 +1570,9 @@ test_that('row_bind of supported table types returns consistent class and functi
   bind_rows(a, a) %>% str # no magic, attributes dropped, not surprising
   bind_rows(b, b) %>% str # magic
   bind_rows(c, c) %>% str # magic
-  bind_rows(a, b) %>% str # no magic, attributes dropped, not surprising
+  bind_rows(a, b) %>% str # magic @ 0.10.7
   bind_rows(b, a) %>% str # magic
-  bind_rows(a, c) %>% str # no magic, attributes dropped, not surprising
+  bind_rows(a, c) %>% str # magic @ 0.10.7
   bind_rows(c, a) %>% str # magic
   bind_rows(b, c) %>% str # returns decorated data.frame, not surprising
   bind_rows(c, b) %>% str # magic
@@ -1628,3 +1633,29 @@ test_that('yamlet warns if row_bind gives overlapping codelist',{
   expect_warning(bind_rows(x, y))
 })
 
+test_that('print.decorated_ggplot() warns if label has length > 1',{
+  library(magrittr)
+  library(ggplot2)
+  library(yamlet)
+  
+  a <- Theoph %>%
+    as.data.frame %>%
+    decorate('
+    conc: Concentration
+    Time: Time
+    ') %>%
+    mutate(source = 'Theoph')
+
+  b <- a %>%
+    ggplot(
+      aes(
+        x = Time, 
+        y = conc
+      )
+    ) + 
+    geom_point() +
+    ggtitle(a$source)
+  b$labels
+  expect_warning(print(b))
+
+})

@@ -7,7 +7,7 @@ NULL
 #' Find common type for dvec, dvec.
 #' @param x dvec
 #' @param y dvec
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 #' @examples
@@ -35,7 +35,7 @@ vec_ptype2.dvec.dvec <- function(x, y, ...) {
 #' Find common type for dvec, logical.
 #' @param x dvec
 #' @param y logical
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.dvec.logical <- function(x, y, ...){
@@ -52,11 +52,11 @@ vec_ptype2.dvec.logical <- function(x, y, ...){
 #' Find common type for logical, dvec.
 #' @param x logical
 #' @param y dvec
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.logical.dvec <- function(x, y, ...){
-  z <- c(x, y)
+  z <- c(as_dvec(x), y)
   z <- unclass(z) # restored below
   p <- vec_ptype2(x, unclass(y))
   attributes(p) <- attributes(z)
@@ -69,7 +69,7 @@ vec_ptype2.logical.dvec <- function(x, y, ...){
 #' Find common type for dvec, integer.
 #' @param x dvec
 #' @param y integer
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.dvec.integer <- function(x, y, ...){
@@ -86,11 +86,11 @@ vec_ptype2.dvec.integer <- function(x, y, ...){
 #' Find common type for integer, dvec.
 #' @param x integer
 #' @param y dvec
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.integer.dvec <- function(x, y, ...){
-  z <- c(x, y)
+  z <- c(as_dvec(x), y)
   z <- unclass(z) # restored below
   p <- vec_ptype2(x, unclass(y))
   attributes(p) <- attributes(z)
@@ -103,9 +103,18 @@ vec_ptype2.integer.dvec <- function(x, y, ...){
 #' Find common type for dvec, double.
 #' @param x dvec
 #' @param y double
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
+#' @examples
+#' str(vctrs::vec_ptype2(as_dvec(1), 1))
+#' str(vctrs::vec_ptype2(1, as_dvec(1)))
+#' 
+#' str(vctrs::vec_ptype2(as_dvec(1, label = 'x'), 1))
+#' str(vctrs::vec_ptype2(1, as_dvec(1, label= 'x')))
+#' str(vctrs::vec_ptype2(as_dvec(1), structure(1, label = 'x')))
+#' 
+
 vec_ptype2.dvec.double <- function(x, y, ...){
   z <- c(x, y)
   z <- unclass(z) # restored below
@@ -120,11 +129,11 @@ vec_ptype2.dvec.double <- function(x, y, ...){
 #' Find common type for double, dvec.
 #' @param x double
 #' @param y dvec
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.double.dvec <- function(x, y, ...){
-  z <- c(x, y)
+  z <- c(as_dvec(x), y)
   z <- unclass(z) # restored below
   p <- vec_ptype2(x, unclass(y))
   attributes(p) <- attributes(z)
@@ -137,7 +146,7 @@ vec_ptype2.double.dvec <- function(x, y, ...){
 #' Find common type for dvec, dvec.
 #' @param x dvec
 #' @param y dvec
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.dvec.character <- function(x, y, ...){
@@ -154,11 +163,11 @@ vec_ptype2.dvec.character <- function(x, y, ...){
 #' Find common type for character, dvec.
 #' @param x character
 #' @param y dvec
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.character.dvec <- function(x, y, ...){
-  z <- c(x, y)
+  z <- c(as_dvec(x), y)
   z <- unclass(z) # restored below
   p <- vec_ptype2(x, unclass(y))
   attributes(p) <- attributes(z)
@@ -171,7 +180,7 @@ vec_ptype2.character.dvec <- function(x, y, ...){
 #' Find common type for dvec, complex.
 #' @param x dvec
 #' @param y complex
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.dvec.complex <- function(x, y, ...){
@@ -188,11 +197,11 @@ vec_ptype2.dvec.complex <- function(x, y, ...){
 #' Find common type for complex, dvec.
 #' @param x complex
 #' @param y dvec
-#' @param ... passed arguments
+#' @param ... ignored
 #' @keywords internal
 #' @export
 vec_ptype2.complex.dvec <- function(x, y, ...){
-  z <- c(x, y)
+  z <- c(as_dvec(x), y)
   p <- vec_ptype2(x, unclass(y))
   attributes(p) <- attributes(z)
   p <- as_dvec(p)

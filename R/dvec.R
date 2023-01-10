@@ -72,6 +72,9 @@ as_dvec.integer <- function(x, ...){
 #' @return dvec
 #' @examples
 #' as_dvec(c(10.3, 1.2))
+#' as_dvec(1, label = 'yin')
+#' as_dvec(structure(1, label = 'yin'))
+#' as_dvec(structure(1, label = 'yin'), label = 'yang')
 #'
 as_dvec.numeric <- function(x, ...){
   at <- list(...)
@@ -303,15 +306,23 @@ length.dvec <- function(x)NextMethod()
 #' @return list (of attributes)
 reconcile <- function(x, ...)UseMethod('reconcile')
 
-#' Reconcile List Atttributes
+#' Reconcile Atttributes of List Members
 #'
-#' Reconciles list attributes. Recursively arbitrates
-#' list members pairwise, returning the accumulated result.
+#' Reconciles attributes of list members. Recursively arbitrates
+#' list members pairwise, returning the accumulated attributes.
 #' @param x list
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
 #' @return list (of attributes)
+#' library(magrittr)
+#' library(dplyr)
+#' a <- data.frame(study = 1) %>% decorate('study: [Study, [A: 1]]')
+#' b <- data.frame(study = 2) %>% decorate('study: [Study, [B: 2]]')
+#' bind_rows(a, b) %>% decorations
+#' c(a$study, b$study)
+#' reconcile(list(a$study, b$study))
+
 reconcile.list <- function(x, ...){
   if(length(x) == 1) return(attributes(x[[1]]))
   # If we got this far, the list has length two or more.
@@ -379,7 +390,11 @@ arbitrate.NULL <- function(x, y, ...){
 arbitrate.list <- function(x, y, ...){
   if(!is.null(names(x))){
     class(x) <- 'namedList'
-    return(arbitrate(x, y, ...))
+    res <- arbitrate(x, y, ...)
+    if(inherits(res, 'namedList')){
+      res <- unclass(res)
+    }
+    return(res)
   }
   # if we got here, x is an un-named list
   if(is.null(y)) return(x)
@@ -588,6 +603,7 @@ as.data.frame.dvec <- function (x, row.names = NULL, optional = FALSE, ..., nm =
 #' @method as_units dvec
 #' @param x dvec
 #' @param ... ignored
+#' @param preserve attributes to preserve; just label by default (class and units are handled implicitly)
 #' @export
 #' @examples 
 #' library(magrittr)
@@ -597,10 +613,15 @@ as.data.frame.dvec <- function (x, row.names = NULL, optional = FALSE, ..., nm =
 #' a %<>% decorate('id: identifier')
 #' a %<>% resolve
 #' a$wt %>% as_units
-as_units.dvec <- function(x, ...){
+as_units.dvec <- function(x, ..., preserve = getOption('yamlet_as_units_preserve', 'label')){
   value <- attr(x, 'units')
   if(is.null(value))stop('x must have non-null value of attribute: units')
-  attr(x, 'units') <- NULL
+  # attr(x, 'units') <- NULL
+  drop <- names(attributes(x))
+  drop <- setdiff(drop, preserve)
+  for(nm in drop){
+    attr(x, nm) <- NULL
+  }
   x <- unclass(x)
   units(x) <- value
   x
@@ -631,7 +652,7 @@ as_dvec.units <- function(x, ...){
   units <- deparse_unit(x)
   x <- drop_units(x)
   attr(x, 'units') <- units
-  x <- as_dvec(x)
+  x <- as_dvec(x, ...)
   x
 }
 
@@ -656,3 +677,16 @@ vec_ptype_abbr.dvec <- function(x, ...) {
 #' @importFrom vctrs vec_ptype_abbr
 #' @export
 vctrs::vec_ptype_abbr
+
+#' Test if Class is dvec
+#' 
+#' Tests whether x inherits 'dvec'.
+#' @param x object
+#' @export
+#' @return logical
+#' @examples 
+#' is_dvec(1L)
+#' is_dvec(as_dvec(1L))
+is_dvec <- function(x){
+  inherits(x, 'dvec')
+}

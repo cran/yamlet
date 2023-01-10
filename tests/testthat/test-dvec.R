@@ -84,6 +84,7 @@ test_that('bind_rows() reconciles attributes',{
   b %<>% select(Wt)
   c <- data.frame(Wt = as_dvec(c(79.6, 79.6), label = 'Weight'))
   d <- data.frame(Wt = as_dvec(c(79.6, 79.6), label = 'WEIGHT'))
+  expect_warning({
   bind_rows(a, b) %>% decorations # one warning
   bind_rows(c, d) %>% decorations # one warning
   bind_rows(c, b) %>% decorations # one warning
@@ -92,9 +93,10 @@ test_that('bind_rows() reconciles attributes',{
   bind_rows(as.data.frame(a), as.data.frame(b)) # one warning
   bind_rows(as_decorated(c), as_decorated(d)) # one warning
 
-
   c <- bind_rows(a, b)
-  d <- bind_rows(b ,a)
+  d <- bind_rows(b, a)
+})  
+  
   decorations(c)
   decorations(d)
   # expect_identical(attr(c$Subject, 'label'), 'subject')
@@ -106,7 +108,7 @@ test_that('bind_rows() reconciles attributes',{
   #   as_dvec(numeric(1), label = 'foo'),
   #   as_dvec(numeric(1), label = 'FOO')
   # )
-  
+expect_warning({ 
   bind_rows(
     data.frame(a = as_dvec(numeric(1), label = 'foo')),
     data.frame(a = as_dvec(numeric(1), label = 'FOO'))
@@ -115,6 +117,7 @@ test_that('bind_rows() reconciles attributes',{
     data.frame(a = as_dvec(numeric(0), label = 'foo')),
     data.frame(a = as_dvec(numeric(0), label = 'FOO'))
   ) %>% decorations
+})
 })
 
 test_that('bind_rows respects column type of first argument', {
@@ -129,27 +132,43 @@ test_that('bind_rows respects column type of first argument', {
   dm2 <- redecorate(dm, 'RACE: foo')
   dm %>% decorations
   dm2 %>% decorations
-  bind_rows(dm, dm2) %>% decorations
-  bind_rows(dm2, dm) %>% decorations
+  expect_warning({
+    bind_rows(dm, dm2) %>% str
+    c(dm2$RACE, dm$RACE)
+   vctrs::vec_c(dm2$RACE, dm$RACE)
+  vctrs::vec_c(dm$RACE, dm2$RACE)
+  vctrs::vec_rbind(dm, dm2)
+  vctrs::vec_rbind(dm2, dm)
+  bind_rows(dm2, dm) %>% decorations # one warning
+  bind_rows(dm2, as_decorated(dm)) %>% decorations # one warning
   bind_rows(as_decorated(dm), dm2) %>% decorations
-  dm3 <- bind_rows(dm, dm2)
+  dm3 <- bind_rows(as_decorated(dm), dm2)
+   
+  })
+  expect_identical(attr(dm3$RACE, 'label'), 'Race')
   
-  expect_identical(attr(dm3$RACE, 'label'), NULL)
-  
-  # In this very interesting example,
+  # In this (next) very interesting example,
   # EVEN THOUGH dm has decorations,
   # EVEN IF dm is coerced to decorated,
   # EVEN THOUGH dm$RACE has a label,
   # EVEN THOUGH dm2$RACE is dvec,
   # dm$RACE is still character.
-  # Therefore, c(dm$RACE, dm2$RACE)
-  # finds a method for character, 
-  # and no attributes are preserved.
+  # But as of 0.10.7, c(dm$RACE, dm2$RACE)
+  # promotes dm$RACE to dvec (see vec_ptype2.character.dvec )
+  # so attributes are preserved.
  
+  expect_warning(
   bind_rows(dm %>% redecorate(persistence = F), dm2) %>% decorations
+    
+  )
+  
+  # here also attributes are preserved
+  expect_warning({
   bind_rows(dm %>% redecorate(persistence = T), dm2) %>% decorations
   bind_rows(dm %>% redecorate, dm2) %>% decorations
-  
+    
+  })
+
   # Columns of an xpt, bearing labels, can be coerced to dvec by
   # self-redecorating with persistence turned on (default).
   
@@ -182,6 +201,7 @@ test_that('pivot_longer() reconciles attributes',{
   expect_identical(attr(out$value, 'label'), 'letters')
 
 })
+
 test_that('dplyr verbs preserve attributes',{
   a <- data.frame(head(Theoph))
   a$Subject %<>% classified
@@ -214,6 +234,7 @@ test_that('dplyr verbs preserve attributes',{
       mutate(Wt = Wt * 2) %$% Wt %>% attr('guide'))
 
 })
+
 test_that('mutate preserves attributes on direct assigment',{
   a <- data.frame(wt = 70)
   a %<>% decorate('wt: [ body weight, kg ]')
@@ -222,6 +243,7 @@ test_that('mutate preserves attributes on direct assigment',{
   a %>% decorations
   expect_identical('kg', attr(a$WT, 'guide'))
 })
+
 test_that('mutate forwards attributes of RHS',{
   a <- data.frame(wt = 70)
   a %<>% decorate('wt: [ body weight, kg ]')
@@ -230,6 +252,7 @@ test_that('mutate forwards attributes of RHS',{
   a %>% decorations
   expect_identical(NULL, attr(a$WT, 'guide'))
 })
+
 test_that('mutate preserves attributes for ifelse()',{
   a <- data.frame(wt = c(70, 80), sex = c(0,1))
   a %<>% decorate('wt: [ body weight, kg ]')
@@ -240,11 +263,13 @@ test_that('mutate preserves attributes for ifelse()',{
   a %>% decorations
   expect_identical('sex', attr(a$WT, 'label'))
 })
+
 test_that('subsetting dvec returns dvec',{
   a <- as_dvec(1:10)
   expect_true(inherits(a[1], 'dvec'))
   expect_true(inherits(a[1:3], 'dvec'))
 })
+
 test_that('pivot_wider preserves attributes and class',{
   a <- data.frame(id = 1:4, wt = c(70, 80, 70, 80), sex = c(0,1,0,1))
   a %<>% decorate('wt: [ body weight, kg ]')
@@ -261,6 +286,7 @@ test_that('pivot_wider preserves attributes and class',{
   a %>% decorations
   expect_true(inherits(a$value, 'dvec'))
 })
+
 test_that('decorate() can class its targets as dvec',{
   a <- data.frame(a = 1:2, b = 3:4)
   b <- data.frame(a = 5:6, b = 7:8)
@@ -275,6 +301,7 @@ test_that('decorate() can class its targets as dvec',{
   decorations(bind_rows(a,b))
   expect_equal_to_reference(file = '107.rds', decorations(bind_rows(a,b)))
 })
+
 test_that('bind_rows combines guides and codelists',{
   a <- data.frame(a = 1:2, b = 3:4)
   b <- data.frame(a = 5:6, b = 7:8)
@@ -289,6 +316,7 @@ test_that('bind_rows combines guides and codelists',{
   decorations(bind_rows(a,b))
   expect_equal_to_reference(file = '107.rds', decorations(bind_rows(a,b)))
 })
+
 test_that('yamlet persistence can be disabled',{
   a <- data.frame(a = 1:2, b = 3:4)
   options(yamlet_persistence = FALSE)
@@ -383,106 +411,6 @@ test_that('left_join.decorated works for y; tibble, and data.frame, and decorate
   expect_identical(3, x %>% left_join(y) %$% sex %>% sum)
 })
 
-test_that('casting to dvec always gives dvec',{
-  
-  expect_true(inherits(vec_cast(TRUE, as_dvec(TRUE)), 'dvec'))
-  expect_true(inherits(vec_cast(TRUE, as_dvec(1L)), 'dvec'))
-  expect_true(inherits(vec_cast(TRUE, as_dvec(1)), 'dvec'))
-  expect_true(inherits(vec_cast(TRUE, as_dvec(1+0i)), 'dvec'))
-  expect_error(inherits(vec_cast(TRUE, as_dvec('1')), 'dvec'))
-  
-  expect_true(inherits(vec_cast(1L, as_dvec(TRUE)), 'dvec'))
-  expect_true(inherits(vec_cast(1L, as_dvec(1L)), 'dvec'))
-  expect_true(inherits(vec_cast(1L, as_dvec(1)), 'dvec'))
-  expect_true(inherits(vec_cast(1L, as_dvec(1+0i)), 'dvec'))
-  expect_error(inherits(vec_cast(1L, as_dvec('1')), 'dvec'))
-  
-  expect_true(inherits(vec_cast(1, as_dvec(TRUE)), 'dvec'))
-  expect_true(inherits(vec_cast(1, as_dvec(1L)), 'dvec'))
-  expect_true(inherits(vec_cast(1, as_dvec(1)), 'dvec'))
-  expect_true(inherits(vec_cast(1, as_dvec(1+0i)), 'dvec'))
-  expect_error(inherits(vec_cast(1, as_dvec('1')), 'dvec'))
-  
-  expect_error(inherits(vec_cast(1+0i, as_dvec(TRUE)), 'dvec'))
-  expect_error(inherits(vec_cast(1+0i, as_dvec(1L)), 'dvec'))
-  expect_error(inherits(vec_cast(1+0i, as_dvec(1)), 'dvec'))
-  expect_true(inherits(vec_cast(1+0i, as_dvec(1+0i)), 'dvec'))
-  expect_error(inherits(vec_cast(1+0i, as_dvec('1')), 'dvec'))
-  
-  expect_error(inherits(vec_cast('1', as_dvec(TRUE)), 'dvec'))
-  expect_error(inherits(vec_cast('1', as_dvec(1L)), 'dvec'))
-  expect_error(inherits(vec_cast('1', as_dvec(1)), 'dvec'))
-  expect_error(inherits(vec_cast('1', as_dvec(1+0i)), 'dvec'))
-  expect_true(inherits(vec_cast('1', as_dvec('1')), 'dvec'))
-  
-})
-test_that('casting from dvec never gives dvec',{
-  
-  expect_false(inherits(vec_cast(as_dvec(TRUE), TRUE), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1L), TRUE), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1), TRUE), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1+0i), TRUE), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec('1'), TRUE), 'dvec'))
-  
-  expect_false(inherits(vec_cast(as_dvec(TRUE), 1L), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1L), 1L), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1), 1L), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1+0i), 1L), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec('1'), 1L), 'dvec'))
-  
-  expect_false(inherits(vec_cast(as_dvec(TRUE), 1), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1L), 1), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1), 1), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1+0i), 1), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec('1'), 1), 'dvec'))
-  
-  expect_false(inherits(vec_cast(as_dvec(TRUE), 1+0i), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1L), 1+0i), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1), 1+0i), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1+0i), 1+0i), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec('1'), 1+0i), 'dvec'))
-  
-  expect_false(inherits(vec_cast(as_dvec(TRUE), '1'), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1L), '1'), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1), '1'), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec(1+0i), '1'), 'dvec'))
-  expect_false(inherits(vec_cast(as_dvec('1'), '1'), 'dvec'))
-  
-})
-test_that('casting from dvec gives expected class',{
-  
-  expect_true(inherits(vec_cast(as_dvec(TRUE), TRUE), 'logical'))
-  expect_true(inherits(vec_cast(as_dvec(1L), TRUE), 'logical'))
-  expect_true(inherits(vec_cast(as_dvec(1), TRUE), 'logical'))
-  expect_true(inherits(vec_cast(as_dvec(1+0i), TRUE), 'logical'))
-  expect_true(inherits(vec_cast(as_dvec('1'), TRUE), 'logical'))
-  
-  expect_true(inherits(vec_cast(as_dvec(TRUE), 1L), 'integer'))
-  expect_true(inherits(vec_cast(as_dvec(1L), 1L), 'integer'))
-  expect_true(inherits(vec_cast(as_dvec(1), 1L), 'integer'))
-  expect_true(inherits(vec_cast(as_dvec(1+0i), 1L), 'integer'))
-  expect_true(inherits(vec_cast(as_dvec('1'), 1L), 'integer'))
-  
-  expect_true(inherits(vec_cast(as_dvec(TRUE), 1), 'numeric'))
-  expect_true(inherits(vec_cast(as_dvec(1L), 1), 'numeric'))
-  expect_true(inherits(vec_cast(as_dvec(1), 1), 'numeric'))
-  expect_true(inherits(vec_cast(as_dvec(1+0i), 1), 'numeric'))
-  expect_true(inherits(vec_cast(as_dvec('1'), 1), 'numeric'))
-  
-  expect_true(inherits(vec_cast(as_dvec(TRUE), 1+0i), 'complex'))
-  expect_true(inherits(vec_cast(as_dvec(1L), 1+0i), 'complex'))
-  expect_true(inherits(vec_cast(as_dvec(1), 1+0i), 'complex'))
-  expect_true(inherits(vec_cast(as_dvec(1+0i), 1+0i), 'complex'))
-  expect_true(inherits(vec_cast(as_dvec('1'), 1+0i), 'complex'))
-  
-  expect_true(inherits(vec_cast(as_dvec(TRUE), '1'), 'character'))
-  expect_true(inherits(vec_cast(as_dvec(1L), '1'), 'character'))
-  expect_true(inherits(vec_cast(as_dvec(1), '1'), 'character'))
-  expect_true(inherits(vec_cast(as_dvec(1+0i), '1'), 'character'))
-  expect_true(inherits(vec_cast(as_dvec('1'), '1'), 'character'))
-  
-})
-
 test_that('dvec int and double are coerced compatibly during merge',{
   library(vctrs)
   library(yamlet)
@@ -560,7 +488,374 @@ test_that('dvec int and double are coerced compatibly during merge',{
       data.frame(ID = '1', TIME = 0)
     )
   )
-  
-  
+})
+
+test_that('as.integer.classified preserves tangential attributes',{
+  library(magrittr)
+  a <- as_dvec(c('a','b','c'), label = 'Letters', title = 'Sample Letters')
+  a %<>% classified
+  expect_true(all(c('label','title') %in% names(attributes(a))))
+})
+
+test_that('yamlet_as_units_preserve functions as expected',{
+  library(magrittr)
+  a <- as_dvec(1, label = 'height', units = 'cm', title = 'Height (cm)')
+  expect_true(
+    setequal(
+      a %>% as_units %>% attributes %>% names, 
+      c('label','units','class')
+    )
+  )
+  expect_true(
+    setequal(
+      a %>% as_units(preserve = character(0)) %>% attributes %>% names, 
+      c('units','class')
+    )
+  )
+  options(yamlet_as_units_preserve = character(0))
+  expect_true(
+    setequal(
+      a %>% as_units(preserve = character(0)) %>% attributes %>% names, 
+      c('units','class')
+    )
+  )
+  options(yamlet_as_units_preserve = NULL)
+  expect_true(
+    setequal(
+      a %>% as_units %>% attributes %>% names, 
+      c('label','units','class')
+    )
+  )
   
 })
+
+test_that('arbitrated namedList prints correctly',{
+  pc <- data.frame(MDV = 0)
+  ex <- data.frame(MDV = 1)
+  pc %<>% decorate('MDV: [mdv, [Missing: 1, Not Missing: 0 ]]')
+  ex %<>% decorate('MDV: mdv')
+  out <- capture.output(pc %>% bind_rows(ex) %>% decorations(MDV))
+  expect_equal_to_reference(out, '117.rds')
+})
+
+test_that('vec_ptype2() conserves attributes if possible',{
+  library(vctrs)
+  dvc <- as_dvec(1, label = 'yin')
+  num <- structure(2, label = 'yang')
+  expect_warning({
+  a <- c(dvc, num)
+  b <- c(num, dvc)
+  
+  c <- vec_c(dvc, num)
+  d <- vec_c(num, dvc)
+    
+  })
+  
+  expect_identical(attr(a, 'label'), 'yin')
+  expect_identical(attr(b, 'label'), NULL )
+  expect_identical(attr(c, 'label'), 'yin')
+  expect_identical(attr(d, 'label'), 'yang')
+  
+
+})
+
+test_that('casting to dvec always gives dvec',{
+  
+  expect_true(inherits(vec_cast(TRUE, as_dvec(TRUE)), 'dvec'))
+  expect_true(inherits(vec_cast(TRUE, as_dvec(1L)), 'dvec'))
+  expect_true(inherits(vec_cast(TRUE, as_dvec(1)), 'dvec'))
+  expect_true(inherits(vec_cast(TRUE, as_dvec(1+0i)), 'dvec'))
+  expect_error(inherits(vec_cast(TRUE, as_dvec('1')), 'dvec'))
+  
+  expect_true(inherits(vec_cast(1L, as_dvec(TRUE)), 'dvec'))
+  expect_true(inherits(vec_cast(1L, as_dvec(1L)), 'dvec'))
+  expect_true(inherits(vec_cast(1L, as_dvec(1)), 'dvec'))
+  expect_true(inherits(vec_cast(1L, as_dvec(1+0i)), 'dvec'))
+  expect_error(inherits(vec_cast(1L, as_dvec('1')), 'dvec'))
+  
+  expect_true(inherits(vec_cast(1, as_dvec(TRUE)), 'dvec'))
+  expect_true(inherits(vec_cast(1, as_dvec(1L)), 'dvec'))
+  expect_true(inherits(vec_cast(1, as_dvec(1)), 'dvec'))
+  expect_true(inherits(vec_cast(1, as_dvec(1+0i)), 'dvec'))
+  expect_error(inherits(vec_cast(1, as_dvec('1')), 'dvec'))
+  
+  expect_error(inherits(vec_cast(1+0i, as_dvec(TRUE)), 'dvec'))
+  expect_error(inherits(vec_cast(1+0i, as_dvec(1L)), 'dvec'))
+  expect_error(inherits(vec_cast(1+0i, as_dvec(1)), 'dvec'))
+  expect_true(inherits(vec_cast(1+0i, as_dvec(1+0i)), 'dvec'))
+  expect_error(inherits(vec_cast(1+0i, as_dvec('1')), 'dvec'))
+  
+  expect_error(inherits(vec_cast('1', as_dvec(TRUE)), 'dvec'))
+  expect_error(inherits(vec_cast('1', as_dvec(1L)), 'dvec'))
+  expect_error(inherits(vec_cast('1', as_dvec(1)), 'dvec'))
+  expect_error(inherits(vec_cast('1', as_dvec(1+0i)), 'dvec'))
+  expect_true(inherits(vec_cast('1', as_dvec('1')), 'dvec'))
+  
+})
+
+test_that('casting from dvec never gives dvec',{
+  
+  expect_false(inherits(vec_cast(as_dvec(TRUE), TRUE), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1L), TRUE), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1), TRUE), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1+0i), TRUE), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec('1'), TRUE), 'dvec'))
+  
+  expect_false(inherits(vec_cast(as_dvec(TRUE), 1L), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1L), 1L), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1), 1L), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1+0i), 1L), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec('1'), 1L), 'dvec'))
+  
+  expect_false(inherits(vec_cast(as_dvec(TRUE), 1), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1L), 1), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1), 1), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1+0i), 1), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec('1'), 1), 'dvec'))
+  
+  expect_false(inherits(vec_cast(as_dvec(TRUE), 1+0i), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1L), 1+0i), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1), 1+0i), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1+0i), 1+0i), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec('1'), 1+0i), 'dvec'))
+  
+  expect_false(inherits(vec_cast(as_dvec(TRUE), '1'), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1L), '1'), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1), '1'), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec(1+0i), '1'), 'dvec'))
+  expect_false(inherits(vec_cast(as_dvec('1'), '1'), 'dvec'))
+  
+})
+
+test_that('casting from dvec gives expected class',{
+  
+  expect_true(inherits(vec_cast(as_dvec(TRUE), TRUE), 'logical'))
+  expect_true(inherits(vec_cast(as_dvec(1L), TRUE), 'logical'))
+  expect_true(inherits(vec_cast(as_dvec(1), TRUE), 'logical'))
+  expect_true(inherits(vec_cast(as_dvec(1+0i), TRUE), 'logical'))
+  expect_true(inherits(vec_cast(as_dvec('1'), TRUE), 'logical'))
+  
+  expect_true(inherits(vec_cast(as_dvec(TRUE), 1L), 'integer'))
+  expect_true(inherits(vec_cast(as_dvec(1L), 1L), 'integer'))
+  expect_true(inherits(vec_cast(as_dvec(1), 1L), 'integer'))
+  expect_true(inherits(vec_cast(as_dvec(1+0i), 1L), 'integer'))
+  expect_true(inherits(vec_cast(as_dvec('1'), 1L), 'integer'))
+  
+  expect_true(inherits(vec_cast(as_dvec(TRUE), 1), 'numeric'))
+  expect_true(inherits(vec_cast(as_dvec(1L), 1), 'numeric'))
+  expect_true(inherits(vec_cast(as_dvec(1), 1), 'numeric'))
+  expect_true(inherits(vec_cast(as_dvec(1+0i), 1), 'numeric'))
+  expect_true(inherits(vec_cast(as_dvec('1'), 1), 'numeric'))
+  
+  expect_true(inherits(vec_cast(as_dvec(TRUE), 1+0i), 'complex'))
+  expect_true(inherits(vec_cast(as_dvec(1L), 1+0i), 'complex'))
+  expect_true(inherits(vec_cast(as_dvec(1), 1+0i), 'complex'))
+  expect_true(inherits(vec_cast(as_dvec(1+0i), 1+0i), 'complex'))
+  expect_true(inherits(vec_cast(as_dvec('1'), 1+0i), 'complex'))
+  
+  expect_true(inherits(vec_cast(as_dvec(TRUE), '1'), 'character'))
+  expect_true(inherits(vec_cast(as_dvec(1L), '1'), 'character'))
+  expect_true(inherits(vec_cast(as_dvec(1), '1'), 'character'))
+  expect_true(inherits(vec_cast(as_dvec(1+0i), '1'), 'character'))
+  expect_true(inherits(vec_cast(as_dvec('1'), '1'), 'character'))
+  
+})
+
+### errors at dplyr 1.0.10, but not for dev version
+
+# test_that('ifelse() returns dvec if true or false is dvec',{
+#   # https://vctrs.r-lib.org/articles/s3-vector.html :
+#   # Unfortunately there’s no way to fix this problem with the current design of c().
+#   x <- data.frame(EVID = c(1,0,1,0), MDV = c(0,0,0,0))
+#   x %<>% decorate('
+#   EVID: [ Event Identifier, [ Dose: 1, Observation: 0]]
+#   MDV: [ Missing Dependent Value, [ DV Not Missing: 0, DV Missing: 1]]
+#   ')
+#   x %>% decorations
+#   class(x$MDV)
+#   c(x$MDV, 1) # magic
+#   c(1, x$MDV) # no magic
+#   c(as_dvec(1), x$MDV) # magic
+#   # can't rescue ifelse() by coercing to dvec
+#   y <- x %>% mutate(MDV =  ifelse(EVID == 1, as_dvec(1, label = 'foo'), MDV))
+#   expect_false(inherits(y$MDV, 'dvec'))
+#   # CAN rescue if_else() by coercing to dvec
+#   
+#   # expect_warning( does not warn under dplyr, 1.0.10, did warn for dev version
+#     z <- x %>% mutate(MDV = if_else(EVID == 1, as_dvec(1, label = 'foo'), MDV))
+#   # )
+#   expect_true(inherits(z$MDV, 'dvec'))
+#   
+#   # as of 0.10.7, coercion is implicit:
+#   # gives error in dplyr 1.0.10: `false` must have class `numeric`, not class `dvec`.
+#   expect_warning(
+#     z <- x %>% mutate(MDV = if_else(EVID == 1, structure(1, label = 'foo'), MDV))
+#   )
+#   expect_true(inherits(z$MDV, 'dvec'))
+#   
+#   # as of 0.10.7, case_when no longer requires dvec in both positions:
+#   # gives error in dplyr 1.0.10
+#   expect_identical(
+#     x %>% mutate(
+#       MDV = case_when(
+#         EVID == 1 ~ 1,
+#         TRUE ~ MDV
+#       )
+#     ) %$% MDV %>% attr('label'), 'Missing Dependent Value'
+#   )
+#   
+#  # case_when preserves first attributes
+#   expect_warning(
+#     expect_identical(
+#       x %>% mutate(
+#         MDV = case_when(
+#           EVID == 1 ~ structure(1, label = 'foo'),
+#           TRUE ~ MDV
+#         )
+#       ) %$% MDV %>% attr('label'), 'foo'
+#     ))
+#   
+#   # case_when preserves first attributes
+#   # gives error in dplyr 1.0.10
+#   expect_identical(
+#     x %>% mutate(
+#       MDV = case_when(
+#         EVID != 1 ~ MDV,
+#         TRUE ~ 1
+#       )
+#     ) %$% MDV %>% attr('label'), 'Missing Dependent Value')
+#   
+# })
+# 
+# test_that('case_when type mismatch gives meaningful error',{
+#   library(yamlet)
+#   library(magrittr)
+#   library(dplyr)
+#   a <- data.frame(
+#     EVID = c(1, 0, 0),
+#     MDV = c(0, 0, 0)
+#   )
+#   a %<>% decorate('
+#     EVID: [ Event ID, [ Observation: 0, Dose: 1]]
+#     MDV: [ Missing DV, [ Not Missing: 0, Missing: 1]]
+#   ')
+#   
+#   
+#   a %>% mutate(MDV = case_when(EVID == 0 ~        MDV, TRUE ~ 1   )) %>% str # magic
+#   a %>% mutate(MDV = case_when(EVID == 1 ~          1, TRUE ~ MDV )) %>% str # magic as of 0.10.7
+#   a %>% mutate(MDV = case_when(EVID == 1 ~ as_dvec(1), TRUE ~ MDV )) %>% str # magic
+#   a %>% mutate(MDV =    ifelse(EVID == 1,           1, MDV        )) %>% str # no magic
+#   a %>% mutate(MDV =    ifelse(EVID == 0,         MDV, 1          )) %>% str # no magic
+#   a %>% mutate(MDV =   if_else(EVID == 0,         MDV, 1          )) %>% str # magic
+#   a %>% mutate(MDV =   if_else(EVID == 1,           1, MDV        )) %>% str # magic as of 0.10.7
+#   a %>% mutate(MDV =   if_else(EVID == 1,  as_dvec(1), MDV        )) %>% str # magic
+# 
+#   c(1, a$MDV) %>% str # no magic
+#   c(a$MDV, 1) %>% str # magic
+#   vctrs:::vec_c(1, a$MDV) %>% str # magic as of 0.10.7
+#   vctrs:::vec_c(a$MDV, 1) %>% str # magic
+#   
+#   b <- case_when(c(TRUE, FALSE) == TRUE ~ 1, TRUE  ~ as_dvec(1, label = 'foo'))
+#   c <- case_when(c(TRUE, FALSE) == TRUE ~ as_dvec(1, label = 'foo'), TRUE  ~ 1)
+#   d <- case_when(c(TRUE, FALSE) == TRUE ~ as_dvec(1), TRUE  ~ as_dvec(1, label = 'foo'))
+#   
+#   # With dplyr_1.0.99.9000, at 0.10.7
+#   # case_when(num, dvec) returns decorated dvec
+#   # case_when(dvec, num) returns decorated dvec
+#   # case_when(dvec, decorated dvec) returns decorated dvec
+#   # perfect!
+#   
+#   expect_identical(b,c)
+#   expect_identical(b,d)
+#   
+#   # case_when does automatic type coercion
+#   expect_identical(
+#   case_when(c(TRUE, FALSE) == TRUE ~ 1L, TRUE  ~ as_dvec(1, label = 'foo')),
+#   case_when(c(TRUE, FALSE) == TRUE ~ 1, TRUE  ~ as_dvec(1L, label = 'foo'))
+#   )
+#   
+#   
+#   c(2L, as_dvec(1L)) %>% str # no magic
+#   c(as_dvec(1L, label = 'foo'), 2L) %>% str # magic
+#   ifelse(FALSE, as_dvec(1L, label = 'foo'),2L) %>% str # no magic
+#   if_else(FALSE, as_dvec(1L, label = 'foo'),2L) %>% str # magic
+#   
+#   # with dev version of dplyr, no longer seeing "dvec must have class dvec" error
+# 
+# })
+# 
+# test_that('if_else and case_when conserve decorations',{
+#   library(yamlet)
+#   library(magrittr)
+#   library(dplyr)
+#   a <- data.frame(
+#     EVID = c(0L, 1L, 0L),
+#     MDV = c(0L, 0L, 0L)
+#   )
+#   a %<>% decorate('
+#     EVID: [ Event ID, [ Observation: 0, Dose: 1]]
+#     MDV: [ Missing DV, [ Not Missing: 0, Missing: 1]]
+#   ')
+# 
+#  a %>% decorations
+#  a 
+#  # The programmatic goal is to set MDV to 1 where EVID is 1.
+#  # One problem is that the user is likely to assign 'double' to this integer.
+#  # Another problem is that decorations historically have been destroyed here.
+#  
+#  # Most intuitive code is this. Note MDV becomes num and decorations are preserved as of 0.10.7.
+#  expect_identical(
+#   a %>% mutate(MDV = if_else(EVID == 1, 1, MDV))  %$% MDV %>% attr('label'), 'Missing DV'
+#  )
+#  
+# 
+#  # This version is less intuitive.  MDV becomes num and decorations are preserved.
+#  expect_identical(
+#    a %>% mutate(MDV = if_else(EVID != 1, MDV, 1))  %$% MDV %>% attr('label'), 'Missing DV'
+#  )
+#  
+#  # This version is easy to understand, MDV stays int, decorations are preserved.
+#  expect_identical(
+#  a %>% mutate(MDV = MDV %>% replace(EVID == 1, 1)) %$% MDV %>% attr('label'), 'Missing DV'
+# )
+#  # This version is intuitive, but like if_else coerces to dvec num and drops decorations.
+#  expect_identical(
+#  a %>% mutate(MDV = case_when(EVID == 1 ~ 1, TRUE ~ MDV)) %$% MDV %>% attr('label'), 'Missing DV'
+# )
+#  # This version less intuitive, but like if_else coerces to dvec num and preserves decor.
+#  expect_identical(
+#  a %>% mutate(
+#    MDV = case_when(
+#      EVID != 1 ~ MDV, 
+#      EVID == 1 ~ 1
+#    )
+#  )  %$% MDV %>% attr('label'), 'Missing DV'
+#  )
+#  
+#  # something similar going on with vec_c, i.e. order independence at 0.10.7
+#  expect_identical(
+#  vctrs::vec_c(1, as_dvec(1L, label = 'foo')),
+#  vctrs::vec_c(as_dvec(1L, label = 'foo'), 1)
+#  )
+#  
+#  # of course, coercing to dvec gets it right
+#  expect_identical(
+#  vctrs::vec_c(as_dvec(1), as_dvec(1L, label = 'foo')),
+#  vctrs::vec_c(as_dvec(1L, label = 'foo'), as_dvec(1))
+#    
+#  )
+#  
+#  # is replace() na-safe?  Does an NA in the condition destroy good data?
+#  b <- data.frame(
+#    EVID = c(0L, 1L, NA),
+#    MDV = c(0L, 0L, 0L)
+#  )
+#  
+#  expect_false(
+#  b %>% mutate(MDV = MDV %>% replace(EVID == 1, 1)) %$% MDV %>% is.na %>% any
+#    
+#  )
+#  # yes!  MDV not disturbed where EVID == 1 returns NA.
+#  
+# })
+

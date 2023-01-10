@@ -11,7 +11,7 @@
 
 \item{to}{dvec}
 
-\item{...}{passed arguments}
+\item{...}{ignored}
 }
 \description{
 Cast to dvec from dvec.
