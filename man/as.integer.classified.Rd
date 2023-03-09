@@ -16,7 +16,7 @@
 
 \item{offset}{an integer value to add to intermediate result}
 
-\item{...}{passed to \code{\link{as.numeric}}, code{\link{as.integer}}, and code{\link{desolve}}}
+\item{...}{passed to \code{\link{desolve}}}
 
 \item{persistence}{whether to return 'dvec' (is.integer(): TRUE) or just integer.}
 }
@@ -26,8 +26,9 @@ integer (possibly of class dvec)
 \description{
 Coerces classified to integer.
 Result is like \code{as.integer(as.numeric(x)) + offset}
-but has a guide giving original values. If you need
-a simple integer, consider coercing first to numeric.
+but has a guide attribute: a list of integers 
+whose names are the original levels of x.
+If you need a simple integer, consider coercing first to numeric.
 }
 \examples{
 library(magrittr)
@@ -49,20 +50,20 @@ options(yamlet_persistence = FALSE)
 c('knife','fork','spoon') \%>\% 
   classified \%>\%
   as.integer \%>\% 
-  class
+  class # integer
   
 # remove option to restore default persistence paradigm
 options(yamlet_persistence = NULL)
 c('knife','fork','spoon') \%>\% 
   classified \%>\%
   as.integer \%>\% 
-  class
+  class # dvec
   
 # locally defeat persistence paradigm
 c('knife','fork','spoon') \%>\% 
   classified \%>\%
   as.integer(persistence = FALSE) \%>\% 
-  class
+  class # integer
   
 
 }
@@ -77,6 +78,7 @@ Other classified:
 \code{\link{classified.data.frame}()},
 \code{\link{classified.default}()},
 \code{\link{classified.dvec}()},
+\code{\link{classified.factor}()},
 \code{\link{classified}()},
 \code{\link{desolve.classified}()},
 \code{\link{unclassified.classified}()},

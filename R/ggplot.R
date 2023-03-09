@@ -165,7 +165,7 @@ ggplot.decorated <- function(data, ...){
 #' 
 #'
 #' @param x class 'decorated_ggplot' from \code{\link{ggplot.decorated}}
-#' @param ... passed arguments
+#' @param ... ignored
 #' @param search attribute names from which to seek label substitutes
 #' @param discrete discrete aesthetics to map from data decorations where available
 #' @param drop should unused factor levels be omitted from data-driven discrete scales?
@@ -269,9 +269,13 @@ print.decorated_ggplot <- function(
 #' Enable automatic labels and units for ggplot.
 #' Substitutes column label, if present, for default.
 #' Supports arrangements of ggplot objects.
+#' Defined similarly to \code{\link{print.decorated_ggplot}}
+#' and respects global options 
+#' yamlet_decorated_ggplot_search,
+#' yamlet_decorated_ggplot_discrete, and
+#' yamlet_decorated_ggplot_drop.
 #'
-#' @param x class 'decorated_ggplot' from \code{\link{ggplot.decorated}}
-#' @param ... passed arguments
+#' @param plot class 'decorated_ggplot' from \code{\link{ggplot.decorated}}
 #' @return see \code{\link[ggplot2]{ggplot_build}}
 #' @export
 #' @method ggplot_build decorated_ggplot
@@ -279,7 +283,91 @@ print.decorated_ggplot <- function(
 #' @keywords internal
 #' @family decorated_ggplot
 
-ggplot_build.decorated_ggplot <- print.decorated_ggplot
+ggplot_build.decorated_ggplot <- function(plot){
+  search = getOption(
+    'yamlet_decorated_ggplot_search',
+    c('expression', 'title', 'label')
+  )
+  discrete = getOption(
+    'yamlet_decorated_ggplot_discrete',
+    c('colour', 'fill', 'size', 'shape', 'linetype', 'alpha')
+  )
+  drop = getOption('yamlet_decorated_ggplot_drop', TRUE)
+  # support for discrete manual scales
+  labelnames <- names(plot$labels)
+  aesthetics <- intersect(discrete, labelnames)
+  scaletypes <- sapply(plot$scales$scales, `[[`, 'aesthetics')
+  # don't redefine existing scales:
+  aesthetics <- setdiff(aesthetics, scaletypes)
+  for(a in aesthetics){
+    src <- plot$labels[[a]]
+    if(length(src) == 1){
+      if(src %in% names(plot$data)){
+        col <- plot$data[[src]]
+        atr <- attributes(col)
+        nms <- names(atr)
+        if('color' %in% nms & !'colour' %in% nms){
+          atr$colour <- atr$color
+        }
+        if(a %in% names(atr)){
+          this <- atr[[a]]
+          # preserve correspondence with guides
+          # increasing precedence:
+          breaks <- waiver()
+          if(drop) breaks <- sort(unique(col))
+          levels <- sort(unique(col))
+          if('guide' %in% names(atr)) levels <- atr$guide
+          if(is.factor(col)) levels <- levels(col)
+          if('codelist' %in% names(atr)) levels <- atr$codelist # ignore names
+          this <- rep(this, length.out = length(levels))
+          names(this) <- levels
+          this <- unlist(this)
+          # create a new scale using the stored values
+          plot <- plot + scale_discrete_manual(
+            aesthetics = a,
+            values = this,
+            breaks = breaks
+          )
+        }
+      }
+    }
+  }
+  
+  for(i in seq_along(plot$labels)){           # plot (gg object) stores names of used columns as $labels
+    lab <- plot$labels[[i]]                   # handle one label
+    if(length(lab)){                       # i.e. not null or empty expression
+      if(length(lab) == 1){
+        if(lab %in% names(plot$data)){            # if this is just a bare column name
+          col <- plot$data[[lab]]
+          atr <- attributes(col)
+          for( s in rev(search)){              # end with first
+            label <- atr[[s]]                  # retrieve label
+            if(!is.null(label)){
+              plot$labels[[i]] <- label           # overwrite default label with one from data attributes
+            }
+          }
+        } 
+      }
+      # done with search.  Plural labels? Note plot$labels unchanged, lab unchanged
+      if(length(lab) > 1){
+        if(length(names(lab)))lab = paste(
+          paste0(
+            '(',
+            names(lab),
+            ')'
+          ),
+          lab
+        )
+        lab <- paste(lab, collapse = '\n')
+        msg <- paste('using first of', lab, sep = '\n')
+        warning(msg)
+        plot$labels[[i]] <- plot$labels[[i]][[1]]
+      }
+    }
+  }
+  NextMethod()
+}
+
 
 #' Determine Scale Type for dvec
 #' 

@@ -25,7 +25,7 @@ mimic <- function(x, ...)UseMethod('mimic')
 #'
 #' @param x vector-like
 #' @param y vector-like, same length as x
-#' @param ... ignored arguments
+#' @param ... passed to \code{link{factor}}
 #' @export
 #' @importFrom stats setNames
 #' @return same class as x
@@ -70,7 +70,7 @@ mimic.default <- function(x, y = x, ...){
   attributes(x) <- at
 
   # native-type levels
-  z <- factor(x) # not as.factor(x), which retains unused levels if x is factor.
+  z <- factor(x, ...) # not as.factor(x), which retains unused levels if x is factor.
   ind <- match(levels(z), z)
   lev <- x[ind]
   if(is.factor(x)) lev <- as.character(lev)
@@ -80,7 +80,17 @@ mimic.default <- function(x, y = x, ...){
   nms <- proxy(z, y)
 
   # reduce
-  if(all(nms == unlist(lev))){
+  # i.e. if nms effectively the same as lev,
+  # don't use the names
+  # since comparison may contain NA, 
+  # check NA match and character equality separately
+  # example: mimic(factor(NA, levels = NA, exclude = NULL), 1, exclude = NULL)
+  if(
+    all(
+      is.na(nms) == is.na(unlist(lev)) &
+      paste(nms) == paste(unlist(lev))
+    )
+  ){
     lev <- unlist(lev)
   } else {
     lev <- setNames(lev, nms)

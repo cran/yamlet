@@ -1349,13 +1349,24 @@ test_that('variables with units support unit math',{
 
 test_that('classified.data.frame passes exclude = NULL to member factors',{
   x <- data.frame(letters = c('a','b','c','d', NA))
-  x %<>% decorate('letters: [Letters, [ a, b, c ]]')
+  x %<>% decorate('letters: [Letters, [ a, b, c, d, NA ]]')
   x %>% decorations
-  suppressWarnings(x %<>% explicit_guide)
+  x %<>% explicit_guide
   x %>% decorations
   x %<>% classified(exclude = NULL)
   expect_true(NA %in% attr(x$letters, 'codelist'))
   expect_true(NA %in% levels(x$letters))
+})
+
+test_that('codelist can contain literal NA if quoted',{
+  x <- data.frame(letters = c('a','b','c','d', 'NA'))
+  x %<>% decorate('letters: [Letters, [ a, b, c, d, "NA" ]]')
+  x %>% decorations
+  x %<>% explicit_guide
+  x %>% decorations
+  x %<>% classified
+  expect_true('NA' %in% attr(x$letters, 'codelist'))
+  expect_true('NA' %in% levels(x$letters))
 })
 
 test_that('when two different decodes have the same code, classified levels match classified codelist values',{
@@ -1423,6 +1434,14 @@ test_that('classified does not re-classify',{
   x %>% resolve
   x %>% resolve(sex)
   x %>% resolve(sex) %>% resolve
+  x %>% resolve %$% sex %>% attributes
+  x %>% resolve(sex) %>% resolve %$% sex %>% attributes
+  x %>% resolve(sex) %$% sex %>% attributes
+  
+  foo <- x %>% resolve(sex)
+  # this drops sex label:
+  foo %>% resolve %>% decorations
+  
   expect_identical(
     x %>% resolve,
     x %>% resolve(sex) %>% resolve
@@ -1567,15 +1586,15 @@ test_that('row_bind of supported table types returns consistent class and functi
   # either a data.frame, tbl_df, or grouped_df
   # or by extension, decorated data.frame, decorated tbl_df, decorated grouped_df
   
-  bind_rows(a, a) %>% str # no magic, attributes dropped, not surprising
-  bind_rows(b, b) %>% str # magic
-  bind_rows(c, c) %>% str # magic
-  bind_rows(a, b) %>% str # magic @ 0.10.7
-  bind_rows(b, a) %>% str # magic
-  bind_rows(a, c) %>% str # magic @ 0.10.7
-  bind_rows(c, a) %>% str # magic
-  bind_rows(b, c) %>% str # returns decorated data.frame, not surprising
-  bind_rows(c, b) %>% str # magic
+  # bind_rows(a, a) %>% str # no magic, attributes dropped, not surprising
+  # bind_rows(b, b) %>% str # magic
+  # bind_rows(c, c) %>% str # magic
+  # bind_rows(a, b) %>% str # magic @ 0.10.7
+  # bind_rows(b, a) %>% str # magic
+  # bind_rows(a, c) %>% str # magic @ 0.10.7
+  # bind_rows(c, a) %>% str # magic
+  # bind_rows(b, c) %>% str # returns decorated data.frame, not surprising
+  # bind_rows(c, b) %>% str # magic
   
   expect_equal_to_reference(file = '108.rds', decorations(bind_rows(a, a)))
   expect_equal_to_reference(file = '109.rds', decorations(bind_rows(b, b)))
@@ -1610,7 +1629,7 @@ test_that('yamlet warns if codelist not one-to-one',{
     race: [ Race, [White: 1, White: 1, Asian: 1 ]]
     ethnicity: [ Ethnicity, [ Hispanic: 0, Hispanic: 1]]
   ')
-  x %>% resolve %>% decorations
+  expect_warning(x %>% resolve %>% decorations)
   expect_warning(x %>% resolve)
 
 })
@@ -1629,7 +1648,7 @@ test_that('yamlet warns if row_bind gives overlapping codelist',{
   y %<>% decorate('
     race: [ Race, [Asian: 1, White: 2, Black: 3]]
   ')
-  bind_rows(x, y) %>% resolve
+  expect_warning(bind_rows(x, y) %>% resolve)
   expect_warning(bind_rows(x, y))
 })
 
@@ -1683,3 +1702,178 @@ test_that('decorations for "n" etc. survive trip to storage', {
 test_that('decorating with guide element -1 survives trip to storage as integer',{
   expect_identical(to_yamlet(-1L), "-1")
 })
+
+test_that('classified.classified() drops unused levels',{
+  a <- factor(c('knife','fork'), levels = c('knife','fork','spoon'))
+  levels(a) # three levels
+  levels(factor(a)) # two levels
+  b <- classified(a)
+  levels(b) # three levels
+  levels(classified(b))
+  levels(classified(b, drop = TRUE))
+  expect_identical(levels(classified(b, drop = TRUE)), c('knife', 'fork'))
+  b
+  classified(b)
+  expect_silent(classified(b, levels = 'knife'))
+  expect_error(classified(b, labels = 'knife'))
+  expect_silent(classified(b, labels = c('Knife','Fork','Spoon')))
+  expect_error(classified(b, labels = c('Knife','Fork','Spoon'), exclude = 'fork'))
+  expect_silent(classified(b, drop = TRUE, labels = c('Knife','Fork')))
+})
+
+test_that('classified() supports NA values',{
+  a <- factor(c('knife','fork','spoon'), levels = c('knife','fork'))
+  b <- classified(a)
+  expect_true(any(is.na(b)))
+  expect_false(any(is.na(attr(b, 'codelist'))))
+  expect_identical(levels(a), levels(b))
+})
+
+test_that('classified() supports NA levels',{
+  a <- factor(c('knife','fork', NA), levels = c('knife','fork',NA), exclude = NULL)
+  expect_true(any(is.na(levels(a))))
+  b <- classified(a, exclude = NULL)
+  expect_false(any(is.na(b)))
+  expect_true(any(is.na(attr(b, 'codelist'))))
+  levels(a)
+  levels(b)
+  expect_identical(levels(a), levels(b))
+})
+
+test_that('as.integer.classified() supports NA values and levels',{
+  a <- classified(
+    factor(
+      c('knife','fork','spoon'), 
+      levels = c('knife','fork')
+    )
+  )
+  b <- classified(
+    factor(
+      c('knife','fork',NA), 
+      levels = c('knife','fork',NA), 
+      exclude = NULL
+    ), 
+    exclude = NULL
+  )
+  ai <- as.integer(a, -1)
+  expect_identical(as.integer(ai), c(0L, 1L, NA))
+  expect_identical(as.integer(attr(ai, 'guide')), c(0L, 1L))
+  expect_identical(names(attr(ai, 'guide')), c('knife','fork'))
+ 
+  bi <- as.integer(b, -1, exclude = NULL)
+  expect_false(any(is.na(bi)))
+  expect_true(any(is.na(names(attr(bi, 'guide')))))
+})
+
+test_that('classified() handles multiple new levels appropriately',{
+  a <- structure(1:3, codelist = list(knife = 1, fork = 2, spoon = 3))
+  b <- classified(a)
+  expect_identical(b, classified(b))
+  expect_warning(
+    c <- classified(
+      b, 
+      levels = c('knife','fork','spoon','chopstix','ladel'),
+      labels = c('Knife','Fork','Spoon','Chopstix','Ladel')
+    )
+  )
+})
+
+test_that('literal NA and NA_character_ survive round-trip',{
+  a <- 'letters: [ Letters, [ a, b, c, NA ]]'
+  x <- data.frame(letters = c('a','b','c', NA))
+  x %<>% decorate(a)
+  b <- write_yamlet(x)
+  expect_identical(a, b)
+  
+  a <- "letters: [ Letters, [ a, b, c, 'NA' ]]"
+  x <- data.frame(letters = c('a','b','c', 'NA'))
+  x %<>% decorate(a)
+  b <- write_yamlet(x)
+  expect_identical(a, b)
+})
+
+test_that('yamlet names can be true NA or NA string',{
+  a <- "letters: [ Letters, [ A: a, B: b, C: c, 'NA': 'NA', NA: NA ]]"
+  x <- data.frame(letters = c('a','b','c', 'NA', NA ))
+  x %<>% decorate(a)
+  foo <- capture.output(b <- write_yamlet(x))
+  expect_identical(a, b)
+  c <- attr(x$letters, 'guide')
+  expect_true(any(is.na(names(c))))
+  expect_true(any(is.na(c)))
+  expect_equal_to_reference(capture.output(decorations(x)), file = '118.rds')
+  x %<>% redecorate("letters: [ Letters, [ a, b, c, 'NA', NA ]]")
+  expect_equal_to_reference(capture.output(decorations(x)), file = '119.rds')
+})
+
+test_that('as.integer.classified gives fully-recoverable result when NA is a level',{
+  library(dplyr)
+  x <- data.frame(letters = c('a','b','c',NA))
+  x %<>% decorate('letters: [ Letters, [NA, a, b, c ]]')
+  x %<>% resolve(exclude = NULL)
+  x %<>% mutate(letters = classified(letters, exclude = NULL))
+  x %<>% mutate(letters = as.integer(letters, -1, exclude = NULL))
+  expect_silent(x %>% resolve(letters))
+  x %<>% resolve
+  expect_equal_to_reference(x, file = '120.rds')
+})
+
+test_that('mimic supports solitary NA',{
+  expect_silent(
+    {
+      mimic(NA, NA)
+      mimic(factor(NA), NA)
+      mimic(factor(NA, exclude = NULL), NA)
+      mimic(NA, 1)
+      mimic(factor(NA), 1)
+      mimic(factor(NA, exclude = NULL), 1)
+      mimic(factor(NA, levels = c(NA, 'foo')), 1)
+      mimic(factor(NA, levels = NA, exclude = NULL), 1)
+    }
+  )
+  
+  expect_silent(
+    {
+      mimic(
+        factor(
+          NA, 
+          levels = NA, 
+          exclude = NULL
+        ), 
+        1, 
+        exclude = NULL
+      )
+    }
+  )
+  
+ 
+})
+
+test_that('as.integer.classified preserves all levels',{
+  
+  a <- classified(
+    c('knife','fork'), 
+    levels = c(NA, 'knife','fork','spoon'), 
+    exclude = NULL
+  )
+  attr(a, 'label') <- 'my label'
+  b <- as.integer(a)
+  guide <- unlist(attr(b, 'guide'))
+  nms <- names(guide)
+  names(guide) <- NULL
+  expect_identical(nms, levels(a))
+  expect_identical(guide, 1:4)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+

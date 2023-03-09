@@ -1,7 +1,7 @@
 Package: yamlet
 Type: Package
 Title: Versatile Curation of Table Metadata
-Version: 0.10.10
+Version: 0.10.18
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 BugReports: https://github.com/bergsmat/yamlet/issues
@@ -16,12 +16,12 @@ Description: A YAML-based
 License: GPL-3
 Encoding: UTF-8
 Imports: yaml, csv (>= 0.6.2), encode, units, spork, ggplot2, scales,
-        dplyr (>= 0.8.1), rlang, xtable, tidyr, vctrs, pillar
+        dplyr (>= 1.1.0), rlang, xtable, tidyr, vctrs, pillar
 RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 Suggests: testthat (>= 2.1.0), magrittr, table1, knitr, rmarkdown,
         gridExtra, haven
 NeedsCompilation: no
-Packaged: 2023-02-17 14:53:04 UTC; tim.bergsma
+Packaged: 2023-03-09 00:44:02 UTC; tim.bergsma
 Repository: CRAN
-Date/Publication: 2023-02-17 15:40:02 UTC
+Date/Publication: 2023-03-09 01:10:03 UTC

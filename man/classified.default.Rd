@@ -7,7 +7,7 @@
 \method{classified}{default}(
   x = character(),
   levels,
-  labels = levels,
+  labels,
   exclude = NA,
   ordered = is.ordered(x),
   nmax = NA,
@@ -68,6 +68,7 @@ Other classified:
 \code{\link{classified.classified}()},
 \code{\link{classified.data.frame}()},
 \code{\link{classified.dvec}()},
+\code{\link{classified.factor}()},
 \code{\link{classified}()},
 \code{\link{desolve.classified}()},
 \code{\link{unclassified.classified}()},
