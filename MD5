@@ -1,4 +1,4 @@
-d3291da9087411d4bfbe4195dbcbd5fb *DESCRIPTION
+fbe7b48c67c14655c28dcfd6d36adc14 *DESCRIPTION
 7248147b876141af3aef156986818c3e *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 2e6fdf23826e41f130bccffb69a24add *R/append_units.R
@@ -34,7 +34,7 @@ b0b4646041685cc302c3507b7877c5e1 *R/merge.R
 adfaf7edc783c5be03474d8325a9af3d *R/parsimonious.R
 8302cab411f7e58181a87d0327faa69b *R/proxy.R
 66c8d04c507f8e0b2d85fcbd529199f4 *R/resolve.R
-0a8fa475bec8009aac6e87a4a1bbdd34 *R/selected.R
+6bd9552b9ca997f0e9016834eabf73cd *R/selected.R
 a47c11eba8d66757cd05b9d01d08aac1 *R/singularity.R
 3651a226f6d02d41fd9fc46f4ec8a026 *R/spork.R
 4ee36ae3a116688d0e22de5a63ff1a86 *R/sub_units.R
@@ -46,10 +46,10 @@ e5b914c724dd23c6a5297ae717cff405 *R/vec_ptype2.R
 916af488ef283f794e9c8ccbad47207f *R/xtable.R
 7f5dff4444ca862982771d1c4cb70d10 *R/yamlet.R
 87754f131182060fd36339ce9bc0e681 *R/yamlet_options.R
-dc9073d30e0a2454412b073dfae7745b *build/vignette.rds
+948ce8e5e607081668e1231b06efdea2 *build/vignette.rds
 302f27528a7b521cf4d6a8fbd5d3618b *inst/doc/yamlet-introduction.R
 bf0bdaebae0fdc88439b668cdbd83132 *inst/doc/yamlet-introduction.Rmd
-2680a730378b3926ee09489ba343ad02 *inst/doc/yamlet-introduction.html
+cb150e92bbf1946340f430637d27dbd8 *inst/doc/yamlet-introduction.html
 255842f52fbd8095276ccc05a3bf9a8c *inst/extdata/dm.xpt.gz
 bdf3edfcbe6b60654f070070552f101d *inst/extdata/ex.xpt.gz
 cafea32947c3e721c349e52d695b9be5 *inst/extdata/pc.R
@@ -76,7 +76,7 @@ cce57336d9a22b60d9947fa551dbe837 *man/arbitrate.NULL.Rd
 2001d766cb03b209dcfde304ad90e620 *man/arbitrate.default.Rd
 c36b7a2798cf0448bcca26438e83a3dc *man/arbitrate.list.Rd
 2118b02f8882908ba4961c31e7adeb91 *man/arbitrate.namedList.Rd
-742bf1efd5b1d350d97ec6a1089f1af9 *man/arrange.decorated.Rd
+7e92f0cca7c3f781751bf4e6f11b3bed *man/arrange.decorated.Rd
 d294d6aa45976175f111d4c38e632d5d *man/as.character.yam.Rd
 63b1c88d983c64186904803d3d5a3ec8 *man/as.character.yamlet.Rd
 11c7779ff40b070dba183e92ef68e5f6 *man/as.data.frame.dvec.Rd
@@ -201,7 +201,7 @@ d311f45287831e42c5d2b924e19cfc51 *man/mimic.Rd
 fa66bb1131c85fa7f9c765600356b8e3 *man/mimic.default.Rd
 392ede99dd43a6afc3b0e1d1fe44e9e0 *man/modify.Rd
 6d8cd283f9eb5e88b4724070c82d859f *man/modify.default.Rd
-41c8ccfbe242420654f6ad4447fd0127 *man/mutate.decorated.Rd
+ed93058268464324c7f6c95757b0c4e0 *man/mutate.decorated.Rd
 ad5d9314ea15fbcfbba91a0d4f9f24d2 *man/named.Rd
 155dc44e75c736af354518d1bcef1fbf *man/names-set-.decorated.Rd
 476686d07aca474fe5b7020177996e34 *man/parsimonious.Rd
@@ -234,7 +234,7 @@ ed7d68d99b4c4cfdd47d56bb90bdb75c *man/scale_type.dvec.Rd
 02d52bcf39e6d6debdb13d38be7ac186 *man/selected.default.Rd
 435372769399e5b8b05d64e392750e58 *man/semi_join.decorated.Rd
 b49b6ec981cce7415a12c48af290dc46 *man/singularity.Rd
-6f6c0d83cd51c7ae31350e28f0d57bfc *man/slice.decorated.Rd
+4d7b33bcef9fa375c36678358890eaca *man/slice.decorated.Rd
 246dc2e0c73afa9f389ba6fe727d8ff9 *man/sub-.classified.Rd
 e32a5d5eb54d0a4c6262ffd85107a742 *man/sub-.decorated.Rd
 37d4719fb3465ab5783bdb316bbe578f *man/sub-.dvec.Rd
@@ -251,8 +251,8 @@ f3beb20a8418fbbc26ce2f354c1f94ea *man/sub_units.Rd
 e2e840123d120473e394e8006c0b0f48 *man/subset-.classified.Rd
 334f77db641da171fe66e2f296ebbdb6 *man/subset-.decorated.Rd
 1682cc828085befa07f0322df6baede8 *man/subset-.dvec.Rd
-934407f55cdcc88b08ca96cab00e25ed *man/summarise.decorated.Rd
-e26b8872c8773737c7c9e9c6b47fab41 *man/summarize.decorated.Rd
+e020243ad30c57b76bf7d4ab6f664183 *man/summarise.decorated.Rd
+d021f3e17459e2d31915d7d33b867686 *man/summarize.decorated.Rd
 a0f6fa7b7c897ae074f5e1ae35471e2f *man/symmetric.Rd
 78b69add331aaec3c34050ac0778c9ef *man/to_yamlet.NULL.Rd
 f60731d473f67c9c9079361275670f98 *man/to_yamlet.Rd
@@ -429,5 +429,5 @@ b0bffb85881a07e05fc002939ac649fe *tests/testthat/donttest-yamlet.R
 477bc0ce7fc0b3e986c24e27e98823b2 *tests/testthat/graphics-yamlet.R
 692cb862f9e2bbac8890d1f4a5ab4fb7 *tests/testthat/test-dvec.R
 eb22523a71ce91a93f92ed7167b451da *tests/testthat/test-gz.R
-e5995600f94062b576c7bf2b068c3605 *tests/testthat/test-yamlet.R
+d80e9ba9c0107db76f30aec55fd941b9 *tests/testthat/test-yamlet.R
 bf0bdaebae0fdc88439b668cdbd83132 *vignettes/yamlet-introduction.Rmd
