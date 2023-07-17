@@ -4,12 +4,14 @@
 \alias{selected.default}
 \title{Identify Selected Names by Default}
 \usage{
-\method{selected}{default}(x, ...)
+\method{selected}{default}(x, ..., expand = TRUE)
 }
 \arguments{
 \item{x}{object}
 
 \item{...}{to \code{\link[dplyr]{select}}}
+
+\item{expand}{if true, selecting nothing expands to selecting everything}
 }
 \value{
 character: names in x
@@ -29,7 +31,7 @@ selected(b:c)
 \seealso{
 Other modify: 
 \code{\link{modify.default}()},
-\code{\link{modify}()},
+\code{\link{modify_generic}},
 \code{\link{named}()},
 \code{\link{selected}()}
 

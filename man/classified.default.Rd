@@ -2,6 +2,7 @@
 % Please edit documentation in R/classified.R
 \name{classified.default}
 \alias{classified.default}
+\alias{classified}
 \title{Create Classified by Default}
 \usage{
 \method{classified}{default}(
@@ -11,6 +12,7 @@
   exclude = NA,
   ordered = is.ordered(x),
   nmax = NA,
+  token = character(0),
   ...
 )
 }
@@ -26,6 +28,8 @@
 \item{ordered}{see \code{\link{factor}}}
 
 \item{nmax}{see \code{\link{factor}}}
+
+\item{token}{informative label for messages}
 
 \item{...}{ignored}
 }
@@ -69,7 +73,7 @@ Other classified:
 \code{\link{classified.data.frame}()},
 \code{\link{classified.dvec}()},
 \code{\link{classified.factor}()},
-\code{\link{classified}()},
+\code{\link{classified_generic}},
 \code{\link{desolve.classified}()},
 \code{\link{unclassified.classified}()},
 \code{\link{unclassified.data.frame}()},

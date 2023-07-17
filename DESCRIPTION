@@ -1,7 +1,7 @@
 Package: yamlet
 Type: Package
 Title: Versatile Curation of Table Metadata
-Version: 0.10.21
+Version: 0.10.28
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 BugReports: https://github.com/bergsmat/yamlet/issues
@@ -11,8 +11,7 @@ Description: A YAML-based
  importing, displaying, and plotting metadata coded as column 
  attributes. The 'yamlet' dialect is valid 'YAML' with
  defaults and conventions chosen to improve readability. 
- See ?yamlet, ?decorate.data.frame and ?modify.default.
- See ?read_yamlet ?write_yamlet, ?io_csv, and ?ggplot.decorated.
+ See ?yamlet, ?decorate, ?modify, ?io_csv, and ?ggplot.decorated.
 License: GPL-3
 Encoding: UTF-8
 Imports: yaml, csv (>= 0.6.2), encode, units, spork, ggplot2, scales,
@@ -22,6 +21,6 @@ VignetteBuilder: knitr
 Suggests: testthat (>= 2.1.0), magrittr, table1, knitr, rmarkdown,
         gridExtra, haven
 NeedsCompilation: no
-Packaged: 2023-04-28 15:12:09 UTC; tim.bergsma
+Packaged: 2023-07-17 18:21:16 UTC; tim.bergsma
 Repository: CRAN
-Date/Publication: 2023-04-28 21:10:02 UTC
+Date/Publication: 2023-07-17 20:00:02 UTC
