@@ -9,7 +9,7 @@
 \arguments{
 \item{...}{passed to next method}
 
-\item{x}{classified factor}
+\item{recursive}{passed to unlist() internally}
 }
 \value{
 class 'classified' 'factor'
@@ -44,7 +44,7 @@ Other classified:
 \code{\link{classified.default}()},
 \code{\link{classified.dvec}()},
 \code{\link{classified.factor}()},
-\code{\link{classified_generic}},
+\code{\link{classified}()},
 \code{\link{desolve.classified}()},
 \code{\link{unclassified.classified}()},
 \code{\link{unclassified.data.frame}()},
