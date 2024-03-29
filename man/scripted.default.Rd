@@ -24,7 +24,7 @@
 \item{format}{one of 'latex' or 'html'}
 }
 \value{
-same class as x
+'scripted', a superclass of x
 }
 \description{
 Modifies specific attributes of each indicated element
@@ -35,15 +35,24 @@ The goal here is to render labels and units (where present)
 in a way that supports subscripts and superscripts 
 for both plots and tables in either html or latex contexts.
 
-The current implementation writes an expression attribute
-to support figure labels and a title attribute to support
+The current implementation writes an 'expression' attribute
+to support figure labels and a 'title' attribute to support
 tables. \code{\link{print.decorated_ggplot}} will attempt
 to honor the expression attribute if it exists.
 \code{\link[tablet]{tablet.data.frame}} will attempt to honor
 the title attribute if it exists (see Details there).
 An attempt is made to guess the output format (html or latex).
 
-To flexibly support plotmath, html, and latex, this function
+In addition to the 'title' and 'expression' attributes, scripted() writes
+a 'plotmath' attribute to store plotmath versions of factor levels, 
+where present. \code{\link{print.decorated_ggplot}} should prefer
+these over their latex and html counterparts. Furthermore,
+factor levels (and codelists, where present) are converted
+to their latex or html equivalents. None of this happens
+if a 'plotmath' attribute already exists, thus preventing 
+the same variable from being accidentally transformed twice.
+
+To flexibly support latex, html, and plotmath, this function
 expects column labels and units to be encoded in "spork" syntax.
 See \code{\link[spork]{as_spork}} for details and examples.
 Briefly, "_" precedes a subscript, "^" precedes a superscript,
@@ -51,7 +60,10 @@ and "." is used to force the termination of either a
 superscript or a subscript where necessary. For best results,
 units should be written using *, /, and ^; e.g. "kg*m^2/s^2"
 not "kg m2 s-2" (although both are valid:  
-see \code{\link{is_parseable}}). 
+see \code{\link{is_parseable}}). A literal backslash followed by "n"
+represents a newline. Greek letters are represented by their names,
+except where names are enclosed in backticks.
+
 
 \code{scripted()} always calls \code{resolve()} for the indicated
 columns, to make units present where appropriate.
@@ -69,6 +81,7 @@ x \%>\% decorations
 x \%>\% ggplot(aes(time, work)) + geom_point()
 x \%>\% scripted \%>\% ggplot(aes(time, work)) + geom_point()
 x \%>\% scripted(format = 'html') \%$\% work \%>\% attr('title')
+testthat::expect_equal(scripted(x), scripted(scripted(x)))
 }
 \seealso{
 Other scripted: 

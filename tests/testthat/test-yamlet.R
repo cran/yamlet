@@ -135,6 +135,12 @@ test_that('interconversion to and from storage is conservative',{
     readLines(meta),
     as.character(as_yamlet(decorate(file)))
   )
+  a <- data.frame(foo = 1)
+  a %<>% decorate('foo: [[A: 1, B: 2]]')
+  expect_identical(
+    a %>% decorations,
+    a %>% io_csv(tempfile(fileext = '.csv')) %>% io_csv %>% decorations
+  )
 })
 
 test_that('coersion to storage format is stable',{
@@ -1870,8 +1876,30 @@ test_that('modify supports nonstandard column names',{
   expect_silent(modify(a, 'has space', name = name))
 })
 
+test_that('scripted() is stable and idempotent', {
+  x <- data.frame(
+    time = 1:10, 
+    work = (1:10)^1.5, 
+    group = 1:2, 
+    set = c(rep('delta',5), rep('gamma', 5))
+  )
+  x %<>% decorate('
+ time: [ Time_cum.^alpha, h ]
+ work: [ Work_total_obs\\n, kg*m^2/s^2 ]
+ group: [ Group, [ Second^\\*: 2, First^#: 1 ]]
+ set: [ Set, [ gamma, delta ]]
+')
+  x %>% decorations
+  expect_equal_to_reference(file = '121.rds', scripted(x))
+  options(yamlet_default_keys = c('label', 'guide', 'title', 'expression', 'plotmath', 'levels', 'codelist'))
+  expect_equal(canonical(scripted(x)), canonical(scripted(scripted(x))))
+})
 
-
+test_that('resolve() and desolve() accommodate anonymous arguments', {
+x <- data.frame(foo = 1)
+expect_silent(resolve(x, foo))
+expect_silent(desolve(x, foo))
+})
 
 
 
