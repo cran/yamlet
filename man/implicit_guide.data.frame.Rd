@@ -46,12 +46,12 @@ x \%>\% explicit_guide(simplify = FALSE) \%>\% implicit_guide \%>\% decorations
 }
 \seealso{
 Other explicit_guide: 
+\code{\link{explicit_guide}()},
 \code{\link{explicit_guide.data.frame}()},
 \code{\link{explicit_guide.dvec}()},
 \code{\link{explicit_guide.yamlet}()},
-\code{\link{explicit_guide}()},
-\code{\link{implicit_guide.dvec}()},
 \code{\link{implicit_guide}()},
+\code{\link{implicit_guide.dvec}()},
 \code{\link{infer_guide}()}
 }
 \concept{explicit_guide}

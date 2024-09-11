@@ -72,8 +72,8 @@ yaml.load('-', handlers = list(seq = parsimonious))
 }
 \seealso{
 Other parsimonious: 
-\code{\link{parsimonious.default}()},
-\code{\link{parsimonious}()}
+\code{\link{parsimonious}()},
+\code{\link{parsimonious.default}()}
 }
 \concept{parsimonious}
 \keyword{internal}

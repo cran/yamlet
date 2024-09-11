@@ -78,6 +78,9 @@
 #'   most cases fine detail will likely have names.
 #' * **yamlet_format**: \code{\link{scripted.default}}.
 #'   Choice of 'html' or 'latex', guessed if not supplied.
+#' * **yamlet_warn_conflicted**: \code{\link{c.classified}}.
+#'   Whether to warn when codelists for combined classified
+#'   factors have conflicting names (which will be dropped).
 #' 
 #' @export
 #' @md

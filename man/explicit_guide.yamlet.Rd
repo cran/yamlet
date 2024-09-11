@@ -55,12 +55,12 @@ library(magrittr)
 }
 \seealso{
 Other explicit_guide: 
+\code{\link{explicit_guide}()},
 \code{\link{explicit_guide.data.frame}()},
 \code{\link{explicit_guide.dvec}()},
-\code{\link{explicit_guide}()},
+\code{\link{implicit_guide}()},
 \code{\link{implicit_guide.data.frame}()},
 \code{\link{implicit_guide.dvec}()},
-\code{\link{implicit_guide}()},
 \code{\link{infer_guide}()}
 }
 \concept{explicit_guide}
