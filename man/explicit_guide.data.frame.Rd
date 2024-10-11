@@ -8,7 +8,8 @@
   x,
   ...,
   overwrite = getOption("yamlet_explicit_guide_overwrite", TRUE),
-  simplify = getOption("yamlet_explicit_guide_simplify", TRUE)
+  simplify = getOption("yamlet_explicit_guide_simplify", TRUE),
+  expand = getOption("yamlet_expand_codelist", TRUE)
 )
 }
 \arguments{
@@ -19,6 +20,8 @@
 \item{overwrite}{passed as TRUE}
 
 \item{simplify}{whether to remove guide attribute}
+
+\item{expand}{whether to expand empty guide list using sorted unique values. NA likely excluded.}
 }
 \value{
 data.frame

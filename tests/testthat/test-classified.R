@@ -86,3 +86,18 @@ V:   [ V/F, L ]
   expect_equal_to_reference(file = '131.rds', vec_c(c1, f3))
   expect_equal_to_reference(file = '132.rds', vec_c(f3, c1))
 })
+
+test_that('items with an empty list as guide resolve to classified',{
+  library(magrittr)
+  library(dplyr)
+  library(yamlet)
+  library(testthat)
+  x <- data.frame(ID = 1:3)
+  x %<>% redecorate('ID: [ Identifier, []]')
+  x %<>% resolve
+  expect_true(is.factor(x$ID))
+  x %<>% desolve(collapse = 0)
+  expect_false(is.factor(x$ID))
+  expect_true(length(attr(x$ID, 'guide')) == 0)
+  decorations(x)
+})

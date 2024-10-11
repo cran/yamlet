@@ -8,6 +8,7 @@
   x,
   ...,
   test = getOption("yamlet_infer_guide", yamlet::infer_guide),
+  expand = getOption("yamlet_expand_codelist", TRUE),
   data = NULL
 )
 }
@@ -17,6 +18,8 @@
 \item{...}{passed to \code{\link[dplyr]{select}} to limit scope}
 
 \item{test}{function or function name; supply non-default or globally set \code{options(yamlet_infer_guide = )}.}
+
+\item{expand}{whether to expand empty guide list using sorted unique values. NA likely excluded.}
 
 \item{data}{optional data.frame for testing guides with length > 1}
 }

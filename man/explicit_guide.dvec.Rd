@@ -7,8 +7,9 @@
 \method{explicit_guide}{dvec}(
   x,
   ...,
-  overwrite = getOption("explicit_guide_overwrite", TRUE),
-  simplify = getOption("explicit_guide_simplify", TRUE)
+  overwrite = getOption("yamlet_explicit_guide_overwrite", TRUE),
+  simplify = getOption("yamlet_explicit_guide_simplify", TRUE),
+  expand = getOption("yamlet_expand_codelist", TRUE)
 )
 }
 \arguments{
@@ -19,6 +20,8 @@
 \item{overwrite}{whether to overwrite attributes}
 
 \item{simplify}{whether to remove guide attribute}
+
+\item{expand}{whether to expand empty guide list using sorted unique values. NA likely excluded.}
 }
 \value{
 dvec
