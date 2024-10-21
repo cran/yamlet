@@ -1,4 +1,4 @@
-aaadad37ca198b34a59acc32e21ac382 *DESCRIPTION
+3c4d860e9ba19505712d61aaf3438c5f *DESCRIPTION
 57394100511b7cc02f7865d8d1dbd275 *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 4cae18c387e34e561abb82c4f2af66ce *R/append_units.R
@@ -13,7 +13,7 @@ b3a5a21c6ad3b21567a0df7017a61677 *R/data.frame.R
 abf68a0eac8e6b88826fd1f62b4d4f21 *R/dplyr.R
 b07f1a996c551f81632f483029eb12df *R/drop_title.R
 4d4bb351f5dbb307e34f6c600751ce4c *R/dvec.R
-9b6d1cb801e512b2db68ccffca90d80b *R/explicit_guide.R
+0e3deef9ace6fb543dba9eff3df6b5a6 *R/explicit_guide.R
 a6cadef06ebe1f1e30dd863a2417c4c1 *R/factorize_codelist.R
 f71dec3b5cedbd505b32f9e51bfba472 *R/gather.R
 4d34769a299a0c0a4a2564d1f6331247 *R/ggplot.R
@@ -51,17 +51,17 @@ e5b914c724dd23c6a5297ae717cff405 *R/vec_ptype2.R
 e5b914c724dd23c6a5297ae717cff405 *R/vec_ptype2_dvec.R
 916af488ef283f794e9c8ccbad47207f *R/xtable.R
 8043b944dcf053cfb998058addddf221 *R/yamlet.R
-8809ce19ee5c1082c34ff1121cf775c0 *R/yamlet_options.R
+e83a97da9459aec470e7adb8d8bc5db3 *R/yamlet_options.R
 8340a43bd4c52008cefb6de95df7ab84 *build/vignette.rds
 3041035f57b5e305909645bdec65fad9 *inst/doc/scripted-html.R
 38a67b1f79c4159fff671aab929f1f32 *inst/doc/scripted-html.Rmd
-b2f5dd7ddf554a358bd0c381d375595f *inst/doc/scripted-html.html
+97c9cc06a54d830a6df4da4b0e1d7b8d *inst/doc/scripted-html.html
 3041035f57b5e305909645bdec65fad9 *inst/doc/scripted-pdf.R
 6eedde2a316efb0b47793d82cc1985d7 *inst/doc/scripted-pdf.Rmd
-3c2b5d890e06f1990918dcd3a45cfdaf *inst/doc/scripted-pdf.pdf
+e2fd4a15b1d6a5ac11ab5d2bd1a1b768 *inst/doc/scripted-pdf.pdf
 302f27528a7b521cf4d6a8fbd5d3618b *inst/doc/yamlet-introduction.R
 bf0bdaebae0fdc88439b668cdbd83132 *inst/doc/yamlet-introduction.Rmd
-3b853a21bd40f070bf38704232ebbe7f *inst/doc/yamlet-introduction.html
+b03e7a48568053bd530b65ec49fff23f *inst/doc/yamlet-introduction.html
 255842f52fbd8095276ccc05a3bf9a8c *inst/extdata/dm.xpt.gz
 bdf3edfcbe6b60654f070070552f101d *inst/extdata/ex.xpt.gz
 cafea32947c3e721c349e52d695b9be5 *inst/extdata/pc.R
@@ -180,7 +180,7 @@ abc8992a5c0ef3c41d20b3e491227298 *man/ggready.data.frame.Rd
 31fb1f16ccb7270e1ab3a4ba3e0876f4 *man/group_by_decorations.Rd
 bf29bd38826cc315c5ff3d2e90bb39bc *man/group_by_decorations.data.frame.Rd
 8647c980e39985735a28b58ed5f6decd *man/implicit_guide.Rd
-3606efae0c2ae4e0898e50bec1bce9c6 *man/implicit_guide.data.frame.Rd
+5309cecdf54056b6c57b1f05281d5343 *man/implicit_guide.data.frame.Rd
 fd511e0921ae7d67d4954cf149082982 *man/implicit_guide.dvec.Rd
 4d777118d8f975af665f3c7f4ab74e5a *man/infer_guide.Rd
 d0f618e69b9ad3ce73f54d61b8cc9ab2 *man/inner_join.decorated.Rd
@@ -330,7 +330,7 @@ e2a61b661f1f99d992a6ebe5901f20e2 *man/vec_ptype2.dvec.logical.Rd
 3b015e730a41c97205214f01887e1509 *man/write_yamlet.Rd
 41b1582e99f7984a6ca99eef0aa0f75a *man/xtable.decorated.Rd
 a6221d1a265646deaf20257c6f8785e5 *man/yamlet.Rd
-5daeb17249f538c1ee96f6406d8d937b *man/yamlet_options.Rd
+1ac36f9845b21093e791877a7b00438c *man/yamlet_options.Rd
 2179aa553e55d1baf148529ffe5fc154 *tests/testthat.R
 bb8bcd5050c3a3a67c88f908f1f94fcb *tests/testthat/001.rds
 cf2378f9e0ef88c6a63ca7184fb4d1c2 *tests/testthat/002.rds
@@ -477,6 +477,6 @@ eb22523a71ce91a93f92ed7167b451da *tests/testthat/test-gz.R
 7f01c6d7132fa5ede6ee1c0406da7b19 *vignettes/scripted-html_files/figure-html/unnamed-chunk-4-1.png
 3c8c6cd285418571e839278d91331561 *vignettes/scripted-html_files/figure-html/unnamed-chunk-5-1.png
 6eedde2a316efb0b47793d82cc1985d7 *vignettes/scripted-pdf.Rmd
-58c4218ffcbf4292e23136262082b99f *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-4-1.pdf
-db0fa5f793b24ee69d64388079409c72 *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-5-1.pdf
+750a240cae4f73f06a5a3176bc8e3bef *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-4-1.pdf
+302fdf3ed3ccd6ae80c1be0786e9cf02 *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-5-1.pdf
 bf0bdaebae0fdc88439b668cdbd83132 *vignettes/yamlet-introduction.Rmd
