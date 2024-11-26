@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
 )
 knitr::opts_chunk$set(package.startup.message = FALSE)
 
-## ---- package.startup.message = FALSE-----------------------------------------
+## ----package.startup.message = FALSE------------------------------------------
 suppressMessages(library(dplyr))
 library(magrittr)
 library(yamlet)
@@ -73,7 +73,7 @@ file.exists(meta)
 meta %>% readLines %>% head %>% writeLines
 options(csv_source = TRUE) # restore
 
-## ---- fig.width = 5.46, fig.height = 3.52, fig.cap = 'Automatic axis labels and legends using curated metadata as column attributes.'----
+## ----fig.width = 5.46, fig.height = 3.52, fig.cap = 'Automatic axis labels and legends using curated metadata as column attributes.'----
 suppressWarnings(library(ggplot2))
 library(dplyr)
 library(magrittr)

@@ -1,7 +1,7 @@
 Package: yamlet
 Type: Package
 Title: Versatile Curation of Table Metadata
-Version: 1.1.5
+Version: 1.2.0
 Authors@R: person(given = "Tim",
                   family = "Bergsma",
                   role = c("aut", "cre"),
@@ -25,7 +25,7 @@ VignetteBuilder: knitr
 Suggests: testthat (>= 2.1.0), magrittr, table1, rmarkdown, gridExtra,
         haven, tablet (>= 0.6.8), kableExtra
 NeedsCompilation: no
-Packaged: 2024-11-14 17:42:00 UTC; tim.bergsma
+Packaged: 2024-11-25 19:48:27 UTC; tim.bergsma
 Author: Tim Bergsma [aut, cre]
 Repository: CRAN
-Date/Publication: 2024-11-14 18:20:02 UTC
+Date/Publication: 2024-11-26 08:00:02 UTC

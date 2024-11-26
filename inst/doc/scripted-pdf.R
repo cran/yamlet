@@ -1,7 +1,7 @@
 ## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(dpi = 600, out.width = '50%')
 
-## ---- message = FALSE, warning = FALSE----------------------------------------
+## ----message = FALSE, warning = FALSE-----------------------------------------
 library(magrittr)
 library(ggplot2)
 library(tablet)
@@ -24,21 +24,22 @@ x %<>% decorate('
 ')
 x %>% decorations
 
-## ---- fig.width = 4.43, fig.height = 2.77-------------------------------------
+## ----fig.width = 4.43, fig.height = 2.77--------------------------------------
 x %>% 
   resolve %>% 
   ggplot(aes(time, work, color = group, shape = set)) + 
   geom_point()
 
-## ---- , fig.width = 4.33, fig.height = 2.82-----------------------------------
+## ----, fig.width = 4.33, fig.height = 2.82------------------------------------
 x %>% 
-  scripted %>% 
+  enscript %>% 
   ggplot(aes(time, work, color = group, shape = set)) + 
+  facet_grid(~ group) +
   geom_point()
 
 ## -----------------------------------------------------------------------------
 x %>% 
-  scripted %>% 
+  enscript %>% 
   group_by(group, set) %>%
   tablet %>%
   as_kable
