@@ -1,4 +1,4 @@
-ef61c888158eb2a37f75b9bb88194656 *DESCRIPTION
+f4fb9f6629a7f6d03a59040e7d74aca7 *DESCRIPTION
 3f04485d9a59722700b356461a80ebff *NAMESPACE
 8d7a0a77903f542ba926be24fbf99716 *R/alias.R
 4cae18c387e34e561abb82c4f2af66ce *R/append_units.R
@@ -17,8 +17,8 @@ b07f1a996c551f81632f483029eb12df *R/drop_title.R
 0e3deef9ace6fb543dba9eff3df6b5a6 *R/explicit_guide.R
 a6cadef06ebe1f1e30dd863a2417c4c1 *R/factorize_codelist.R
 f71dec3b5cedbd505b32f9e51bfba472 *R/gather.R
-119aa328ec95f0d0a98851895bbca64b *R/ggplot.R
-163057b6080c7f215d187c4ff8dfcabc *R/ggplot_build.R
+6dd8539bd16af42e735dcd8db1e14f8d *R/ggplot.R
+6dce0321c0859ce404d189f952ae366e *R/ggplot_build.R
 51e81731bca89870fc028bfc1958e1f6 *R/ggplot_ggready.R
 11c8e7e0c3a0415ae9c949fb4924dc30 *R/ggready.R
 27d86327eb5e2e7635fbe19413988b61 *R/groups.R
@@ -26,7 +26,7 @@ f71dec3b5cedbd505b32f9e51bfba472 *R/gather.R
 0826792cea0ed5a47a29e1dc325321a6 *R/io_res.R
 94f6e3a921285e556ab7daf336d7baa9 *R/io_table.R
 86126a098970fc4eb5d4500b9dfa2953 *R/io_yamlet.R
-1c5f7ec82c533189e3f83e7cbe69766e *R/isometric.R
+90bf6d6afa4ae9b6508b21995ce19d55 *R/isometric.R
 ab287dad6926ac0235b696439340c810 *R/make_title.R
 b0b4646041685cc302c3507b7877c5e1 *R/merge.R
 eb313989c29a7e3711b1da5b6de0739f *R/mimic.R
@@ -56,13 +56,13 @@ e5b914c724dd23c6a5297ae717cff405 *R/vec_ptype2_dvec.R
 ca8a6044236971cd5ae8428478b5d3c3 *build/vignette.rds
 508e6b897ed50fcecc6ca8b824ed7488 *inst/doc/scripted-html.R
 45c2b8f406e517ca0e8392ba7a3fbadc *inst/doc/scripted-html.Rmd
-286890a7b89460538dfda97073b69be8 *inst/doc/scripted-html.html
+37e6b643e886aedaa01018669eedfbe6 *inst/doc/scripted-html.html
 508e6b897ed50fcecc6ca8b824ed7488 *inst/doc/scripted-pdf.R
 57db16d2a59fc5f8ad90eee56f8bf87c *inst/doc/scripted-pdf.Rmd
-0144992f07da2509d10ace881580ad66 *inst/doc/scripted-pdf.pdf
+34293ffa4e972337382858a987a71043 *inst/doc/scripted-pdf.pdf
 5e869ff3b17f76e1c8801e519e9cfb1a *inst/doc/yamlet-introduction.R
 bf0bdaebae0fdc88439b668cdbd83132 *inst/doc/yamlet-introduction.Rmd
-f65778ce96566b10101511b2001740dd *inst/doc/yamlet-introduction.html
+57bb5303551e6d04c607f0269a7a7cc7 *inst/doc/yamlet-introduction.html
 255842f52fbd8095276ccc05a3bf9a8c *inst/extdata/dm.xpt.gz
 bdf3edfcbe6b60654f070070552f101d *inst/extdata/ex.xpt.gz
 cafea32947c3e721c349e52d695b9be5 *inst/extdata/pc.R
@@ -175,9 +175,9 @@ ce07aa91bfddd9a3f4928594c88e1e95 *man/enscript.Rd
 585762959b13d5cbbf1da60a910f62ea *man/get_labs.Rd
 24c4d250d37cb04f8a880dd42260089b *man/gg_new.Rd
 0f24bf60f63faba1074b55695de82343 *man/ggplot.decorated.Rd
-d99019b444ecda789a2e0d556be4a67a *man/ggplot_add.ggplot_isometric.Rd
-24febcd4970c9e3b2b2a3989bd839b61 *man/ggplot_add.ggplot_symmetric.Rd
-2208b1543dc3ed1c5ee04b13978ec0f8 *man/ggplot_build.decorated_ggplot.Rd
+768de109755950b907a57be9890cd756 *man/ggplot_add.ggplot_isometric.Rd
+afabb50046be1b030cd3a4f0154cf6b6 *man/ggplot_add.ggplot_symmetric.Rd
+0fbcad5cf8545ece3953f78d47006aa0 *man/ggplot_build.decorated_ggplot.Rd
 3c831a75b2ceed2cbb073c5b364cf2fd *man/ggready.Rd
 abc8992a5c0ef3c41d20b3e491227298 *man/ggready.data.frame.Rd
 512fb0f55798192a967f4c990e297a72 *man/ggready.decorated.Rd
@@ -482,6 +482,6 @@ eb22523a71ce91a93f92ed7167b451da *tests/testthat/test-gz.R
 46838aff4b507bc32fdb5f99d40f7499 *vignettes/scripted-html_files/figure-html/unnamed-chunk-4-1.png
 69074b8f2434938b1d7f18591f1ab877 *vignettes/scripted-html_files/figure-html/unnamed-chunk-5-1.png
 57db16d2a59fc5f8ad90eee56f8bf87c *vignettes/scripted-pdf.Rmd
-b20bee2eb1ba6f033b13d4ab1e6071ab *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-4-1.pdf
-e6adaaa97a3565fb403e3e613282ed23 *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-5-1.pdf
+bb58dbcf2a61869e06065e707c1c08e0 *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-4-1.pdf
+aef38a4f83dc83075c2f63ce1f5b2a7e *vignettes/scripted-pdf_files/figure-latex/unnamed-chunk-5-1.pdf
 bf0bdaebae0fdc88439b668cdbd83132 *vignettes/yamlet-introduction.Rmd
