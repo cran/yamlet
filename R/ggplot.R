@@ -1,3 +1,4 @@
+globalVariables(c('x','y'))
 #' Create a New ggplot for a Decorated Data Frame
 #'
 #' Creates a new ggplot object for a decorated data.frame.
@@ -203,22 +204,25 @@ print.decorated_ggplot <- function(
 ){
 
   # support for discrete manual scales
-  theLabels <- x$labels
-  if(gg_new()){
-    # get_labs builds the plot to assess the labels.
-    # we need to know the old-style labels so that
-    # we can locate value-added metadata by column.
-    # thus we need to suppress label attributes here
-    # to defeat their new-style uptake.
-    decoy <- x
-    decoy$data <- modify(decoy$data, label = NULL)
-    theLabels <- get_labs(decoy)
-    # ignore labels that were explicitly set
-    candidates <- names(theLabels)
-    userdefined <- x$labels
-    keep <- setdiff(candidates, userdefined)
-    theLabels <- theLabels[keep]
-  }
+  
+  # In 1.2.3, we move "decoy" code upstream to get_labs itself.
+  # theLabels <- x$labels
+  # if(gg_new()){
+  #   # get_labs builds the plot to assess the labels.
+  #   # we need to know the old-style labels so that
+  #   # we can locate value-added metadata by column.
+  #   # thus we need to suppress label attributes here
+  #   # to defeat their new-style uptake.
+  #   decoy <- x
+  #   decoy$data <- modify(decoy$data, label = NULL)
+  #   theLabels <- get_labs(decoy)
+  #   # ignore labels that were explicitly set
+  #   candidates <- names(theLabels)
+  #   userdefined <- x$labels
+  #   keep <- setdiff(candidates, userdefined)
+  #   theLabels <- theLabels[keep]
+  # }
+  theLabels <- get_labs(x)
   labelnames <- names(theLabels)
   aesthetics <- intersect(discrete, labelnames)
   scaletypes <- sapply(x$scales$scales, `[[`, 'aesthetics')
@@ -401,24 +405,90 @@ print.decorated_ggplot <- function(
 #' Detects the existence of qqplot's updated label strategy after v. 3.5.1,
 #' e.g. ggplot2_3.5.1.9000. For internal use to accommodate breaking changes.
 #' 
-gg_new <- function()"get_labs" %in% getNamespaceExports("ggplot2")
+# this ultimately failed due to altered release strategy
+# gg_new <- function()"get_labs" %in% getNamespaceExports("ggplot2")
+# this is more emperical.
+gg_new <- function(){
+  p <- ggplot2::ggplot(data.frame(x=1, y=1), aes(x,y))
+  labs <- p$labels
+  # if this is old-school, labs is a list with members x and y.  
+  # if this is the "new" way, labs is an empty list, to be calculated on build.
+  is.new <- length(labs) == 0
+  return(is.new)
+}
 
 #' Get Labels
 #' 
 #' Gets labels for a ggplot object.  Not exported, to avoid confusion.
 #' Development version of ggplot2 implements new get_labs() interface.
-#' This function is an abstraction that supports new vs old approaches.
+#' This function is an abstraction that supports new vs old approaches,
+#' solely for yamlet's interests.
 #' See https://github.com/tidyverse/ggplot2/pull/6078.
 #' 
 #' @param plot the ggplot
 #' 
 get_labs <- function(plot) {
-  if (gg_new()) {
+  theLabels <- plot$labels # old style default
+  
+  if (gg_new()) { # re-define theLabels
+    
     # ggplot_build.decorated_ggplot calls get_labs
+    # as do the ggplot_symmetric and ggplot_isometric methods
+    #  for ggplot_add()
+    
+    # get_labs builds the plot to assess the labels.
+    # we need to know the old-style labels so that
+    # we can locate value-added metadata by column.
+    # thus we need to suppress label attributes here
+    # to defeat their new-style uptake.
+
+    # Specifically, ggplot2 plans/intends that
+    # the label attributes of columns named as aesthetics
+    # will be returned by get_labels() even if not assigned
+    # in plot$labels, e.g. by labs(x=,) etc.
+    # this makes get_labs() less-informative,
+    # because the default mapping info is lost.
+    # (available elsewhere?)
+    # I.e., we no longer know what column in the dataset
+    # is being used for that aesthetic (e.g., x)
+    # so we can't go back and find other clever attributes
+    # such as units, colors, and what not.
+    # If we yeet the the labels, get_labels() gives us
+    # boring but useful mappings with which to work.
+    # we practice on a decoy so that we don't really
+    # make 'plot' less informative.
+    
+    decoy <- plot
+    decoy$data <- modify(decoy$data, label = NULL)
+    
     # partial unclass to avoid circularity ...
-    class(plot) <- setdiff(class(plot), 'decorated_ggplot')
-    return(ggplot2::get_labs(plot))
+    class(decoy) <- setdiff(class(decoy), 'decorated_ggplot')
+    
+    theLabels <- ggplot2::get_labs(decoy) # re-defined
+    
+    # ignore labels that were explicitly set
+    candidates <- names(theLabels)
+    userdefined <- names(plot$labels)
+    keep <- setdiff(candidates, userdefined)
+    
+    # note, however, that warnings based on $labels
+    # will not necessarily work across all ggplot2 versions.
+    # consider above: warning('length of labels for ', aesthetic, ' is longer than 1
+    # in the old days, reading plot$labels,
+    # we would trap a multi-line title 
+    # and only use the first element, with warning.
+    # but now, (new way), something defined by
+    # e.g. ggtitle() is considered an inviolable user intervention
+    # (see userdefined above) 
+    # and is therefore unmolested (and un-checked).
+    # fortunately, ggplot silently uses only the first
+    # line of a multiline label,
+    # so we will quietly allow that under the new paradigm.
+    
+    theLabels <- theLabels[keep]
   }
-  # else old style labels
-  return(plot$labels)
+  
+  # unconditionally ...
+  
+  return(theLabels)
 }
