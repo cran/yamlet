@@ -49,12 +49,12 @@
 #' * **yamlet_explicit_guide_simplify**: \code{\link{explicit_guide.data.frame}}
 #'   and \code{\link{explicit_guide.dvec}}. Ordinarily, the 'guide' attribute
 #'   is removed if something more useful can be inferred.
-#' * **yamlet_decorated_ggplot_search**: see \code{\link{print.decorated_ggplot}}.
-#'   The print method for decorated_ggplot populates axis labels by searching
+#' * **yamlet_decorated_ggplot_search**: see \code{\link{ggplot_build.decorated_ggplot}}.
+#'   The build method for decorated_ggplot populates axis labels by searching
 #'   first for attributes named 'expression', 'title', and 'label'.  Customizable.
-#' * **yamlet_decorated_ggplot_discrete**: see \code{\link{print.decorated_ggplot}}.
+#' * **yamlet_decorated_ggplot_discrete**: see \code{\link{ggplot_build.decorated_ggplot}}.
 #'   Discrete aesthetics to map from data decorations where available.
-#' * **yamlet_decorated_ggplot_drop**: see \code{\link{print.decorated_ggplot}}.
+#' * **yamlet_decorated_ggplot_drop**: see \code{\link{ggplot_build.decorated_ggplot}}.
 #'   Should unused factor levels be omitted from data-driven discrete scales?
 #' * **yamlet_ggready_parse**: see \code{\link{ggready.data.frame}}, 
 #'   \code{\link{ggready.decorated}}. Whether to parse axis labels.
@@ -81,6 +81,10 @@
 #' * **yamlet_warn_conflicted**: \code{\link{c.classified}}.
 #'   Whether to warn when codelists for combined classified
 #'   factors have conflicting names (which will be dropped).
+#' * **yamlet_reconcile_attributes**: \code{\link{c.classified}}.
+#'   Whether to reconcile attribute lists when combining classified.
+#'   Set FALSE for old behavior (pre 1.3.1) of adopting attributes
+#'   (other than levels and codelists).
 #' * **yamlet_expand_codelist**: \code{\link{explicit_guide.yamlet}}.
 #'   If TRUE (default) an empty list as a guide attribute 
 #'   is short-hand for \code{sort(unique(x))}.

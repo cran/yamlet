@@ -49,15 +49,34 @@ classified.factor <- function(
   if(missing(labels)) labels <- levels
   stopifnot(identical(length(levels), length(labels)))
   if(any(duplicated(labels)))(stop(paste( collapse = ': ', c(token, 'duplicated labels not supported in this context'))))
-  y <- classified.default(
-    x,
-    levels = levels,
-    labels = labels,
-    exclude = exclude,
-    ordered = ordered,
-    nmax = NA,
-    ...
-  )
+  
+  # @ 1.3.0 to support decorated factors (incl. resolve.factor())
+  at <- attributes(x)
+  at$class <- NULL
+  at$levels <- NULL
+  x <- type.convert(x, as.is = TRUE)
+  attributes(x) <- at
+  
+  # if x has a codelist attribute, don't pass levels and labels)
+  
+  args <- list(x)
+  if(!('codelist' %in% names(attributes(x)))){
+    args <- c(args, list(levels = levels, labels = labels))
+  }
+  args <- c(args, list(exclude = exclude, ordered = ordered, nmax = nmax))
+  args <- c(args, list(...))
+  
+  # y <- classified.default(
+  #   x,
+  #   levels = levels,
+  #   labels = labels,
+  #   exclude = exclude,
+  #   ordered = ordered,
+  #   nmax = NA,
+  #   ...
+  # )
+  
+  y <- do.call(classified.default, args)
   y
 }
 
@@ -388,7 +407,9 @@ classified.default <- function(
 #'
 #' Combines classified factor, retaining attributes.
 #' Attributes other than levels and codelist are taken
-#' from the first argument.  Attribute 'levels' is
+#' from the first argument if \code{reconcile_attributes} is FALSE;
+#' otherwise remaining attributes are reconciled (default as of 1.3.1).
+#' Attribute 'levels' is
 #' supplied by next method.  Attribute 'codelist'
 #' is the combined codelists in sequence of
 #' all (dots) arguments, after silently removing
@@ -399,6 +420,7 @@ classified.default <- function(
 #' @param ... passed to next method
 #' @param recursive passed to unlist() internally
 #' @param warn_conflicted logical: warn if any duplicated codelist names?
+#' @param reconcile_attributes logical: reconcile attribute lists (other than levels and attributes) if TRUE (default as of 1.3.1); else take attributes from first argument (former behavior)
 #' @export
 #' @keywords internal
 #' @family classified
@@ -414,14 +436,15 @@ classified.default <- function(
 `c.classified` <- function( 
     ..., 
     recursive = TRUE, 
-    warn_conflicted = getOption('yamlet_warn_conflicted', FALSE) 
+    warn_conflicted = getOption('yamlet_warn_conflicted', FALSE),
+    reconcile_attributes = getOption('yamlet_reconcile_attributes', TRUE)
 ){
   c_factor <- function (..., recursive = TRUE) { # i.e. c.factor() from R 4.1.0
     x <- list(...)
     y <- unlist(x, recursive = recursive)
     if (
       inherits(y, "factor") &&
-      all(vapply(x, inherits,NA, "ordered")) &&
+      all(vapply(x, inherits, NA, "ordered")) &&
       (length(unique(lapply(x, levels))) == 1L)
     ) class(y) <- c("ordered", "factor")
     y
@@ -429,12 +452,26 @@ classified.default <- function(
   # y <- NextMethod() # not back-compatible before R 4.1.0
   y <- c_factor(..., recursive = recursive)
   # class and levels will have been handled
+  
+  # assign secondary attributes
   all <- list(...)
-  x <- all[[1]]
-  nms <- names(attributes(x))
-  nms <- setdiff(nms, c('levels')) # implicitly restore class
-  for(nm in nms){
-    attr(y, nm) <- attr(x, nm)
+  atr <- all # copy for reconciling attributes
+  
+  if(!reconcile_attributes){
+    x <- all[[1]]
+    nms <- names(attributes(x))
+    nms <- setdiff(nms, c('levels')) # implicitly restore class
+    for(nm in nms){
+      attr(y, nm) <- attr(x, nm)
+    }
+  } else { # new behavior in 1.3.1
+    atr <- lapply(atr, `attr<-`, "levels", NULL)   # handled later
+    atr <- lapply(atr, `attr<-`, "codelist", NULL) # handled later
+    atr <- lapply(atr, `attr<-`, "class", NULL)    # handled later
+    rec <- reconcile(atr)
+    for(nm in names(rec)){
+      attr(y, nm) <- rec[[nm]]
+    }
   }
   # combine levels
   codelist <- list()

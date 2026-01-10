@@ -53,9 +53,11 @@ Other explicit_guide:
 \code{\link{explicit_guide}()},
 \code{\link{explicit_guide.data.frame}()},
 \code{\link{explicit_guide.dvec}()},
+\code{\link{explicit_guide.factor}()},
 \code{\link{explicit_guide.yamlet}()},
 \code{\link{implicit_guide}()},
 \code{\link{implicit_guide.data.frame}()},
+\code{\link{implicit_guide.factor}()},
 \code{\link{infer_guide}()}
 
 Other dvec: 
@@ -76,10 +78,12 @@ Other dvec:
 \code{\link{desolve.dvec}()},
 \code{\link{explicit_guide.data.frame}()},
 \code{\link{format.dvec}()},
+\code{\link{implicit_guide.factor}()},
 \code{\link{length.dvec}()},
 \code{\link{print.dvec}()},
 \code{\link{resolve.classified}()},
 \code{\link{resolve.dvec}()},
+\code{\link{resolve.factor}()},
 \code{\link{unclassified.dvec}()}
 }
 \concept{dvec}

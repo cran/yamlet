@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Tim Bergsma" />
+
+<meta name="date" content="2026-01-09" />
+
+<title>Yamlet Plot Aesthetics</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Yamlet Plot Aesthetics</h1>
+<h4 class="author">Tim Bergsma</h4>
+<h4 class="date">2026-01-09</h4>
+
+
+
+<div id="behavior" class="section level2">
+<h2>Behavior</h2>
+<p>Plotting a decorated data.frame in ggplot() has special behavior for
+aesthetics defined using yamlet decorations. If there is only one
+dataset (typical), the aesthetics are coordinated with the (levels of
+the) corresponding variable.</p>
+<p>If one or more additional layers provide non-default data, a single
+set of consensus decorations is accumulated, with each successive
+dataset overriding all previous decorations where conflicts exist; then,
+consensus decorations are enforced on all datasets.</p>
+</div>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>In the example below, points are plotted using the observed data,
+then summary data is plotted as a separate layer, supplying its own
+data. the plot is rendered <em>without</em> decorations (left) and
+<em>with</em> decorations (right).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(yamlet)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(metaplot)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&#39;a&#39;</span>,<span class="st">&#39;b&#39;</span>),</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="at">concentration =</span> <span class="fu">rnorm</span>(<span class="dv">100</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># observed data</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>obs <span class="sc">%&lt;&gt;%</span> <span class="fu">decorate</span>(<span class="st">&#39;</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="st">  time: [ Time, h ]</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="st">  concentration: [ Concentration, ng/mL ]</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="st">  group: [ </span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="st">    Group, </span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="st">    [ a, b ], </span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="st">    color: [ green, yellow ] , </span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="st">    linetype: [ dashed, dotdash ]</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="st">  ]</span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="st">&#39;</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co"># summary data</span></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>sum <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(concentration))</span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>sum <span class="sc">%&lt;&gt;%</span> undecorate <span class="sc">%&gt;%</span> <span class="fu">decorate</span>(<span class="st">&#39;</span></span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a><span class="st">  group: [ </span></span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a><span class="st">    Subset, </span></span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a><span class="st">    [ a, b ], </span></span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a><span class="st">    color: [ blue, magenta ], </span></span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a><span class="st">    shape: [ 15, 19 ]</span></span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a><span class="st">  ]</span></span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a><span class="st">&#39;</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a>q <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span></span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>  undecorate <span class="sc">%&gt;%</span></span>
+<span id="cb1-40"><a href="#cb1-40" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time, concentration)) <span class="sc">+</span></span>
+<span id="cb1-41"><a href="#cb1-41" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> group, <span class="at">shape =</span> group)) <span class="sc">+</span></span>
+<span id="cb1-42"><a href="#cb1-42" tabindex="-1"></a>  <span class="fu">geom_hline</span>(</span>
+<span id="cb1-43"><a href="#cb1-43" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">undecorate</span>(sum), </span>
+<span id="cb1-44"><a href="#cb1-44" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb1-45"><a href="#cb1-45" tabindex="-1"></a>      <span class="at">yintercept =</span> mean, </span>
+<span id="cb1-46"><a href="#cb1-46" tabindex="-1"></a>      <span class="at">color =</span> group, </span>
+<span id="cb1-47"><a href="#cb1-47" tabindex="-1"></a>      <span class="at">linetype =</span> group</span>
+<span id="cb1-48"><a href="#cb1-48" tabindex="-1"></a>    )</span>
+<span id="cb1-49"><a href="#cb1-49" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb1-50"><a href="#cb1-50" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;top&quot;</span>) <span class="sc">+</span></span>
+<span id="cb1-51"><a href="#cb1-51" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&#39;without decorations&#39;</span>) <span class="sc">+</span></span>
+<span id="cb1-52"><a href="#cb1-52" tabindex="-1"></a>  <span class="fu">symmetric</span>()</span>
+<span id="cb1-53"><a href="#cb1-53" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" tabindex="-1"></a>p <span class="ot">&lt;-</span> obs <span class="sc">%&gt;%</span></span>
+<span id="cb1-55"><a href="#cb1-55" tabindex="-1"></a>  resolve <span class="sc">%&gt;%</span></span>
+<span id="cb1-56"><a href="#cb1-56" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time, concentration)) <span class="sc">+</span></span>
+<span id="cb1-57"><a href="#cb1-57" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> group, <span class="at">shape =</span> group)) <span class="sc">+</span></span>
+<span id="cb1-58"><a href="#cb1-58" tabindex="-1"></a>  <span class="fu">geom_hline</span>(</span>
+<span id="cb1-59"><a href="#cb1-59" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">resolve</span>(sum), </span>
+<span id="cb1-60"><a href="#cb1-60" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb1-61"><a href="#cb1-61" tabindex="-1"></a>      <span class="at">yintercept =</span> mean, </span>
+<span id="cb1-62"><a href="#cb1-62" tabindex="-1"></a>      <span class="at">color =</span> group, </span>
+<span id="cb1-63"><a href="#cb1-63" tabindex="-1"></a>      <span class="at">linetype =</span> group</span>
+<span id="cb1-64"><a href="#cb1-64" tabindex="-1"></a>    )</span>
+<span id="cb1-65"><a href="#cb1-65" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb1-66"><a href="#cb1-66" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;top&quot;</span>) <span class="sc">+</span></span>
+<span id="cb1-67"><a href="#cb1-67" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&#39;with decorations&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb1-68"><a href="#cb1-68" tabindex="-1"></a>  <span class="fu">symmetric</span>()</span>
+<span id="cb1-69"><a href="#cb1-69" tabindex="-1"></a></span>
+<span id="cb1-70"><a href="#cb1-70" tabindex="-1"></a></span>
+<span id="cb1-71"><a href="#cb1-71" tabindex="-1"></a><span class="fu">multiplot</span>(q, p) <span class="co"># %&gt;% devsize(2,2)</span></span></code></pre></div>
+<pre><code>## Warning: mismatched label attributes: ignoring &#39;Group&#39; in favor of &#39;Subset&#39;</code></pre>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+<ul>
+<li>Notice that the label (on the right) for color and shape is
+‘Subset’, not ‘Groups’, because the last layer wins.</li>
+<li>Likewise, colors are blue and magenta, not green and yellow, because
+the summary layer was supplied last.</li>
+<li>The summary layer respects the linetype defined earlier, having no
+such decoration in its own data.</li>
+<li>The observations layer respects the shapes defined with the summary
+layer, which in fact are not even used by the summary layer.</li>
+</ul>
+<p>This example is a bit contrived for heuristic value. As a best
+practice, consider specifying all aesthetics in the default data
+only.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.5.2 (2025-10-31 ucrt)
+## Platform: x86_64-w64-mingw32/x64
+## Running under: Windows 11 x64 (build 26200)
+## 
+## Matrix products: default
+##   LAPACK version 3.12.1
+## 
+## locale:
+## [1] LC_COLLATE=C                          
+## [2] LC_CTYPE=English_United States.utf8   
+## [3] LC_MONETARY=English_United States.utf8
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.utf8    
+## 
+## time zone: America/New_York
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] metaplot_0.8.4 dplyr_1.1.4    yamlet_1.3.1   ggplot2_4.0.1  magrittr_2.0.4
+## 
+## loaded via a namespace (and not attached):
+##  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.1        xml2_1.5.1        
+##  [5] lattice_0.22-7     stringi_1.8.7      digest_0.6.39      evaluate_1.0.5    
+##  [9] grid_4.5.2         RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0    
+## [13] latexpdf_0.1.8     gridExtra_2.3      purrr_1.2.0        viridisLite_0.4.2 
+## [17] scales_1.4.0       textshaping_1.0.4  jquerylib_0.1.4    csv_0.6.2         
+## [21] cli_3.6.5          rlang_1.1.6        units_1.0-0        withr_3.0.2       
+## [25] cachem_1.1.0       yaml_2.3.12        tools_4.5.2        kableExtra_1.4.0  
+## [29] vctrs_0.6.5        R6_2.6.1           png_0.1-8          spork_0.3.5       
+## [33] lifecycle_1.0.4    stringr_1.6.0      pkgconfig_2.0.3    pillar_1.11.1     
+## [37] bslib_0.9.0        gtable_0.3.6       data.table_1.17.8  glue_1.8.0        
+## [41] Rcpp_1.1.0         systemfonts_1.3.1  xfun_0.55          tibble_3.3.0      
+## [45] tidyselect_1.2.1   rstudioapi_0.17.1  knitr_1.50         farver_2.1.2      
+## [49] xtable_1.8-4       htmltools_0.5.9    labeling_0.4.3     rmarkdown_2.30    
+## [53] svglite_2.2.2      compiler_4.5.2     S7_0.2.1           encode_0.3.6</code></pre>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

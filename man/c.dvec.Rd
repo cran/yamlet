@@ -32,8 +32,8 @@ are removed.  If the result has only blank names,
 these are removed as well.
 }
 \examples{
-a <- as_dvec(letters[1:3], label = 'foo')
-b <- as_dvec(letters[3:5], label = 'foo')
+a <- as_dvec(letters[1:3], label = 'foo', priority = 1)
+b <- as_dvec(letters[3:5], label = 'foo', case = 'lower')
 c <- c(a,b)
 c
 class(c)
@@ -58,10 +58,12 @@ Other dvec:
 \code{\link{explicit_guide.data.frame}()},
 \code{\link{format.dvec}()},
 \code{\link{implicit_guide.dvec}()},
+\code{\link{implicit_guide.factor}()},
 \code{\link{length.dvec}()},
 \code{\link{print.dvec}()},
 \code{\link{resolve.classified}()},
 \code{\link{resolve.dvec}()},
+\code{\link{resolve.factor}()},
 \code{\link{unclassified.dvec}()}
 }
 \concept{dvec}

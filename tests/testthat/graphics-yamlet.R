@@ -74,6 +74,35 @@ plotgroup: [ engine\\ntransmission, [v-shaped\n\nautomatic,v-shaped\n\nmanual,st
   # note that x axis labels are 2-line, as is x-axis category labels
 })
 
+test_that('resolve supports axis label line breaks',{
+  library(yamlet)
+  library(ggplot2)
+  library(magrittr)
+  library(dplyr)
+  library(encode)
+  data(mtcars)
+  mtcars %>%
+    select(mpg, vs, am) %>%
+    data.frame %>%
+    mutate(
+      plotgroup = case_when(
+        vs == 0 & am == 0 ~ 'v-shaped\nautomatic',
+        vs == 0 & am == 1 ~ 'v-shaped\nmanual',
+        vs == 1 & am == 0 ~ 'straight\nautomatic',
+        vs == 1 & am == 1 ~ 'straight\nmanual'
+      )
+    ) %>%
+    redecorate("
+mpg: [ milage, mi/gal ]
+plotgroup: [ engine\n\ntransmission, [v-shaped\n\nautomatic,v-shaped\n\nmanual,straight\n\nautomatic,straight\n\nmanual]]
+") %>%
+    resolve %>%
+    ggplot(aes(x = plotgroup, y = mpg)) +
+    geom_boxplot()
+  # note that x axis labels are 2-line, as is x-axis category labels
+})
+
+
 test_that('subplots respect metadata assignments',{
   library(ggplot2)
   library(magrittr)
@@ -175,7 +204,7 @@ test_that('print.decorated_ggplot correctly handles spork for x axis, y axis, fa
   library(tablet)
   library(yamlet)
   library(dplyr)
- 
+  
   x <- data.frame(
     time = 1:10, 
     work = (1:10)^1.5, 
@@ -208,7 +237,7 @@ test_that('print.decorated_ggplot correctly handles spork for x axis, y axis, fa
   x %>% 
     ggplot(aes(time, work, color = group, shape = set)) + 
     geom_point()
-
+  
   # note the literal axes and legends
   x %>% 
     resolve %>% 
@@ -220,7 +249,7 @@ test_that('print.decorated_ggplot correctly handles spork for x axis, y axis, fa
     enscript %>%
     ggplot(aes(time, work, color = group, shape = set)) + 
     geom_point()
-
+  
   # must work for facet_wrap and facet_grid
   x %>% 
     enscript %>%
@@ -234,3 +263,107 @@ test_that('print.decorated_ggplot correctly handles spork for x axis, y axis, fa
     facet_wrap(~ set + group)
   
 })
+
+
+test_that('yamlet aesthetics work in the presence of layers',{
+  library(magrittr)
+  library(ggplot2)
+  library(yamlet)
+  library(dplyr)
+  
+  set.seed(10)
+  x <- data.frame(
+    x = 1:100,
+    group = c('a','b'),
+    y = rnorm(100),
+  )
+  
+  # observed data
+  x %<>% decorate('
+  group: [ 
+    Subset, 
+    [ a, b ], 
+    color: [ green, yellow ] , 
+    linetype: [ dashed, dotdash ]
+  ]
+')
+  
+  # summary data
+  y <- x %>% group_by(group) %>% summarize(z = mean(y))
+  y %<>% redecorate('
+  group: [ 
+    Group, 
+    [ a, b ], 
+    color: [ blue, magenta ], 
+    shape: [ 15, 19 ]
+  ]
+')
+  
+  
+p <- x %>%
+  resolve %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(color = group, shape = group)) +
+  geom_hline(
+    data = resolve(y), 
+    aes(
+      yintercept = z, 
+      color = group, 
+      linetype = group
+    )
+  )
+# p should have
+# blue/magenta color, 
+# dashed/dotdash linetype,
+# square/circle shape,
+# y axis labeled 'y' not 'z'
+# legend title 'Group'
+  
+q <- x %>%
+  undecorate %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(color = group, shape = group)) +
+  geom_hline(
+    data = undecorate(y), 
+    aes(
+      yintercept = z, 
+      color = group, 
+      linetype = group
+    )
+  )
+library(metaplot)
+multiplot(q, p)
+
+# should work when facetted
+x %>%
+  resolve %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(color = group, shape = group)) +
+  geom_hline(
+    data = resolve(y), 
+    aes(
+      yintercept = z, 
+      color = group, 
+      linetype = group
+    )
+  ) +
+  facet_wrap(~group)
+x %>%
+  resolve %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(color = group, shape = group)) +
+  geom_hline(
+    data = resolve(y), 
+    aes(
+      yintercept = z, 
+      color = group, 
+      linetype = group
+    )
+  ) +
+  facet_grid(rows = vars(group))
+
+})
+
+
+
+
