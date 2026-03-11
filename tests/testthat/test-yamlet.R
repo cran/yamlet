@@ -768,6 +768,66 @@ test_that('promote() preserves labels on categorical target elements', {
   
 })
 
+test_that('promote syntax is stable', {
+  library(magrittr)
+  x <- data.frame(
+    id = 1:6,
+    dv = c(1,2,3,1,2,3),
+    type = c('a','a','a','b','b','b')
+  )
+  a <- x %>% decorate("
+    dv:
+      -
+        - type == 'a': EASI Category
+        - type == 'b': IGA Category
+      - 
+        - type == 'a':
+          - EASI75: 1
+          - EASI50: 2
+          - <EASI50: 3
+        - type == 'b':
+          - IGA0: 1
+          - IGA1: 2
+          - IGA2: 3
+  ") %>% decorations
+  
+  b <- x %>% decorate("
+    dv:
+      - label:
+        - type == 'a': EASI Category
+        - type == 'b': IGA Category
+      - guide:
+        - type == 'a':
+          - EASI75: 1
+          - EASI50: 2
+          - <EASI50: 3
+        - type == 'b':
+          - IGA0: 1
+          - IGA1: 2
+          - IGA2: 3
+  ") %>% decorations
+  
+  
+  c <- x %<>% redecorate("
+    dv:
+      label:
+        type == 'a': EASI Category
+        type == 'b': IGA Category
+      guide:
+        type == 'a':
+          EASI75: 1
+          EASI50: 2
+          <EASI50: 3
+        type == 'b':
+          IGA0: 1
+          IGA1: 2
+          IGA2: 3
+  ") %>% decorations
+  
+  expect_true(identical(a, b))
+  expect_true(identical(a, c))
+})
+
 test_that('ggready is stable',{
 library(magrittr)
 file <- system.file(package = 'yamlet', 'extdata','quinidine.csv')
@@ -1961,6 +2021,22 @@ test_that('yaml package result is stable',{
   expect_equal_to_reference(file = '135.rds', decorations(undecorate(resolve(x))))
 })
 
-
+test_that('as_categorical is stable', {
+  library(magrittr)
+  library(tablet)
+  library(kableExtra)
+  library(yamlet)
+  
+  
+  x <- 
+    data.frame(DOSE = c(12, 1.2, 2.4, 6, 12)) %>% 
+    decorate('DOSE: [ Dose, mg ]')
+  
+  result <- x %>% 
+    as_categorical(DOSE) %>%
+    resolve %>% 
+    tablet 
+  expect_equal_to_reference(file = '137.rds', result)
+})
 
 
